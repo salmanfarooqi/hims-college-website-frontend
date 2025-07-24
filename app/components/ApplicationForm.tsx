@@ -92,39 +92,47 @@ const ApplicationForm = () => {
         formDataToSend.append('transactionReceipt', transactionReceipt)
       }
 
-      const { applicationsAPI } = await import('../../services');
-      const result = await applicationsAPI.submit(formDataToSend);
+      const response = await fetch('http://localhost:5000/api/applications', {
+        method: 'POST',
+        body: formDataToSend
+      })
 
-      toast.success('🎉 Application submitted successfully! We\'ll review your application and get back to you within 2-3 business days.');
-      
-      // Reset form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        dateOfBirth: '',
-        gender: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        program: '',
-        previousSchool: '',
-        previousGrade: '',
-        transactionId: '',
-        easypaisaNumber: ''
-      });
-      setTransactionReceipt(null);
-      
-      // Reset file input
-      const fileInput = document.getElementById('receipt-upload') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
-    } catch (error: any) {
-      console.error('Submission error:', error);
-      toast.error(error.message || 'Failed to submit application. Please try again.');
+      if (response.ok) {
+        const result = await response.json()
+        toast.success('🎉 Application submitted successfully! We\'ll review your application and get back to you within 2-3 business days.')
+        
+        // Reset form
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          dateOfBirth: '',
+          gender: '',
+          address: '',
+          city: '',
+          state: '',
+          zipCode: '',
+          program: '',
+          previousSchool: '',
+          previousGrade: '',
+          transactionId: '',
+          easypaisaNumber: ''
+        })
+        setTransactionReceipt(null)
+        
+        // Reset file input
+        const fileInput = document.getElementById('receipt-upload') as HTMLInputElement
+        if (fileInput) fileInput.value = ''
+      } else {
+        const errorData = await response.json()
+        toast.error(errorData.error || 'Failed to submit application. Please try again.')
+      }
+    } catch (error) {
+      console.error('Submission error:', error)
+      toast.error('Network error. Please check your connection and try again.')
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
 
@@ -356,7 +364,7 @@ const ApplicationForm = () => {
                 <div className="space-y-2 text-sm text-gray-700">
                   <p><strong>Application Fee:</strong> <span className="text-2xl font-bold text-yellow-600">PKR 200</span></p>
                   <p><strong>Payment Method:</strong> Easypaisa</p>
-                  <p><strong>Account Number:</strong> <span className="font-mono bg-gray-100 px-2 py-1 rounded">03005928890</span></p>
+                  <p><strong>Account Number:</strong> <span className="font-mono bg-gray-100 px-2 py-1 rounded">03001234567</span></p>
                   <p><strong>Account Title:</strong> HIMS Degree College</p>
                 </div>
               </div>
