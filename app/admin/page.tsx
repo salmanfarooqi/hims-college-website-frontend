@@ -110,7 +110,7 @@ const AdminDashboard = () => {
   const fetchApplications = async () => {
     try {
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('https://hims-college-website-qnux.vercel.app/api/applications', {
+      const response = await fetch('https://hims-college-website-qnux.vercel.app/admin/api/applications', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
