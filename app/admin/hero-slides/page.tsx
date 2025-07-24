@@ -12,15 +12,15 @@ import {
   Save,
   X
 } from 'lucide-react'
+import { getImageUrl } from '../../../services'
 
 interface HeroSlide {
-  id: number
+  id: string
+  _id?: string
   title: string
   subtitle: string
   description: string
   imageUrl: string
-  ctaText: string
-  ctaLink: string
   order: number
   isActive: boolean
 }
@@ -37,16 +37,15 @@ const HeroSlidesPage = () => {
 
   const fetchHeroSlides = async () => {
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch('https://hims-college-website-qnux.vercel.app/api/content/admin/hero-slides', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setHeroSlides(data)
-      }
+      const { contentAPI } = await import('../../../services')
+      const data = await contentAPI.heroSlides.getAllAdmin()
+      // Map the data to ensure we have both _id and id
+      const mappedData = data.map((slide: any) => ({
+        ...slide,
+        id: slide._id || slide.id || 'unknown',
+        _id: slide._id || slide.id || 'unknown'
+      }))
+      setHeroSlides(mappedData)
     } catch (error) {
       console.error('Failed to fetch hero slides:', error)
     } finally {
@@ -61,75 +60,44 @@ const HeroSlidesPage = () => {
     const formData = new FormData(e.target as HTMLFormElement)
 
     try {
-      const token = localStorage.getItem('adminToken')
+      const { contentAPI } = await import('../../../services')
       
-      let url = 'https://hims-college-website-qnux.vercel.app/api/content/admin/hero-slides'
-      let method = 'POST'
-
       if (editingItem) {
-        url += `/${editingItem.id}`
-        method = 'PUT'
-      }
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      })
-
-      if (response.ok) {
-        fetchHeroSlides()
-        setShowModal(false)
-        setEditingItem(null)
+        await contentAPI.heroSlides.update(editingItem.id, formData)
       } else {
-        alert('Failed to save')
+        await contentAPI.heroSlides.create(formData)
       }
-    } catch (error) {
+
+      fetchHeroSlides()
+      setShowModal(false)
+      setEditingItem(null)
+    } catch (error: any) {
       console.error('Save failed:', error)
-      alert('Save failed')
+      alert(error.message || 'Save failed')
     }
   }
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this hero slide?')) return
 
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch(`https://hims-college-website-qnux.vercel.app/api/content/admin/hero-slides/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (response.ok) {
-        fetchHeroSlides()
-      } else {
-        alert('Failed to delete')
-      }
+      const { contentAPI } = await import('../../../services')
+      await contentAPI.heroSlides.delete(id)
+      fetchHeroSlides()
     } catch (error) {
       console.error('Delete failed:', error)
       alert('Delete failed')
     }
   }
 
-  const toggleActive = async (id: number, isActive: boolean) => {
+  const toggleActive = async (id: string, isActive: boolean) => {
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch(`https://hims-college-website-qnux.vercel.app/api/content/admin/hero-slides/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ isActive: !isActive })
-      })
-
-      if (response.ok) {
-        fetchHeroSlides()
-      }
+      const formData = new FormData()
+      formData.append('isActive', (!isActive).toString())
+      
+      const { contentAPI } = await import('../../../services')
+      await contentAPI.heroSlides.update(id, formData)
+      fetchHeroSlides()
     } catch (error) {
       console.error('Toggle failed:', error)
     }
@@ -169,17 +137,27 @@ const HeroSlidesPage = () => {
           >
             <div className="flex items-start space-x-4">
               <img 
-                src={slide.imageUrl} 
+                src={(() => {
+                  const url = getImageUrl(slide.imageUrl);
+                  console.log('Admin hero slide image URL:', url, 'for slide:', slide.title);
+                  return url;
+                })()}
                 alt={slide.title}
                 className="w-32 h-20 object-cover rounded"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  console.log('Admin hero slide image failed to load:', target.src);
+                  target.src = 'data:image/svg+xml,%3Csvg width="128" height="80" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="128" height="80" fill="%233B82F6"/%3E%3Ctext x="64" y="40" text-anchor="middle" fill="white" font-size="10"%3ESLIDE%3C/text%3E%3C/svg%3E';
+                }}
+                onLoad={() => {
+                  console.log('Admin hero slide image loaded successfully');
+                }}
               />
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900">{slide.title}</h3>
                 <p className="text-sm text-gray-600">{slide.subtitle}</p>
                 <p className="text-sm text-gray-500 mt-1">{slide.description}</p>
                 <div className="flex items-center space-x-4 mt-2">
-                  <span className="text-xs text-gray-500">CTA: {slide.ctaText}</span>
-                  <span className="text-xs text-gray-500">Link: {slide.ctaLink}</span>
                   <span className="text-xs text-gray-500">Order: {slide.order}</span>
                 </div>
               </div>
@@ -258,24 +236,7 @@ const HeroSlidesPage = () => {
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">CTA Text</label>
-                  <input
-                    name="ctaText"
-                    defaultValue={editingItem?.ctaText}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">CTA Link</label>
-                  <input
-                    name="ctaLink"
-                    defaultValue={editingItem?.ctaLink}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-              </div>
+
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Order</label>
                 <input
@@ -296,7 +257,15 @@ const HeroSlidesPage = () => {
                 {editingItem?.imageUrl && (
                   <div className="mt-2">
                     <p className="text-sm text-gray-600 mb-2">Current image:</p>
-                    <img src={editingItem.imageUrl} alt="Current" className="w-32 h-20 object-cover rounded" />
+                    <img 
+                      src={getImageUrl(editingItem.imageUrl) || 'data:image/svg+xml,%3Csvg width="128" height="80" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="128" height="80" fill="%233B82F6"/%3E%3Ctext x="64" y="40" text-anchor="middle" fill="white" font-size="10"%3ECURRENT%3C/text%3E%3C/svg%3E'} 
+                      alt="Current" 
+                      className="w-32 h-20 object-cover rounded"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'data:image/svg+xml,%3Csvg width="128" height="80" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="128" height="80" fill="%233B82F6"/%3E%3Ctext x="64" y="40" text-anchor="middle" fill="white" font-size="10"%3ECURRENT%3C/text%3E%3C/svg%3E';
+                      }}
+                    />
                   </div>
                 )}
               </div>

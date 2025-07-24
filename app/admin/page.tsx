@@ -9,6 +9,7 @@ import {
   XCircle, 
   Clock, 
   Eye, 
+  EyeOff,
   Edit, 
   Search,
   Filter,
@@ -17,11 +18,15 @@ import {
   TrendingUp,
   Calendar,
   ImageIcon,
-  Archive
+  Archive,
+  Loader,
+  X,
+  CreditCard,
+  Receipt
 } from 'lucide-react'
 
 interface Application {
-  id: number
+  _id: string
   firstName: string
   lastName: string
   email: string
@@ -35,11 +40,14 @@ interface Application {
   program: string
   previousSchool: string
   previousGrade: string
-  documents: {
-    [key: string]: string
-  } | null
-  status: 'pending' | 'reviewed' | 'approved' | 'rejected'
+  paymentAmount: string
+  easypaisaNumber: string
+  transactionId: string
+  transactionReceipt: string
+  status: 'pending' | 'approved' | 'rejected'
   applicationDate: string
+  createdAt: string
+  updatedAt: string
   notes?: string
 }
 
@@ -48,6 +56,7 @@ interface Statistics {
   pending: number
   approved: number
   rejected: number
+  totalPayments?: number
 }
 
 const AdminDashboard = () => {
@@ -56,16 +65,20 @@ const AdminDashboard = () => {
     total: 0,
     pending: 0,
     approved: 0,
-    rejected: 0
+    rejected: 0,
+    totalPayments: 0
   })
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null)
   const [showModal, setShowModal] = useState(false)
 
-  // Mock authentication - in real app, implement proper JWT auth
+  // Check authentication and load data
   useEffect(() => {
     const token = localStorage.getItem('adminToken')
     if (token) {
@@ -79,137 +92,98 @@ const AdminDashboard = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoggingIn(true)
+    setLoginError(null)
+    
     const formData = new FormData(e.target as HTMLFormElement)
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
     try {
-      const response = await fetch('https://hims-college-website-qnux.vercel.app/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        localStorage.setItem('adminToken', data.token)
-        setIsAuthenticated(true)
-        fetchApplications()
-        fetchStatistics()
-      } else {
-        alert('Login failed')
-      }
-    } catch (error) {
+      const { adminAPI } = await import('../../services')
+      const data = await adminAPI.login(email, password)
+      localStorage.setItem('adminToken', data.token)
+      setIsAuthenticated(true)
+      fetchApplications()
+      fetchStatistics()
+    } catch (error: any) {
       console.error('Login failed:', error)
-      alert('Login failed')
+      setLoginError(error.message || 'Login failed. Please check your credentials.')
+    } finally {
+      setIsLoggingIn(false)
     }
   }
 
   const fetchApplications = async () => {
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch('https://hims-college-website-qnux.vercel.app/admin/api/applications', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setApplications(data)
-      }
+      setIsLoading(true)
+      const { applicationsAPI } = await import('../../services')
+      const data = await applicationsAPI.getAll()
+      console.log('Applications data:', data) // Debug log
+      // Handle different API response formats
+      const applicationsArray = Array.isArray(data) ? data : (data.applications || [])
+      setApplications(applicationsArray)
     } catch (error) {
       console.error('Failed to fetch applications:', error)
+      setApplications([])
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const fetchStatistics = async () => {
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch('https://hims-college-website-qnux.vercel.app/api/applications/statistics', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setStatistics(data)
-      }
+      const { applicationsAPI } = await import('../../services')
+      const data = await applicationsAPI.getStatistics()
+      console.log('Statistics data:', data) // Debug log
+      setStatistics(data)
     } catch (error) {
       console.error('Failed to fetch statistics:', error)
     }
   }
 
-  const updateApplicationStatus = async (id: number, status: string, notes?: string) => {
+  const updateApplicationStatus = async (id: string, status: string, notes?: string) => {
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch(`https://hims-college-website-qnux.vercel.app/api/applications/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ status, notes })
-      })
-
-      if (response.ok) {
-        fetchApplications()
-        setShowModal(false)
-        setSelectedApplication(null)
-      } else {
-        alert('Failed to update status')
-      }
-    } catch (error) {
+      const { applicationsAPI } = await import('../../services')
+      await applicationsAPI.updateStatus(id, status, notes)
+      fetchApplications()
+      fetchStatistics()
+      setShowModal(false)
+      setSelectedApplication(null)
+    } catch (error: any) {
       console.error('Update failed:', error)
-      alert('Update failed')
-    }
-  }
-
-  const openAllDocuments = async (application: Application) => {
-    try {
-      if (!application.documents || typeof application.documents !== 'object') {
-        alert('No documents available')
-        return
-      }
-
-      const documentEntries = Object.entries(application.documents)
-      if (documentEntries.length === 0) {
-        alert('No documents available')
-        return
-      }
-
-      // Open each document in a new tab
-      documentEntries.forEach(([docType, docUrl], index) => {
-        if (typeof docUrl === 'string') {
-          setTimeout(() => {
-            window.open(docUrl, '_blank')
-          }, 500) // Small delay between opens
-        }
-      })
-      alert(`${documentEntries.length} documents will open in new tabs. Please save them individually.`)
-    } catch (error) {
-      console.error('Failed to open documents:', error)
-      alert('Failed to open documents')
+      alert(error.message || 'Update failed')
     }
   }
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken')
     setIsAuthenticated(false)
-    setApplications([])
-    setStatistics({ total: 0, pending: 0, approved: 0, rejected: 0 })
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'approved': return 'text-green-600 bg-green-100'
+      case 'rejected': return 'text-red-600 bg-red-100'
+      default: return 'text-yellow-600 bg-yellow-100'
+    }
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'approved': return CheckCircle
+      case 'rejected': return XCircle
+      default: return Clock
+    }
   }
 
   const filteredApplications = applications.filter(app => {
-    const searchLower = searchTerm.toLowerCase()
     const matchesSearch = 
-      app.firstName.toLowerCase().includes(searchLower) ||
-      app.lastName.toLowerCase().includes(searchLower) ||
-      app.email.toLowerCase().includes(searchLower) ||
-      app.phone.toLowerCase().includes(searchLower) ||
-      app.program.toLowerCase().includes(searchLower) ||
-      app.previousSchool.toLowerCase().includes(searchLower)
+      app.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.program.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.transactionId.toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesStatus = statusFilter === 'all' || app.status === statusFilter
     
@@ -221,7 +195,7 @@ const AdminDashboard = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">Loading applications...</p>
         </div>
       </div>
     )
@@ -235,35 +209,90 @@ const AdminDashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md"
         >
-          <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">Admin Login</h1>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Login</h1>
+            <p className="text-gray-600">Sign in to access the admin dashboard</p>
+          </div>
+
+          {loginError && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4"
+            >
+              <p className="text-red-600 text-sm">{loginError}</p>
+            </motion.div>
+          )}
+
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                disabled={isLoggingIn}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
                 placeholder="hims@gmail.com"
               />
             </div>
+            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-              <input
-                type="password"
-                name="password"
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                placeholder="Enter password"
-              />
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  required
+                  disabled={isLoggingIn}
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+                  placeholder="Enter password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoggingIn}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             </div>
+            
             <button
               type="submit"
-              className="w-full btn-primary"
+              disabled={isLoggingIn}
+              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              Login
+              {isLoggingIn ? (
+                <>
+                  <Loader className="w-4 h-4 animate-spin" />
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <span>Sign In</span>
+              )}
             </button>
           </form>
+
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-2">Default credentials for testing:</p>
+              <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                hims@gmail.com / hims123
+              </code>
+            </div>
+          </div>
         </motion.div>
       </div>
     )
@@ -277,7 +306,7 @@ const AdminDashboard = () => {
       </div>
       
       {/* Statistics */}
-      <div className="grid md:grid-cols-4 gap-6 mb-8">
+      <div className="grid md:grid-cols-5 gap-6 mb-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -344,9 +373,26 @@ const AdminDashboard = () => {
             </div>
           </div>
         </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white rounded-xl p-6 shadow-sm"
+        >
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <CreditCard className="w-6 h-6 text-purple-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Total Payments</p>
+              <p className="text-2xl font-bold text-gray-900">Rs. {statistics.totalPayments || 0}</p>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Filters */}
+      {/* Search and Filter */}
       <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
@@ -354,7 +400,7 @@ const AdminDashboard = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search applications..."
+                placeholder="Search by name, email, program, or transaction ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -369,292 +415,275 @@ const AdminDashboard = () => {
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
-              <option value="reviewed">Reviewed</option>
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
             </select>
+            <button
+              onClick={fetchApplications}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              Refresh
+            </button>
           </div>
         </div>
       </div>
 
       {/* Applications Table */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Applications ({filteredApplications.length})</h2>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Student
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Program
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Payment
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredApplications.map((application) => (
-                <tr key={application.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {application.firstName} {application.lastName}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{application.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{application.phone}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{application.program}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      application.status === 'approved' ? 'bg-green-100 text-green-800' :
-                      application.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                      application.status === 'reviewed' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {application.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(application.applicationDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center space-x-2">
-                      {application.documents && typeof application.documents === 'object' && Object.keys(application.documents).length > 0 && (
-                        <span className="inline-flex items-center px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                          <FileText className="w-3 h-3 mr-1" />
-                          Docs
-                        </span>
-                      )}
+            <tbody className="divide-y divide-gray-200">
+              {filteredApplications.map((application) => {
+                const StatusIcon = getStatusIcon(application.status)
+                return (
+                  <tr key={application._id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                          <span className="text-primary-600 font-medium">
+                            {application.firstName[0]}{application.lastName[0]}
+                          </span>
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {application.firstName} {application.lastName}
+                          </div>
+                          <div className="text-sm text-gray-500">{application.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div>{application.program}</div>
+                      <div className="text-xs text-gray-500">{application.city}, {application.state}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div className="flex items-center">
+                        <CreditCard className="w-4 h-4 text-green-600 mr-1" />
+                        Rs. {application.paymentAmount}
+                      </div>
+                      <div className="text-xs text-gray-500">ID: {application.transactionId}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(application.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
+                        <StatusIcon className="w-4 h-4 mr-1" />
+                        {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
                         onClick={() => {
                           setSelectedApplication(application)
                           setShowModal(true)
                         }}
-                        className="text-primary-600 hover:text-primary-900"
-                        title="View Details"
+                        className="text-primary-600 hover:text-primary-900 mr-3"
                       >
-                        <Eye className="w-4 h-4" />
+                        View
                       </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      <button
+                        onClick={() => {
+                          setSelectedApplication(application)
+                          setShowModal(true)
+                        }}
+                        className="text-gray-600 hover:text-gray-900"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
+          {filteredApplications.length === 0 && (
+            <div className="text-center py-12">
+              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No applications found</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Application Detail Modal */}
+      {/* Modal for viewing/editing applications */}
       {showModal && selectedApplication && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Application Details</h2>
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <XCircle className="w-6 h-6" />
-              </button>
-            </div>
-            
-            <div className="space-y-6">
-              {/* Summary */}
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Application Summary</h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium text-gray-700">Applicant:</span>
-                    <p className="text-gray-900">{selectedApplication.firstName} {selectedApplication.lastName}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-700">Program:</span>
-                    <p className="text-gray-900">{selectedApplication.program}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-700">Documents:</span>
-                    <p className="text-gray-900">
-                      {selectedApplication.documents && typeof selectedApplication.documents === 'object' 
-                        ? Object.keys(selectedApplication.documents).length 
-                        : 0} uploaded
-                    </p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-700">Applied:</span>
-                    <p className="text-gray-900">{new Date(selectedApplication.applicationDate).toLocaleString()}</p>
-                  </div>
-                </div>
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white max-h-[80vh] overflow-y-auto">
+            <div className="mt-3">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Application Details
+                </h3>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
               </div>
-
-              {/* Personal Information */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.firstName} {selectedApplication.lastName}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Email</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.email}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Phone</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.phone}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                    <p className="text-sm text-gray-900">{new Date(selectedApplication.dateOfBirth).toLocaleDateString()}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Gender</label>
-                    <p className="text-sm text-gray-900 capitalize">{selectedApplication.gender}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Address Information */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Address Information</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">Address</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.address}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">City</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.city}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">State</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.state}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">ZIP Code</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.zipCode}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Academic Information */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Academic Information</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Program</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.program}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Previous School</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.previousSchool}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Previous Grade</label>
-                    <p className="text-sm text-gray-900">{selectedApplication.previousGrade}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Documents */}
-              {selectedApplication.documents && typeof selectedApplication.documents === 'object' && Object.keys(selectedApplication.documents).length > 0 && (
+              
+              <div className="space-y-6">
+                {/* Personal Information */}
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Documents</h3>
+                  <h4 className="font-semibold text-gray-900 mb-3">Personal Information</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Name</label>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {selectedApplication.firstName} {selectedApplication.lastName}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Email</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.email}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Phone</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.phone}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                      <p className="mt-1 text-sm text-gray-900">
+                        {new Date(selectedApplication.dateOfBirth).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Gender</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.gender}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Program</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.program}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Address Information */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">Address Information</h4>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-medium text-gray-700">Address</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.address}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">City</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.city}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">State</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.state}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">ZIP Code</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.zipCode}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Academic Information */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">Academic Information</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Previous School</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.previousSchool}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Previous Grade</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.previousGrade}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Information */}
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                    <CreditCard className="w-5 h-5 mr-2 text-green-600" />
+                    Payment Information
+                  </h4>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Amount Paid</label>
+                      <p className="mt-1 text-sm font-bold text-green-600">Rs. {selectedApplication.paymentAmount}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">EasyPaisa Number</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.easypaisaNumber}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Transaction ID</label>
+                      <p className="mt-1 text-sm font-mono text-gray-900">{selectedApplication.transactionId}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <label className="block text-sm font-medium text-gray-700">Transaction Receipt</label>
+                    {selectedApplication.transactionReceipt && (
+                      <div className="mt-2">
+                        <a 
+                          href={`http://localhost:5000/${selectedApplication.transactionReceipt}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+                        >
+                          <Receipt className="w-4 h-4 mr-2" />
+                          View Receipt
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
+                  <div className="flex gap-2">
                     <button
-                      onClick={() => openAllDocuments(selectedApplication)}
-                      className="btn-secondary text-sm px-3 py-2 flex items-center"
+                      onClick={() => updateApplicationStatus(selectedApplication._id, 'approved')}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                     >
-                      <Archive className="w-4 h-4 mr-1" />
-                      Open All
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => updateApplicationStatus(selectedApplication._id, 'rejected')}
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                    >
+                      Reject
+                    </button>
+                    <button
+                      onClick={() => updateApplicationStatus(selectedApplication._id, 'pending')}
+                      className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                    >
+                      Mark as Pending
                     </button>
                   </div>
-                  <div className="grid gap-3">
-                    {Object.entries(selectedApplication.documents).map(([docType, docUrl]) => {
-                      const fileName = typeof docUrl === 'string' ? docUrl.split('/').pop() || 'Unknown file' : 'Unknown file'
-                      return (
-                        <div key={docType} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 capitalize">{docType.replace(/([A-Z])/g, ' $1').trim()}</label>
-                            <p className="text-xs text-gray-500">{fileName}</p>
-                          </div>
-                          {typeof docUrl === 'string' && (
-                            <a
-                              href={docUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn-secondary text-sm px-3 py-1"
-                            >
-                              <Download className="w-4 h-4 mr-1" />
-                              View
-                            </a>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Application Status */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Application Status</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Status</label>
-                    <select
-                      value={selectedApplication.status}
-                      onChange={(e) => setSelectedApplication({
-                        ...selectedApplication,
-                        status: e.target.value as any
-                      })}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="reviewed">Reviewed</option>
-                      <option value="approved">Approved</option>
-                      <option value="rejected">Rejected</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Notes</label>
-                    <textarea
-                      value={selectedApplication.notes || ''}
-                      onChange={(e) => setSelectedApplication({
-                        ...selectedApplication,
-                        notes: e.target.value
-                      })}
-                      rows={3}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="Add notes about this application..."
-                    />
-                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="flex justify-end space-x-3 mt-6">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => updateApplicationStatus(
-                  selectedApplication.id,
-                  selectedApplication.status,
-                  selectedApplication.notes
-                )}
-                className="btn-primary"
-              >
-                Update Status
-              </button>
             </div>
           </div>
         </div>

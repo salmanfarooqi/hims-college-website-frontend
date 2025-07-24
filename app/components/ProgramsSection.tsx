@@ -51,7 +51,7 @@ const ProgramsSection = () => {
 
   const stats = [
     { number: "95%", label: "Employment Rate", icon: Award },
-    { number: "50+", label: "Industry Partners", icon: Users },
+    { number: "5+", label: "Industry Partners", icon: Users },
     { number: "10+", label: "Years Experience", icon: Clock },
     { number: "1000+", label: "Graduates", icon: GraduationCap }
   ]
@@ -131,10 +131,10 @@ const ProgramsSection = () => {
                   </div>
                 </div>
 
-                <button className={`w-full py-3 px-4 rounded-lg bg-gradient-to-r ${program.color} text-white font-semibold hover:opacity-90 transition-opacity flex items-center justify-center`}>
+                {/* <button className={`w-full py-3 px-4 rounded-lg bg-gradient-to-r ${program.color} text-white font-semibold hover:opacity-90 transition-opacity flex items-center justify-center`}>
                   Learn More
                   <ArrowRight className="w-4 h-4 ml-2" />
-                </button>
+                </button> */}
               </div>
             </motion.div>
           ))}

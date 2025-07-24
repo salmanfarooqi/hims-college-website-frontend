@@ -1,310 +1,309 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle, User, Building } from 'lucide-react'
+import Link from 'next/link'
 
 const ContactPage = () => {
   const contactInfo = [
     {
       icon: Phone,
-      title: "Phone",
-      details: ["+1 (555) 123-4567", "+1 (555) 123-4568"],
-      color: "bg-blue-100 text-blue-600"
+      title: 'Phone',
+      details: ['+92 (xxx) xxx-xxxx', '+92 (xxx) xxx-xxxx'],
+      color: 'text-blue-600'
     },
     {
       icon: Mail,
-      title: "Email",
-      details: ["admissions@excellencecollege.edu", "info@excellencecollege.edu"],
-      color: "bg-green-100 text-green-600"
+      title: 'Email',
+      details: ['info@hims.edu.pk', 'admissions@hims.edu.pk'],
+      color: 'text-green-600'
     },
     {
       icon: MapPin,
-      title: "Address",
-      details: ["123 Education Street", "University City, UC 12345", "United States"],
-      color: "bg-purple-100 text-purple-600"
+      title: 'Address',
+      details: ['HIMS College Campus', 'Your City, Province, Pakistan'],
+      color: 'text-purple-600'
     },
     {
       icon: Clock,
-      title: "Office Hours",
-      details: ["Monday - Friday: 8:00 AM - 6:00 PM", "Saturday: 9:00 AM - 2:00 PM", "Sunday: Closed"],
-      color: "bg-orange-100 text-orange-600"
+      title: 'Office Hours',
+      details: ['Mon - Fri: 8:00 AM - 5:00 PM', 'Sat: 9:00 AM - 2:00 PM'],
+      color: 'text-orange-600'
     }
   ]
 
   const departments = [
     {
-      name: "Admissions Office",
-      phone: "+1 (555) 123-4001",
-      email: "admissions@excellencecollege.edu"
+      name: 'Admissions Office',
+      email: 'admissions@hims.edu.pk',
+      phone: '+92 (xxx) xxx-xxxx',
+      description: 'Application inquiries, enrollment, and student services'
     },
     {
-      name: "Student Services",
-      phone: "+1 (555) 123-4002",
-      email: "studentservices@excellencecollege.edu"
+      name: 'Academic Affairs',
+      email: 'academics@hims.edu.pk',
+      phone: '+92 (xxx) xxx-xxxx',
+      description: 'Curriculum, courses, and academic programs'
     },
     {
-      name: "Financial Aid",
-      phone: "+1 (555) 123-4003",
-      email: "financialaid@excellencecollege.edu"
+      name: 'Student Support',
+      email: 'support@hims.edu.pk',
+      phone: '+92 (xxx) xxx-xxxx',
+      description: 'Student counseling, guidance, and general support'
     },
     {
-      name: "Academic Affairs",
-      phone: "+1 (555) 123-4004",
-      email: "academic@excellencecollege.edu"
+      name: 'Finance Office',
+      email: 'finance@hims.edu.pk',
+      phone: '+92 (xxx) xxx-xxxx',
+      description: 'Fee payments, scholarships, and financial aid'
     }
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-16 h-16 bg-indigo-200 rounded-full opacity-20 animate-pulse delay-1000"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center"
+            className="text-center mb-16"
           >
-            <h1 className="text-5xl lg:text-6xl font-bold mb-6">
-              Get in <span className="text-yellow-300">Touch</span>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="inline-flex items-center px-4 py-2 bg-white/70 backdrop-blur-sm border border-blue-200 rounded-full text-blue-700 text-sm font-medium mb-6"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Get in Touch
+            </motion.div>
+            
+            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Contact <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">HIMS College</span>
             </h1>
-            <p className="text-xl text-primary-100 max-w-3xl mx-auto">
-              We're here to help! Reach out to our team for any questions about admissions, 
-              programs, or general inquiries. We'd love to hear from you.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Contact Information */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Contact <span className="gradient-text">Information</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Multiple ways to reach us. We're here to help with all your questions and needs.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              We're here to help you with any questions about our programs, admissions process, or campus life. Reach out to us today!
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Contact Information Cards */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {contactInfo.map((info, index) => (
               <motion.div
                 key={info.title}
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-xl p-6 shadow-lg card-hover"
+                className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/20 text-center"
               >
-                <div className={`w-12 h-12 ${info.color} rounded-full flex items-center justify-center mb-4`}>
-                  <info.icon className="w-6 h-6" />
+                <div className={`inline-flex p-4 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 mb-4`}>
+                  <info.icon className={`w-6 h-6 ${info.color}`} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{info.title}</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{info.title}</h3>
                 <div className="space-y-1">
                   {info.details.map((detail, idx) => (
-                    <p key={idx} className="text-gray-600">{detail}</p>
+                    <p key={idx} className="text-gray-600 text-sm">{detail}</p>
                   ))}
                 </div>
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Contact Form & Map */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
+          {/* Main Content Grid */}
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 p-8"
             >
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Send us a <span className="gradient-text">Message</span>
-              </h2>
+              <div className="flex items-center mb-6">
+                <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mr-4">
+                  <Send className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Send us a Message</h2>
+                  <p className="text-gray-600">We'll get back to you within 24 hours</p>
+                </div>
+              </div>
+
               <form className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      First Name
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300"
+                        placeholder="Your first name"
+                      />
+                      <User className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Last Name
+                    </label>
                     <input
                       type="text"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                      placeholder="Enter your first name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
-                    <input
-                      type="text"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                      placeholder="Enter your last name"
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                    <input
-                      type="email"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                    <input
-                      type="tel"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                      placeholder="Enter your phone number"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300"
+                      placeholder="Your last name"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
-                  <select 
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="admissions">Admissions Inquiry</option>
-                    <option value="financial-aid">Financial Aid</option>
-                    <option value="academic-programs">Academic Programs</option>
-                    <option value="campus-life">Campus Life</option>
-                    <option value="general">General Inquiry</option>
-                    <option value="other">Other</option>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300"
+                      placeholder="your.email@example.com"
+                    />
+                    <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300"
+                      placeholder="+92 (xxx) xxx-xxxx"
+                    />
+                    <Phone className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Subject
+                  </label>
+                  <select className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300">
+                    <option>General Inquiry</option>
+                    <option>Admissions Information</option>
+                    <option>Academic Programs</option>
+                    <option>Campus Visit</option>
+                    <option>Financial Aid</option>
+                    <option>Other</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Message
+                  </label>
                   <textarea
-                    required
-                    rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-                    placeholder="Tell us how we can help you..."
+                    rows={5}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 resize-none"
+                    placeholder="Please share your questions or comments..."
                   ></textarea>
                 </div>
 
-                <button 
-                  type="submit" 
-                  className="btn-primary w-full flex items-center justify-center"
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center"
                 >
                   <Send className="w-5 h-5 mr-2" />
                   Send Message
-                </button>
+                </motion.button>
               </form>
             </motion.div>
 
-            {/* Map and Departments */}
+            {/* Departments & Additional Info */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
               className="space-y-8"
             >
-              {/* Map */}
-              <div className="bg-gray-200 rounded-xl p-6 h-64 flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">Interactive Map Coming Soon</p>
-                  <p className="text-sm text-gray-500 mt-2">123 Education Street, University City</p>
-                </div>
-              </div>
-
               {/* Departments */}
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Department Contacts</h3>
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 p-8">
+                <div className="flex items-center mb-6">
+                  <div className="p-3 bg-gradient-to-r from-green-500 to-teal-600 rounded-full mr-4">
+                    <Building className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Departments</h2>
+                    <p className="text-gray-600">Direct contact to specific departments</p>
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   {departments.map((dept, index) => (
-                    <motion.div
-                      key={dept.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
-                      viewport={{ once: true }}
-                      className="bg-gray-50 rounded-lg p-4"
-                    >
-                      <h4 className="font-semibold text-gray-900 mb-2">{dept.name}</h4>
-                      <div className="space-y-1 text-sm text-gray-600">
-                        <p>📞 {dept.phone}</p>
-                        <p>✉️ {dept.email}</p>
+                    <div key={dept.name} className="border border-gray-200 rounded-xl p-4 hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-300">
+                      <h3 className="font-bold text-gray-900 mb-1">{dept.name}</h3>
+                      <p className="text-sm text-gray-600 mb-3">{dept.description}</p>
+                      <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 text-sm">
+                        <div className="flex items-center text-blue-600">
+                          <Mail className="w-4 h-4 mr-1" />
+                          <a href={`mailto:${dept.email}`} className="hover:underline">{dept.email}</a>
+                        </div>
+                        <div className="flex items-center text-green-600">
+                          <Phone className="w-4 h-4 mr-1" />
+                          <a href={`tel:${dept.phone}`} className="hover:underline">{dept.phone}</a>
+                        </div>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
+
+              {/* Quick Links */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Links</h3>
+                <div className="space-y-3">
+                  <Link href="/apply" className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+                    Apply for Admission
+                  </Link>
+                  <Link href="/#track" className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+                    Track Application Status
+                  </Link>
+                  <Link href="/#programs" className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+                    View Academic Programs
+                  </Link>
+                  <Link href="/#facilities" className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+                    Campus Tour & Facilities
+                  </Link>
+                </div>
+              </div>
+
+              {/* Map placeholder */}
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 p-8">
+                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                  <MapPin className="w-5 h-5 mr-2 text-purple-600" />
+                  Find Us
+                </h3>
+                <div className="bg-gray-200 rounded-xl h-48 flex items-center justify-center">
+                  <div className="text-center">
+                    <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-500">Interactive Map</p>
+                    <p className="text-sm text-gray-400">HIMS College Campus</p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Frequently Asked <span className="gradient-text">Questions</span>
-            </h2>
-            <p className="text-xl text-gray-600">
-              Quick answers to common questions about contacting us.
-            </p>
-          </motion.div>
-
-          <div className="space-y-6">
-            {[
-              {
-                question: "What are your office hours?",
-                answer: "Our main office is open Monday through Friday from 8:00 AM to 6:00 PM, and Saturdays from 9:00 AM to 2:00 PM. We're closed on Sundays and major holidays."
-              },
-              {
-                question: "How can I schedule a campus tour?",
-                answer: "You can schedule a campus tour by calling our admissions office at +1 (555) 123-4001 or by filling out the contact form above. Tours are available Monday through Friday."
-              },
-              {
-                question: "What information should I include in my inquiry?",
-                answer: "Please include your name, contact information, specific questions or concerns, and any relevant background information that will help us provide the most accurate response."
-              },
-              {
-                question: "How quickly will I receive a response?",
-                answer: "We typically respond to all inquiries within 24-48 hours during business days. For urgent matters, please call our main office directly."
-              }
-            ].map((faq, index) => (
-              <motion.div
-                key={faq.question}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-xl p-6 shadow-lg"
-              >
-                <h3 className="text-lg font-bold text-gray-900 mb-3">{faq.question}</h3>
-                <p className="text-gray-600">{faq.answer}</p>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>

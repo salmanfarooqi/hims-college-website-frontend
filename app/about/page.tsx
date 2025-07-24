@@ -8,7 +8,7 @@ const AboutPage = () => {
   const achievements = [
     { icon: Award, title: "Best College Award", description: "Recognized as the top educational institution in the region" },
     { icon: Users, title: "10,000+ Alumni", description: "Successful graduates working in leading organizations worldwide" },
-    { icon: BookOpen, title: "50+ Programs", description: "Comprehensive range of academic programs and courses" },
+    { icon: BookOpen, title: "5+ Programs", description: "Comprehensive range of academic programs and courses" },
     { icon: Globe, title: "International Recognition", description: "Accredited by international educational bodies" }
   ]
 
@@ -260,7 +260,7 @@ const AboutPage = () => {
               { number: "25+", label: "Years of Excellence", icon: GraduationCap },
               { number: "10,000+", label: "Graduates", icon: Users },
               { number: "95%", label: "Employment Rate", icon: Award },
-              { number: "50+", label: "Programs Offered", icon: BookOpen }
+              { number: "5+", label: "Programs Offered", icon: BookOpen }
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}

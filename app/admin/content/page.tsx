@@ -2,21 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { 
-  Image, 
-  Users, 
-  Star, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Upload,
-  Eye,
-  EyeOff,
-  ArrowUp,
-  ArrowDown,
-  Save,
-  X
-} from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, EyeOff, Save, X, Upload, Star, Award } from 'lucide-react'
+import { getImageUrl } from '../../../services'
 
 interface HeroSlide {
   id: number
@@ -24,8 +11,6 @@ interface HeroSlide {
   subtitle: string
   description: string
   imageUrl: string
-  ctaText: string
-  ctaLink: string
   order: number
   isActive: boolean
 }
@@ -83,21 +68,21 @@ const ContentManagement = () => {
       const headers = { 'Authorization': `Bearer ${token}` }
 
       // Fetch hero slides
-      const heroResponse = await fetch('https://hims-college-website-qnux.vercel.app/api/content/admin/hero-slides', { headers })
+      const heroResponse = await fetch('http://localhost:5000/api/content/admin/hero-slides', { headers })
       if (heroResponse.ok) {
         const heroData = await heroResponse.json()
         setHeroSlides(heroData)
       }
 
       // Fetch teachers
-      const teachersResponse = await fetch('https://hims-college-website-qnux.vercel.app/api/content/admin/teachers', { headers })
+      const teachersResponse = await fetch('http://localhost:5000/api/content/admin/teachers', { headers })
       if (teachersResponse.ok) {
         const teachersData = await teachersResponse.json()
         setTeachers(teachersData)
       }
 
       // Fetch students
-      const studentsResponse = await fetch('https://hims-college-website-qnux.vercel.app/api/content/admin/students', { headers })
+      const studentsResponse = await fetch('http://localhost:5000/api/content/admin/students', { headers })
       if (studentsResponse.ok) {
         const studentsData = await studentsResponse.json()
         setStudents(studentsData)
@@ -116,7 +101,7 @@ const ContentManagement = () => {
       formData.append('image', file)
 
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('https://hims-college-website-qnux.vercel.app/api/content/upload', {
+      const response = await fetch('http://localhost:5000/api/content/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -151,19 +136,19 @@ const ContentManagement = () => {
       let method = 'POST'
 
       if (type === 'hero') {
-        url = 'https://hims-college-website-qnux.vercel.app/api/content/admin/hero-slides'
+        url = 'http://localhost:5000/api/content/admin/hero-slides'
         if (editingItem) {
           url += `/${editingItem.id}`
           method = 'PUT'
         }
       } else if (type === 'teacher') {
-        url = 'https://hims-college-website-qnux.vercel.app/api/content/admin/teachers'
+        url = 'http://localhost:5000/api/content/admin/teachers'
         if (editingItem) {
           url += `/${editingItem.id}`
           method = 'PUT'
         }
       } else if (type === 'student') {
-        url = 'https://hims-college-website-qnux.vercel.app/api/content/admin/students'
+        url = 'http://localhost:5000/api/content/admin/students'
         if (editingItem) {
           url += `/${editingItem.id}`
           method = 'PUT'
@@ -198,11 +183,11 @@ const ContentManagement = () => {
 
       let url = ''
       if (type === 'hero') {
-        url = `https://hims-college-website-qnux.vercel.app/api/content/admin/hero-slides/${id}`
+        url = `http://localhost:5000/api/content/admin/hero-slides/${id}`
       } else if (type === 'teacher') {
-        url = `https://hims-college-website-qnux.vercel.app/api/content/admin/teachers/${id}`
+        url = `http://localhost:5000/api/content/admin/teachers/${id}`
       } else if (type === 'student') {
-        url = `https://hims-college-website-qnux.vercel.app/api/content/admin/students/${id}`
+        url = `http://localhost:5000/api/content/admin/students/${id}`
       }
 
       const response = await fetch(url, {
@@ -231,11 +216,11 @@ const ContentManagement = () => {
 
       let url = ''
       if (type === 'hero') {
-        url = `https://hims-college-website-qnux.vercel.app/api/content/admin/hero-slides/${id}`
+        url = `http://localhost:5000/api/content/admin/hero-slides/${id}`
       } else if (type === 'teacher') {
-        url = `https://hims-college-website-qnux.vercel.app/api/content/admin/teachers/${id}`
+        url = `http://localhost:5000/api/content/admin/teachers/${id}`
       } else if (type === 'student') {
-        url = `https://hims-college-website-qnux.vercel.app/api/content/admin/students/${id}`
+        url = `http://localhost:5000/api/content/admin/students/${id}`
       }
 
       const response = await fetch(url, {
@@ -342,7 +327,23 @@ const ContentManagement = () => {
               <div className="grid gap-6">
                 {heroSlides.map((slide) => (
                   <div key={slide.id} className="border rounded-lg p-4 flex items-center space-x-4">
-                    <img src={slide.imageUrl} alt={slide.title} className="w-16 h-16 object-cover rounded" />
+                    <img 
+                      src={(() => {
+                        const url = getImageUrl(slide.imageUrl);
+                        console.log('Admin content page hero image URL:', url, 'for slide:', slide.title);
+                        return url;
+                      })()}
+                      alt={slide.title} 
+                      className="w-16 h-16 object-cover rounded"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        console.log('Admin content page hero image failed to load:', target.src);
+                        target.src = 'data:image/svg+xml,%3Csvg width="64" height="64" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="64" height="64" fill="%233B82F6"/%3E%3Ctext x="32" y="32" text-anchor="middle" fill="white" font-size="8"%3ESLIDE%3C/text%3E%3C/svg%3E';
+                      }}
+                      onLoad={() => {
+                        console.log('Admin content page hero image loaded successfully');
+                      }}
+                    />
                     <div className="flex-1">
                       <h3 className="font-semibold">{slide.title}</h3>
                       <p className="text-sm text-gray-600">{slide.subtitle}</p>
@@ -379,7 +380,15 @@ const ContentManagement = () => {
               <div className="grid gap-6">
                 {teachers.map((teacher) => (
                   <div key={teacher.id} className="border rounded-lg p-4 flex items-center space-x-4">
-                    <img src={teacher.imageUrl} alt={teacher.name} className="w-16 h-16 object-cover rounded" />
+                    <img 
+                      src={getImageUrl(teacher.imageUrl) || 'data:image/svg+xml,%3Csvg width="64" height="64" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="64" height="64" fill="%233B82F6"/%3E%3Ctext x="32" y="32" text-anchor="middle" fill="white" font-size="8"%3ETEACHER%3C/text%3E%3C/svg%3E'} 
+                      alt={teacher.name} 
+                      className="w-16 h-16 object-cover rounded"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'data:image/svg+xml,%3Csvg width="64" height="64" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="64" height="64" fill="%233B82F6"/%3E%3Ctext x="32" y="32" text-anchor="middle" fill="white" font-size="8"%3ETEACHER%3C/text%3E%3C/svg%3E';
+                      }}
+                    />
                     <div className="flex-1">
                       <h3 className="font-semibold">{teacher.name}</h3>
                       <p className="text-sm text-gray-600">{teacher.position}</p>
@@ -417,7 +426,23 @@ const ContentManagement = () => {
               <div className="grid gap-6">
                 {students.map((student) => (
                   <div key={student.id} className="border rounded-lg p-4 flex items-center space-x-4">
-                    <img src={student.imageUrl} alt={student.name} className="w-16 h-16 object-cover rounded" />
+                    <img 
+                      src={(() => {
+                        const url = getImageUrl(student.imageUrl);
+                        console.log('Admin content page student image URL:', url, 'for student:', student.name);
+                        return url;
+                      })()}
+                      alt={student.name} 
+                      className="w-16 h-16 object-cover rounded"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        console.log('Admin content page student image failed to load:', target.src);
+                        target.src = 'data:image/svg+xml,%3Csvg width="64" height="64" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="64" height="64" fill="%233B82F6"/%3E%3Ctext x="32" y="32" text-anchor="middle" fill="white" font-size="8"%3ESTUDENT%3C/text%3E%3C/svg%3E';
+                      }}
+                      onLoad={() => {
+                        console.log('Admin content page student image loaded successfully');
+                      }}
+                    />
                     <div className="flex-1">
                       <h3 className="font-semibold">{student.name}</h3>
                       <p className="text-sm text-gray-600">{student.program}</p>
@@ -672,7 +697,15 @@ const ContentManagement = () => {
                   }}
                 />
                 {editingItem?.imageUrl && (
-                  <img src={editingItem.imageUrl} alt="Current" className="w-32 h-32 object-cover mt-2 rounded" />
+                  <img 
+                    src={getImageUrl(editingItem.imageUrl) || 'data:image/svg+xml,%3Csvg width="128" height="128" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="128" height="128" fill="%23374151"/%3E%3Ctext x="64" y="64" text-anchor="middle" fill="white" font-size="12"%3ECURRENT%3C/text%3E%3C/svg%3E'} 
+                    alt="Current" 
+                    className="w-32 h-32 object-cover mt-2 rounded"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'data:image/svg+xml,%3Csvg width="128" height="128" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="128" height="128" fill="%23374151"/%3E%3Ctext x="64" y="64" text-anchor="middle" fill="white" font-size="12"%3ECURRENT%3C/text%3E%3C/svg%3E';
+                    }}
+                  />
                 )}
               </div>
 

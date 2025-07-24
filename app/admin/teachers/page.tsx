@@ -13,9 +13,10 @@ import {
   X,
   Star
 } from 'lucide-react'
+import { getImageUrl } from '../../../services'
 
 interface Teacher {
-  id: number
+  id: string
   name: string
   position: string
   expertise: string
@@ -38,16 +39,15 @@ const TeachersPage = () => {
 
   const fetchTeachers = async () => {
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch('https://hims-college-website-qnux.vercel.app/api/content/admin/teachers', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setTeachers(data)
-      }
+      const { contentAPI } = await import('../../../services')
+      const data = await contentAPI.teachers.getAllAdmin()
+      // Map the data to ensure we have both _id and id
+      const mappedData = data.map((teacher: any) => ({
+        ...teacher,
+        id: teacher._id || teacher.id || 'unknown',
+        _id: teacher._id || teacher.id || 'unknown'
+      }))
+      setTeachers(mappedData)
     } catch (error) {
       console.error('Failed to fetch teachers:', error)
     } finally {
@@ -62,43 +62,29 @@ const TeachersPage = () => {
     const formData = new FormData(e.target as HTMLFormElement)
 
     try {
-      const token = localStorage.getItem('adminToken')
+      const { contentAPI } = await import('../../../services')
       
-      let url = 'https://hims-college-website-qnux.vercel.app/api/content/admin/teachers'
-      let method = 'POST'
-
       if (editingItem) {
-        url += `/${editingItem.id}`
-        method = 'PUT'
-      }
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      })
-
-      if (response.ok) {
-        fetchTeachers()
-        setShowModal(false)
-        setEditingItem(null)
+        await contentAPI.teachers.update(editingItem.id, formData)
       } else {
-        alert('Failed to save')
+        await contentAPI.teachers.create(formData)
       }
-    } catch (error) {
+
+      fetchTeachers()
+      setShowModal(false)
+      setEditingItem(null)
+    } catch (error: any) {
       console.error('Save failed:', error)
-      alert('Save failed')
+      alert(error.message || 'Save failed')
     }
   }
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this teacher?')) return
 
     try {
       const token = localStorage.getItem('adminToken')
-      const response = await fetch(`https://hims-college-website-qnux.vercel.app/api/content/admin/teachers/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/content/admin/teachers/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -116,10 +102,10 @@ const TeachersPage = () => {
     }
   }
 
-  const toggleActive = async (id: number, isActive: boolean) => {
+  const toggleActive = async (id: string, isActive: boolean) => {
     try {
       const token = localStorage.getItem('adminToken')
-      const response = await fetch(`https://hims-college-website-qnux.vercel.app/api/content/admin/teachers/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/content/admin/teachers/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -170,9 +156,21 @@ const TeachersPage = () => {
           >
             <div className="flex items-start space-x-4">
               <img 
-                src={teacher.imageUrl} 
+                src={(() => {
+                  const url = getImageUrl(teacher.imageUrl);
+                  console.log('Admin teacher image URL:', url, 'for teacher:', teacher.name);
+                  return url;
+                })()}
                 alt={teacher.name}
                 className="w-32 h-32 object-cover rounded"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  console.log('Admin teacher image failed to load:', target.src);
+                  target.src = 'data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="300" fill="%233B82F6"/%3E%3Ctext x="150" y="150" text-anchor="middle" fill="white" font-size="20"%3ETEACHER%3C/text%3E%3C/svg%3E';
+                }}
+                onLoad={() => {
+                  console.log('Admin teacher image loaded successfully');
+                }}
               />
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
@@ -308,7 +306,15 @@ const TeachersPage = () => {
                 {editingItem?.imageUrl && (
                   <div className="mt-2">
                     <p className="text-sm text-gray-600 mb-2">Current image:</p>
-                    <img src={editingItem.imageUrl} alt="Current" className="w-32 h-32 object-cover rounded" />
+                    <img 
+                      src={getImageUrl(editingItem.imageUrl) || 'data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="300" fill="%233B82F6"/%3E%3Ctext x="150" y="150" text-anchor="middle" fill="white" font-size="20"%3ECURRENT%3C/text%3E%3C/svg%3E'} 
+                      alt="Current" 
+                      className="w-32 h-32 object-cover rounded"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="300" height="300" fill="%233B82F6"/%3E%3Ctext x="150" y="150" text-anchor="middle" fill="white" font-size="20"%3ECURRENT%3C/text%3E%3C/svg%3E';
+                      }}
+                    />
                   </div>
                 )}
               </div>

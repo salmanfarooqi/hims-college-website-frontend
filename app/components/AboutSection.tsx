@@ -6,7 +6,7 @@ import { Star, Users, BookOpen } from 'lucide-react'
 const AboutSection = () => {
   const stats = [
     { number: "95%", label: "Graduation Rate" },
-    { number: "50+", label: "Programs Offered" },
+    { number: "5+", label: "Programs Offered" },
     { number: "200+", label: "Expert Faculty" },
     { number: "10K+", label: "Alumni Worldwide" }
   ]

@@ -97,7 +97,7 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Phone</h4>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
+                    <p className="text-gray-600">03005928890</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
@@ -115,7 +115,7 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Address</h4>
-                    <p className="text-gray-600">123 Education Street<br />University City, UC 12345</p>
+                    <p className="text-gray-600">Hims Degree college Shahi bagh road peshawar<br /></p>
                   </div>
                 </div>
               </div>
@@ -125,8 +125,8 @@ const ContactSection = () => {
               <h4 className="text-lg font-semibold text-gray-900 mb-4">Office Hours</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Monday - Friday</span>
-                  <span className="font-semibold">8:00 AM - 6:00 PM</span>
+                  <span className="text-gray-600">Monday - Saturday</span>
+                  <span className="font-semibold">7:00 AM - 6:00 PM</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Saturday</span>

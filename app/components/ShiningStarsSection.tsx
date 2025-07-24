@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Star, Award, Trophy, Target, Quote } from 'lucide-react'
+import { Star, Award, Trophy, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import { getImageUrl } from '../../services'
 import Image from 'next/image'
 
 interface Student {
@@ -24,57 +25,11 @@ const ShiningStarsSection = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch('https://hims-college-website-qnux.vercel.app/api/content/students')
-        if (response.ok) {
-          const data = await response.json()
-          setShiningStars(data)
-        } else {
-          // Fallback to default students if API fails
-          setShiningStars([
-            {
-              id: 1,
-              name: "Ahmed Khan",
-              program: "FSC Pre-Medical",
-              imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-              achievement: "Top 1% in Medical Entry Test",
-              gpa: "3.95",
-              quote: "HIMS Degree College provided me with the perfect foundation for my medical career. The faculty's dedication and support were incredible.",
-              awards: ["Academic Excellence", "Leadership Award", "Community Service"]
-            },
-            {
-                          id: 2,
-            name: "Fatima Ali",
-            program: "FSC Engineering",
-            imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-              achievement: "Gold Medal in Physics Olympiad",
-              gpa: "3.98",
-              quote: "The engineering program at HIMS prepared me excellently for university. The practical labs and expert guidance made all the difference.",
-              awards: ["Physics Excellence", "Innovation Award", "Research Grant"]
-            },
-            {
-              id: 3,
-              name: "Usman Hassan",
-              program: "ICS Computer Science",
-              imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-              achievement: "National Coding Champion",
-              gpa: "3.92",
-              quote: "The computer science program at HIMS gave me the skills and confidence to pursue my passion for technology and innovation.",
-              awards: ["Programming Excellence", "Innovation Award", "Tech Leadership"]
-            },
-            {
-              id: 4,
-              name: "Ayesha Malik",
-              program: "FSC Pre-Medical",
-              imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
-              achievement: "Merit Position in Medical College",
-              gpa: "3.96",
-              quote: "The supportive environment and excellent teaching methods at HIMS helped me achieve my dreams of becoming a doctor.",
-              awards: ["Academic Excellence", "Merit Scholarship", "Community Service"]
-            }
-          ])
-        }
+        const { contentAPI } = await import('../../services');
+        const data = await contentAPI.students.getAll();
+        setShiningStars(data);
       } catch (error) {
-        console.error('Error fetching students:', error)
+        console.error('Error fetching students:', error);
         // Fallback to default students
         setShiningStars([
           {
@@ -117,19 +72,19 @@ const ShiningStarsSection = () => {
             quote: "The supportive environment and excellent teaching methods at HIMS helped me achieve my dreams of becoming a doctor.",
             awards: ["Academic Excellence", "Merit Scholarship", "Community Service"]
           }
-        ])
+        ]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchStudents()
+    fetchStudents();
   }, [])
 
   const achievements = [
-    { number: "50+", label: "Merit Positions", icon: Trophy },
+    { number: "5+", label: "Merit Positions", icon: Trophy },
     { number: "100+", label: "Awards Won", icon: Award },
-    { number: "95%", label: "Success Rate", icon: Target },
+    { number: "95%", label: "Success Rate", icon: ChevronLeft },
     { number: "1000+", label: "Success Stories", icon: Star }
   ]
 
@@ -198,12 +153,14 @@ const ShiningStarsSection = () => {
               className="bg-white rounded-xl shadow-lg overflow-hidden card-hover"
             >
               <div className="relative">
-                <Image 
-                  src={student.imageUrl} 
+                <img 
+                  src={getImageUrl(student.imageUrl)} 
                   alt={student.name}
-                  width={400}
-                  height={400}
                   className="w-full h-64 object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'data:image/svg+xml,%3Csvg width="400" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="400" height="400" fill="%2310B981"/%3E%3Ctext x="200" y="200" text-anchor="middle" fill="white" font-size="24"%3ESTUDENT%3C/text%3E%3C/svg%3E';
+                  }}
                 />
                 <div className="absolute top-4 right-4 bg-yellow-400 rounded-full px-3 py-1 flex items-center space-x-1">
                   <Star className="w-4 h-4 text-white fill-current" />
