@@ -16,6 +16,8 @@ import {
   Shield,
   Key
 } from 'lucide-react'
+import { toast } from 'react-toastify'
+import { adminAPI } from '../../../services'
 
 interface AdminProfile {
   id: string
@@ -57,24 +59,20 @@ const AdminSettings = () => {
         return
       }
 
-      const response = await fetch('http://localhost:5000/api/admin/profile', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setProfile(data)
-        setName(data.name)
-        setEmail(data.email)
-      } else if (response.status === 401) {
+      const data = await adminAPI.getProfile()
+      setProfile(data)
+      setName(data.name)
+      setEmail(data.email)
+    } catch (error: any) {
+      console.error('Failed to fetch profile:', error)
+      const errorMessage = error.message || 'Failed to load profile information'
+      setMessage({ type: 'error', text: errorMessage })
+      toast.error(errorMessage)
+      
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
         localStorage.removeItem('adminToken')
         window.location.href = '/admin'
       }
-    } catch (error) {
-      console.error('Failed to fetch profile:', error)
-      setMessage({ type: 'error', text: 'Failed to load profile information' })
     } finally {
       setIsLoading(false)
     }
@@ -85,28 +83,34 @@ const AdminSettings = () => {
     setIsSaving(true)
     setMessage(null)
 
+    // Validation
+    if (!name.trim()) {
+      const errorMsg = 'Name is required'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
+      setIsSaving(false)
+      return
+    }
+
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      const errorMsg = 'Please enter a valid email address'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
+      setIsSaving(false)
+      return
+    }
+
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch('http://localhost:5000/api/admin/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ name, email })
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setProfile(data.admin)
-        setMessage({ type: 'success', text: 'Profile updated successfully!' })
-      } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to update profile' })
-      }
-    } catch (error) {
+      const data = await adminAPI.updateProfile(name.trim(), email.trim())
+      setProfile(data.admin)
+      const successMsg = 'Profile updated successfully!'
+      setMessage({ type: 'success', text: successMsg })
+      toast.success(successMsg)
+    } catch (error: any) {
       console.error('Update failed:', error)
-      setMessage({ type: 'error', text: 'Network error. Please try again.' })
+      const errorMsg = error.message || 'Failed to update profile'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
     } finally {
       setIsSaving(false)
     }
@@ -118,45 +122,59 @@ const AdminSettings = () => {
     setMessage(null)
 
     // Validation
-    if (newPassword !== confirmPassword) {
-      setMessage({ type: 'error', text: 'New passwords do not match' })
+    if (!currentPassword.trim()) {
+      const errorMsg = 'Current password is required'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
+      setIsSaving(false)
+      return
+    }
+
+    if (!newPassword.trim()) {
+      const errorMsg = 'New password is required'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
       setIsSaving(false)
       return
     }
 
     if (newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'New password must be at least 6 characters long' })
+      const errorMsg = 'New password must be at least 6 characters long'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
+      setIsSaving(false)
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      const errorMsg = 'New passwords do not match'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
+      setIsSaving(false)
+      return
+    }
+
+    if (currentPassword === newPassword) {
+      const errorMsg = 'New password must be different from current password'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
       setIsSaving(false)
       return
     }
 
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch('http://localhost:5000/api/admin/change-password', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ 
-          currentPassword, 
-          newPassword 
-        })
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'Password changed successfully!' })
-        setCurrentPassword('')
-        setNewPassword('')
-        setConfirmPassword('')
-      } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to change password' })
-      }
-    } catch (error) {
+      await adminAPI.changePassword(currentPassword, newPassword)
+      const successMsg = 'Password changed successfully!'
+      setMessage({ type: 'success', text: successMsg })
+      toast.success(successMsg)
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (error: any) {
       console.error('Password change failed:', error)
-      setMessage({ type: 'error', text: 'Network error. Please try again.' })
+      const errorMsg = error.message || 'Failed to change password'
+      setMessage({ type: 'error', text: errorMsg })
+      toast.error(errorMsg)
     } finally {
       setIsSaving(false)
     }

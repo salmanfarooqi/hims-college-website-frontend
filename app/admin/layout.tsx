@@ -14,6 +14,7 @@ import {
   Settings
 } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -33,6 +34,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     }
     setIsLoading(false)
   }, [])
+
+  // Close sidebar when route changes on mobile
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [pathname])
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken')
@@ -79,7 +85,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             {navigation.map((item) => {
               const isActive = pathname === item.href
               return (
-                <a
+                <Link
                   key={item.name}
                   href={item.href}
                   className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
@@ -87,10 +93,11 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                       ? 'bg-primary-100 text-primary-900'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   {item.name}
-                </a>
+                </Link>
               )
             })}
           </nav>
@@ -116,7 +123,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             {navigation.map((item) => {
               const isActive = pathname === item.href
               return (
-                <a
+                <Link
                   key={item.name}
                   href={item.href}
                   className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
@@ -127,7 +134,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   {item.name}
-                </a>
+                </Link>
               )
             })}
           </nav>
@@ -145,19 +152,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       {/* Main content */}
       <div className="lg:pl-64">
-        {/* Top bar */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-          <button
-            type="button"
-            className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            <div className="flex flex-1"></div>
-          </div>
-        </div>
+        {/* Mobile menu button - floating */}
+        <button
+          type="button"
+          className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-md border border-gray-200"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className="h-6 w-6 text-gray-700" />
+        </button>
 
         {/* Page content */}
         <main className="py-6">

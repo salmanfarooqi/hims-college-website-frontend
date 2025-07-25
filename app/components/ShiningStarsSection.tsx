@@ -126,16 +126,16 @@ const ShiningStarsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16"
         >
           {achievements.map((achievement, index) => (
             <div key={achievement.label} className="text-center">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <div className="flex justify-center mb-3">
-                  <achievement.icon className="w-8 h-8 text-yellow-500" />
+              <div className="bg-white rounded-xl p-4 md:p-6 shadow-lg">
+                <div className="flex justify-center mb-2 md:mb-3">
+                  <achievement.icon className="w-6 h-6 md:w-8 md:h-8 text-yellow-500" />
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{achievement.number}</div>
-                <div className="text-sm text-gray-600">{achievement.label}</div>
+                <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{achievement.number}</div>
+                <div className="text-xs md:text-sm text-gray-600">{achievement.label}</div>
               </div>
             </div>
           ))}
