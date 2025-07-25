@@ -187,11 +187,7 @@ const ApplyPage = () => {
                     <p className="text-sm text-gray-800 mt-1">{program.requirements}</p>
                   </div>
                 </div>
-                <p className="text-gray-600 text-sm mb-4">{program.description}</p>
-                <button className="btn-primary w-full group">
-                  Apply Now
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </button>
+                <p className="text-gray-600 text-sm">{program.description}</p>
               </motion.div>
             ))}
           </div>

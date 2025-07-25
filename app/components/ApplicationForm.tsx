@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { FileText, Upload, Loader2, CreditCard, Receipt } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { applicationsAPI } from '../../services'
 
 interface ApplicationData {
   firstName: string
@@ -92,42 +93,33 @@ const ApplicationForm = () => {
         formDataToSend.append('transactionReceipt', transactionReceipt)
       }
 
-      const response = await fetch('http://localhost:5000/api/applications', {
-        method: 'POST',
-        body: formDataToSend
+      const result = await applicationsAPI.submit(formDataToSend)
+      
+      toast.success('🎉 Application submitted successfully! We\'ll review your application and get back to you within 2-3 business days.')
+      
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        dateOfBirth: '',
+        gender: '',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        program: '',
+        previousSchool: '',
+        previousGrade: '',
+        transactionId: '',
+        easypaisaNumber: ''
       })
-
-      if (response.ok) {
-        const result = await response.json()
-        toast.success('🎉 Application submitted successfully! We\'ll review your application and get back to you within 2-3 business days.')
-        
-        // Reset form
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          dateOfBirth: '',
-          gender: '',
-          address: '',
-          city: '',
-          state: '',
-          zipCode: '',
-          program: '',
-          previousSchool: '',
-          previousGrade: '',
-          transactionId: '',
-          easypaisaNumber: ''
-        })
-        setTransactionReceipt(null)
-        
-        // Reset file input
-        const fileInput = document.getElementById('receipt-upload') as HTMLInputElement
-        if (fileInput) fileInput.value = ''
-      } else {
-        const errorData = await response.json()
-        toast.error(errorData.error || 'Failed to submit application. Please try again.')
-      }
+      setTransactionReceipt(null)
+      
+      // Reset file input
+      const fileInput = document.getElementById('receipt-upload') as HTMLInputElement
+      if (fileInput) fileInput.value = ''
     } catch (error) {
       console.error('Submission error:', error)
       toast.error('Network error. Please check your connection and try again.')
