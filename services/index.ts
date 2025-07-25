@@ -1,5 +1,5 @@
 // API Configuration - Direct URL configuration (no env dependency)
-const API_BASE_URL = 'https://hims-college-website.vercel.app/';
+const API_BASE_URL = 'https://hims-college-website.vercel.app';
 // const API_BASE_URL = 'http://localhost:5000'; // Local development URL
 
 // For production, change this to your production URL:
