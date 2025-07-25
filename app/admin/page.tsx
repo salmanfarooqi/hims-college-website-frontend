@@ -24,6 +24,7 @@ import {
   CreditCard,
   Receipt
 } from 'lucide-react'
+import { API_BASE_URL } from '../../services'
 
 interface Application {
   _id: string
@@ -236,7 +237,7 @@ const AdminDashboard = () => {
                 required
                 disabled={isLoggingIn}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
-                placeholder="hims@gmail.com"
+                placeholder="test@gmail.com"
               />
             </div>
             
@@ -285,14 +286,7 @@ const AdminDashboard = () => {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="text-center">
-              <p className="text-sm text-gray-500 mb-2">Default credentials for testing:</p>
-              <code className="text-xs bg-gray-100 px-2 py-1 rounded">
-                hims@gmail.com / hims123
-              </code>
-            </div>
-          </div>
+          
         </motion.div>
       </div>
     )
@@ -647,7 +641,7 @@ const AdminDashboard = () => {
                     {selectedApplication.transactionReceipt && (
                       <div className="mt-2">
                         <a 
-                          href={`http://localhost:5000/${selectedApplication.transactionReceipt}`}
+                          href={`${API_BASE_URL}/${selectedApplication.transactionReceipt}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"

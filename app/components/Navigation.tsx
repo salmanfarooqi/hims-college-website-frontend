@@ -9,13 +9,7 @@ import {
   Phone, 
   Mail, 
   MapPin, 
-  Clock, 
-  Facebook, 
-  Twitter, 
-  Instagram, 
-  ChevronDown,
-  Calendar,
-  Bell
+  ChevronDown
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -49,82 +43,10 @@ const Navigation = () => {
     { name: 'Track Status', href: '/#track' }
   ]
 
-  const importantLinks = [
-    { name: 'Prospectus', href: '#', icon: Calendar },
-    { name: 'Announcements', href: '#', icon: Bell }
-  ]
+
 
   return (
     <>
-      {/* Top Bar */}
-      <div className="bg-gradient-to-r from-gray-800 via-blue-800 to-indigo-800 text-white text-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center py-2 space-y-1 lg:space-y-0">
-            {/* Contact Information */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start space-x-4 text-xs lg:text-sm">
-              <div className="flex items-center space-x-2 text-blue-200">
-                <Phone className="w-3 h-3 lg:w-4 lg:h-4" />
-                <span>+92 (091) xxx-xxxx</span>
-              </div>
-              <div className="flex items-center space-x-2 text-blue-200">
-                <Mail className="w-3 h-3 lg:w-4 lg:h-4" />
-                <span>info@hims.edu.pk</span>
-              </div>
-              <div className="hidden md:flex items-center space-x-2 text-blue-200">
-                <MapPin className="w-3 h-3 lg:w-4 lg:h-4" />
-                <span>Shahi Bagh Road, Peshawar</span>
-              </div>
-              <div className="hidden lg:flex items-center space-x-2 text-blue-200">
-                <Clock className="w-3 h-3 lg:w-4 lg:h-4" />
-                <span>Mon-Fri: 8AM-6PM</span>
-              </div>
-            </div>
-            
-            {/* Right Side - Important Links and Social */}
-            <div className="flex items-center space-x-3">
-              {/* Important Links */}
-              <div className="hidden lg:flex items-center space-x-3">
-                {importantLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className="flex items-center space-x-1 text-blue-200 hover:text-white transition-colors duration-200 text-xs"
-                  >
-                    <link.icon className="w-3 h-3" />
-                    <span>{link.name}</span>
-                  </Link>
-                ))}
-              </div>
-              
-              <div className="w-px h-3 bg-blue-600"></div>
-              
-              {/* Social Media */}
-              <div className="flex items-center space-x-1">
-                <span className="text-blue-300 text-xs mr-1">Follow:</span>
-                <div className="flex items-center space-x-1">
-                  {[
-                    { icon: Facebook, href: '#', name: 'Facebook' },
-                    { icon: Twitter, href: '#', name: 'Twitter' },
-                    { icon: Instagram, href: '#', name: 'Instagram' }
-                  ].map((social) => (
-                    <a
-                      key={social.name}
-                      href={social.href}
-                      className="p-1 text-blue-300 hover:text-white hover:bg-blue-700 rounded transition-all duration-200"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <social.icon className="w-3 h-3" />
-                      <span className="sr-only">{social.name}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Main Navigation */}
       <nav className="bg-white shadow-lg relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
