@@ -16,6 +16,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'hims-college-backend.vercel.app',
+        port: '',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',

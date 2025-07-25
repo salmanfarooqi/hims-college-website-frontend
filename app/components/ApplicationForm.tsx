@@ -46,6 +46,28 @@ const ApplicationForm = () => {
   const [transactionReceipt, setTransactionReceipt] = useState<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Debug function to test API connectivity
+  const testApiConnection = async () => {
+    try {
+      console.log('Testing API connection to:', 'https://hims-college-backend.vercel.app/api/applications')
+      const response = await fetch('https://hims-college-backend.vercel.app/api/applications', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      console.log('Response status:', response.status)
+      console.log('Response headers:', response.headers)
+      const data = await response.json()
+      console.log('API Response:', data)
+      toast.success('API connection successful!')
+    } catch (error) {
+      console.error('API connection failed:', error)
+      toast.error(`API connection failed: ${error}`)
+    }
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -120,9 +142,19 @@ const ApplicationForm = () => {
       // Reset file input
       const fileInput = document.getElementById('receipt-upload') as HTMLInputElement
       if (fileInput) fileInput.value = ''
-    } catch (error) {
+    } catch (error: any) {
       console.error('Submission error:', error)
-      toast.error('Network error. Please check your connection and try again.')
+      
+      // Handle different types of errors
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        toast.error('Connection failed. Please check if you\'re connected to the internet and try again.')
+      } else if (error.message?.includes('CORS')) {
+        toast.error('API access blocked. Please contact support.')
+      } else if (error.message?.includes('HTTP')) {
+        toast.error(`Server error: ${error.message}. Please try again later.`)
+      } else {
+        toast.error(error.message || 'Failed to submit application. Please try again.')
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -136,7 +168,20 @@ const ApplicationForm = () => {
       viewport={{ once: true }}
       className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
     >
-
+      {/* Debug section - remove in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h4 className="text-sm font-semibold text-yellow-800 mb-2">Debug Tools (Development Only)</h4>
+          <button
+            type="button"
+            onClick={testApiConnection}
+            className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors text-sm"
+          >
+            Test API Connection
+          </button>
+          <p className="text-xs text-yellow-600 mt-2">Check browser console for detailed logs</p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Personal Information */}

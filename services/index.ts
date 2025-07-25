@@ -24,8 +24,35 @@ const getAuthHeaders = () => {
 // Helper function to handle API responses
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Network error' }));
-    throw new Error(error.error || `HTTP ${response.status}`);
+    let errorMessage = `HTTP ${response.status}`;
+    
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error || errorData.message || errorMessage;
+    } catch {
+      // If JSON parsing fails, use status-based messages
+      switch (response.status) {
+        case 400:
+          errorMessage = 'Invalid request data';
+          break;
+        case 401:
+          errorMessage = 'Authentication required';
+          break;
+        case 403:
+          errorMessage = 'Access forbidden';
+          break;
+        case 404:
+          errorMessage = 'API endpoint not found';
+          break;
+        case 500:
+          errorMessage = 'Server error occurred';
+          break;
+        default:
+          errorMessage = 'Network error occurred';
+      }
+    }
+    
+    throw new Error(errorMessage);
   }
   return response.json();
 };
@@ -36,6 +63,7 @@ export const applicationsAPI = {
   submit: async (formData: FormData) => {
     const response = await fetch(`${API_BASE_URL}/api/applications`, {
       method: 'POST',
+      mode: 'cors', // Explicitly handle CORS
       body: formData // FormData object
     });
     return handleResponse(response);
