@@ -76,12 +76,14 @@ const Footer = () => {
                   <div className="p-1 bg-blue-500/20 rounded">
                     <Heart className="w-4 h-4 text-blue-300" />
                   </div>
-                  <div>
+                  <a href='/admin'>
+                  <div >
                     <h4 className="font-semibold text-white text-sm mb-1">Our Mission</h4>
                     <p className="text-xs text-gray-300">
                       Providing quality education with strong moral values.
                     </p>
                   </div>
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -162,7 +164,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-white font-medium text-sm">Phone</p>
-                  <p className="text-gray-300 text-xs">+92 (091) xxx-xxxx</p>
+                  <p className="text-gray-300 text-xs">0300-1234567</p>
                 </div>
               </div>
               

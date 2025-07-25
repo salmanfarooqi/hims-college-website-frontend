@@ -220,7 +220,7 @@ const Navigation = () => {
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3 text-gray-600">
                       <Phone className="w-5 h-5 text-blue-600" />
-                      <span className="text-sm">+92 (091) xxx-xxxx</span>
+                      <span className="text-sm">0300-1234567</span>
                     </div>
                     <div className="flex items-center space-x-3 text-gray-600">
                       <Mail className="w-5 h-5 text-blue-600" />
