@@ -98,7 +98,7 @@ const HeroSection = () => {
   const stats = [
     { number: "95%", label: "Graduation Rate", icon: GraduationCap },
     { number: "10,000+", label: "Alumni throught pakistan", icon: Users },
-    { number: "200+", label: "Expert Faculty", icon: BookOpen },
+    { number: "20+", label: "Expert Faculty", icon: BookOpen },
     { number: "5+", label: "Programs Offered", icon: Award }
   ]
 

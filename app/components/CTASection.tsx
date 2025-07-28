@@ -83,7 +83,7 @@ const CTASection = () => {
           {[
             { number: "95%", label: "Graduation Rate" },
             { number: "10,000+", label: "Alumni Worldwide" },
-            { number: "200+", label: "Expert Faculty" },
+            { number: "20+", label: "Expert Faculty" },
             { number: "5+", label: "Programs Offered" }
           ].map((stat, index) => (
             <motion.div

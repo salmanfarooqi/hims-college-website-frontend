@@ -38,7 +38,7 @@
 - `hims frontend/services/index.ts`
 
 ### 4. ✅ Hardcoded API URLs
-**Problem**: Using `http://localhost:5000` throughout the frontend codebase.
+**Problem**: Using `https://hims-college-backend.vercel.app` throughout the frontend codebase.
 
 **Solution Applied**:
 - Added environment configuration in `next.config.js`
@@ -61,7 +61,7 @@
 ## 🛠️ How to Use
 
 ### Environment Configuration
-1. Set `NEXT_PUBLIC_API_URL` in your environment or let it default to `http://localhost:5000`
+1. Set `NEXT_PUBLIC_API_URL` in your environment or let it default to `https://hims-college-backend.vercel.app`
 2. For production, update the environment variable to your production API URL
 
 ### Running the Database Fix

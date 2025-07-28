@@ -91,7 +91,7 @@ cd backend
 npm run dev
 ```
 
-The backend will start on `http://localhost:5000`
+The backend will start on `https://hims-college-backend.vercel.app`
 
 ### 6. Start the Frontend Development Server
 ```bash

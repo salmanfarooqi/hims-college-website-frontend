@@ -12,7 +12,7 @@
 - **Solution**: Moved API configuration directly to `services/index.ts`
 - **Configuration**: 
   ```typescript
-  const API_BASE_URL = 'http://localhost:5000';
+  const API_BASE_URL = 'https://hims-college-backend.vercel.app';
   // For production: const API_BASE_URL = 'https://your-production-api.com';
   ```
 
@@ -30,8 +30,8 @@
 - **Problem**: Images not showing due to incorrect URL paths
 - **Solution**: Updated image URL generation in backend routes
 - **Fixed URLs**:
-  - Before: `http://localhost:5000/${req.file.path.replace(/\\/g, '/')}`
-  - After: `http://localhost:5000/uploads/${req.file.filename}`
+  - Before: `https://hims-college-backend.vercel.app/${req.file.path.replace(/\\/g, '/')}`
+  - After: `https://hims-college-backend.vercel.app/uploads/${req.file.filename}`
 - **Added**: Cloudinary support in Next.js config for external images
 
 ### 5. ✅ **Application Tracking Working**

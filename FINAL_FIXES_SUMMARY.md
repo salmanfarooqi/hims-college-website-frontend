@@ -33,7 +33,7 @@ const studentData = {
 ## 🌐 **Hardcoded API URLs - ELIMINATED**
 
 ### Problem:
-Hardcoded `http://localhost:5000` URLs throughout the codebase.
+Hardcoded `https://hims-college-backend.vercel.app` URLs throughout the codebase.
 
 ### Solution Applied:
 1. **Service Layer**: All API calls centralized in `services/index.ts`
@@ -43,7 +43,7 @@ Hardcoded `http://localhost:5000` URLs throughout the codebase.
 ### Code Changes:
 ```javascript
 // Before: Hardcoded URLs
-imageUrl: req.file ? `http://localhost:5000/uploads/${req.file.filename}` : ''
+imageUrl: req.file ? `https://hims-college-backend.vercel.app/uploads/${req.file.filename}` : ''
 
 // After: Relative paths
 imageUrl: req.file ? `/uploads/${req.file.filename}` : ''
@@ -154,7 +154,7 @@ npm run dev
 ### API Configuration:
 ```typescript
 // In services/index.ts
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://hims-college-backend.vercel.app';
 // For production: const API_BASE_URL = 'https://your-api.com';
 ```
 

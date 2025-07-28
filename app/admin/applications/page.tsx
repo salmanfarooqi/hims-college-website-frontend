@@ -67,7 +67,7 @@ const ApplicationsPage = () => {
   const fetchApplications = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch('http://localhost:5000/api/applications?limit=100', {
+      const response = await fetch('https://hims-college-backend.vercel.app/api/applications?limit=100', {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -92,7 +92,7 @@ const ApplicationsPage = () => {
 
   const updateApplicationStatus = async (id: string, status: string, notes?: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/applications/${id}`, {
+      const response = await fetch(`https://hims-college-backend.vercel.app/api/applications/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -323,7 +323,7 @@ const ApplicationsPage = () => {
                           </button>
                           {application.transactionReceipt && (
                             <a 
-                              href={`http://localhost:5000/${application.transactionReceipt}`}
+                              href={`https://hims-college-backend.vercel.app/${application.transactionReceipt}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center"
@@ -494,7 +494,7 @@ const ApplicationsPage = () => {
                         {selectedApplication.transactionReceipt ? (
                           <div className="mt-2">
                             <a 
-                              href={`http://localhost:5000/${selectedApplication.transactionReceipt}`}
+                              href={`https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"

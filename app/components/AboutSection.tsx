@@ -7,7 +7,7 @@ const AboutSection = () => {
   const stats = [
     { number: "95%", label: "Graduation Rate" },
     { number: "5+", label: "Programs Offered" },
-    { number: "200+", label: "Expert Faculty" },
+    { number: "20+", label: "Expert Faculty" },
     { number: "10K+", label: "Alumni Worldwide" }
   ]
 

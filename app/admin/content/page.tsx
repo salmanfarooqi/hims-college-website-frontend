@@ -68,21 +68,21 @@ const ContentManagement = () => {
       const headers = { 'Authorization': `Bearer ${token}` }
 
       // Fetch hero slides
-      const heroResponse = await fetch('http://localhost:5000/api/content/admin/hero-slides', { headers })
+      const heroResponse = await fetch('https://hims-college-backend.vercel.app/api/content/admin/hero-slides', { headers })
       if (heroResponse.ok) {
         const heroData = await heroResponse.json()
         setHeroSlides(heroData)
       }
 
       // Fetch teachers
-      const teachersResponse = await fetch('http://localhost:5000/api/content/admin/teachers', { headers })
+      const teachersResponse = await fetch('https://hims-college-backend.vercel.app/api/content/admin/teachers', { headers })
       if (teachersResponse.ok) {
         const teachersData = await teachersResponse.json()
         setTeachers(teachersData)
       }
 
       // Fetch students
-      const studentsResponse = await fetch('http://localhost:5000/api/content/admin/students', { headers })
+      const studentsResponse = await fetch('https://hims-college-backend.vercel.app/api/content/admin/students', { headers })
       if (studentsResponse.ok) {
         const studentsData = await studentsResponse.json()
         setStudents(studentsData)
@@ -101,7 +101,7 @@ const ContentManagement = () => {
       formData.append('image', file)
 
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('http://localhost:5000/api/content/upload', {
+      const response = await fetch('https://hims-college-backend.vercel.app/api/content/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -136,19 +136,19 @@ const ContentManagement = () => {
       let method = 'POST'
 
       if (type === 'hero') {
-        url = 'http://localhost:5000/api/content/admin/hero-slides'
+        url = 'https://hims-college-backend.vercel.app/api/content/admin/hero-slides'
         if (editingItem) {
           url += `/${editingItem.id}`
           method = 'PUT'
         }
       } else if (type === 'teacher') {
-        url = 'http://localhost:5000/api/content/admin/teachers'
+        url = 'https://hims-college-backend.vercel.app/api/content/admin/teachers'
         if (editingItem) {
           url += `/${editingItem.id}`
           method = 'PUT'
         }
       } else if (type === 'student') {
-        url = 'http://localhost:5000/api/content/admin/students'
+        url = 'https://hims-college-backend.vercel.app/api/content/admin/students'
         if (editingItem) {
           url += `/${editingItem.id}`
           method = 'PUT'
@@ -183,11 +183,11 @@ const ContentManagement = () => {
 
       let url = ''
       if (type === 'hero') {
-        url = `http://localhost:5000/api/content/admin/hero-slides/${id}`
+        url = `https://hims-college-backend.vercel.app/api/content/admin/hero-slides/${id}`
       } else if (type === 'teacher') {
-        url = `http://localhost:5000/api/content/admin/teachers/${id}`
+        url = `https://hims-college-backend.vercel.app/api/content/admin/teachers/${id}`
       } else if (type === 'student') {
-        url = `http://localhost:5000/api/content/admin/students/${id}`
+        url = `https://hims-college-backend.vercel.app/api/content/admin/students/${id}`
       }
 
       const response = await fetch(url, {
@@ -216,11 +216,11 @@ const ContentManagement = () => {
 
       let url = ''
       if (type === 'hero') {
-        url = `http://localhost:5000/api/content/admin/hero-slides/${id}`
+        url = `https://hims-college-backend.vercel.app/api/content/admin/hero-slides/${id}`
       } else if (type === 'teacher') {
-        url = `http://localhost:5000/api/content/admin/teachers/${id}`
+        url = `https://hims-college-backend.vercel.app/api/content/admin/teachers/${id}`
       } else if (type === 'student') {
-        url = `http://localhost:5000/api/content/admin/students/${id}`
+        url = `https://hims-college-backend.vercel.app/api/content/admin/students/${id}`
       }
 
       const response = await fetch(url, {

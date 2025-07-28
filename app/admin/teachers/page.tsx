@@ -84,7 +84,7 @@ const TeachersPage = () => {
 
     try {
       const token = localStorage.getItem('adminToken')
-      const response = await fetch(`http://localhost:5000/api/content/admin/teachers/${id}`, {
+      const response = await fetch(`https://hims-college-backend.vercel.app/api/content/admin/teachers/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -105,7 +105,7 @@ const TeachersPage = () => {
   const toggleActive = async (id: string, isActive: boolean) => {
     try {
       const token = localStorage.getItem('adminToken')
-      const response = await fetch(`http://localhost:5000/api/content/admin/teachers/${id}`, {
+      const response = await fetch(`https://hims-college-backend.vercel.app/api/content/admin/teachers/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
