@@ -158,6 +158,7 @@ export const contentAPI = {
       });
       return handleResponse(response);
     },
+    // Legacy method - uses FormData (file upload)
     create: async (formData: FormData) => {
       const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
       const response = await fetch(`${API_BASE_URL}/api/content/admin/hero-slides`, {
@@ -167,6 +168,34 @@ export const contentAPI = {
       });
       return handleResponse(response);
     },
+    // New method - uses Cloudinary URL (no file upload)
+    createWithUrl: async (slideData: {
+      title: string;
+      subtitle: string;
+      description: string;
+      imageUrl: string;
+      order: number;
+      isActive: boolean;
+    }) => {
+      const url = `${API_BASE_URL}/api/content/admin/hero-slides-url`;
+      const headers = getAuthHeaders();
+      
+      console.log('🌐 API Call: POST', url);
+      console.log('📋 Headers:', headers);
+      console.log('📤 Data:', slideData);
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(slideData)
+      });
+      
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      return handleResponse(response);
+    },
+    // Legacy method - uses FormData (file upload)
     update: async (id: string, formData: FormData) => {
       const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
       const response = await fetch(`${API_BASE_URL}/api/content/admin/hero-slides/${id}`, {
@@ -174,6 +203,33 @@ export const contentAPI = {
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
       });
+      return handleResponse(response);
+    },
+    // New method - uses Cloudinary URL (no file upload)
+    updateWithUrl: async (id: string, slideData: {
+      title?: string;
+      subtitle?: string;
+      description?: string;
+      imageUrl?: string;
+      order?: number;
+      isActive?: boolean;
+    }) => {
+      const url = `${API_BASE_URL}/api/content/admin/hero-slides-url/${id}`;
+      const headers = getAuthHeaders();
+      
+      console.log('🌐 API Call: PUT', url);
+      console.log('📋 Headers:', headers);
+      console.log('📤 Data:', slideData);
+      
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(slideData)
+      });
+      
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+      
       return handleResponse(response);
     },
     delete: async (id: string) => {

@@ -25,15 +25,9 @@ const AboutSection = () => {
               About <span className="gradient-text">HIMS Degree College</span>
             </h2>
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-              Founded in 1995, HIMS Degree College has been at the forefront of academic innovation 
-              and excellence. Our mission is to provide world-class education that empowers students 
-              to become leaders in their chosen fields.
+            The Hilal Institute of Modern Sciences (HIMS) is one of the pioneers of quality  education in the private sector at Peshawar. The credit for its foundation goes to a  group of enthusiasts and intellectuals who felt,the dire need of an institution  imparting quality education in Khyber Pakhtunkhwa. The aim of HIMS is to impart  standard education alongwith positive character building of the students. The  institute also aims at inculcating the lslamic values of life in them through a broad-  based and well-planned programme of physical,mental and academic training.The  authority considers each student as member of college family and endeavors to  bring his unique qualities to his maximum advantage. Thus,our total attention is  centered on students,where the college authority takes it as challenge to develop  requisite inside the students and bring all his potentialities to lime light. The college  has really come upto the expectation of the public and has shown brilliant resultsìn  F.Sc examination in BISE Peshawar. Every Year a Number of HIMSAIN get  Admission in Medical Colleges and Engineering Universities.
             </p>
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              We believe in fostering critical thinking, creativity, and character development. 
-              Our state-of-the-art facilities, experienced faculty, and industry partnerships 
-              ensure that our graduates are well-prepared for the challenges of tomorrow.
-            </p>
+           
             
             <div className="grid grid-cols-2 gap-6">
               {stats.map((stat, index) => (
