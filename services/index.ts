@@ -319,8 +319,29 @@ export const contentAPI = {
     }
   },
 
-  // Image upload
-  uploadImage: async (file: File) => {
+  // Direct image upload - Returns Cloudinary URL
+  uploadImage: async (file: File, folder: string = 'hims-college/hero-slides') => {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('folder', folder);
+    
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+    
+    console.log('📤 Uploading image to backend...');
+    
+    const response = await fetch(`${API_BASE_URL}/api/content/upload-image`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+    
+    console.log('📥 Upload response status:', response.status);
+    
+    return handleResponse(response);
+  },
+
+  // Legacy image upload (for compatibility)
+  uploadImageLegacy: async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
     const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;

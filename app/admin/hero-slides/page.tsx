@@ -13,7 +13,6 @@ import {
   X
 } from 'lucide-react'
 import { getImageUrl } from '../../../services'
-import { uploadImageToCloudinary } from '../../../services/cloudinary'
 
 interface HeroSlide {
   id: string
@@ -34,7 +33,8 @@ const HeroSlidesPage = () => {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isSaving, setIsSaving] = useState(false)
-  const [useCloudinaryUpload, setUseCloudinaryUpload] = useState(true)
+  const [isTestingBackend, setIsTestingBackend] = useState(false)
+  const [backendTestResult, setBackendTestResult] = useState<string | null>(null)
 
   useEffect(() => {
     fetchHeroSlides()
@@ -91,7 +91,7 @@ const HeroSlidesPage = () => {
         return
       }
 
-      // Prepare slide data
+      // Prepare slide data with existing image URL (if editing)
       let slideData = {
         title,
         subtitle,
@@ -101,96 +101,56 @@ const HeroSlidesPage = () => {
         imageUrl: editingItem?.imageUrl || '' // Keep existing image URL if no new image
       }
 
-      // Step 1: Upload image to Cloudinary if a new image is selected
+      // Step 1: Upload image first if a new image is selected
       if (imageFile && imageFile.size > 0) {
         setIsUploading(true)
+        setUploadProgress(50) // Show progress
         
-        if (useCloudinaryUpload) {
-          console.log('Step 1: Uploading image to Cloudinary...')
+        console.log('📤 Step 1: Uploading image to backend...')
+        
+        try {
+          const { contentAPI } = await import('../../../services')
+          const uploadResult = await contentAPI.uploadImage(imageFile, 'hims-college/hero-slides')
           
-          try {
-            const uploadResult = await uploadImageToCloudinary(
-              imageFile, 
-              'hims-college/hero-slides',
-              (progress) => setUploadProgress(progress)
-            )
-            slideData.imageUrl = uploadResult.secure_url
-            console.log('✅ Image uploaded successfully:', uploadResult.secure_url)
-          } catch (uploadError: any) {
-            console.error('❌ Cloudinary upload failed:', uploadError)
-            
-            // Offer fallback to old method
-            const useFallback = confirm(
-              `Cloudinary upload failed: ${uploadError.message}\n\n` +
-              'Would you like to try the old upload method instead? (This will upload through your backend)'
-            )
-            
-            if (useFallback) {
-              setUseCloudinaryUpload(false)
-              console.log('Using fallback file upload method...')
-              // Don't return - let it continue with the fallback method below
-            } else {
-              return
-            }
-          } finally {
-            setIsUploading(false)
+          slideData.imageUrl = uploadResult.imageUrl
+          console.log('✅ Image uploaded successfully:', uploadResult.imageUrl)
+          
+          setUploadProgress(100)
+        } catch (uploadError: any) {
+          console.error('❌ Image upload failed:', uploadError)
+          
+          // Handle specific error types
+          if (uploadError.message && uploadError.message.includes('413')) {
+            alert('Image file is too large. Please try a smaller image (under 50MB).')
+          } else if (uploadError.message && uploadError.message.includes('compression')) {
+            alert('Failed to process image. Please try a different image format.')
+          } else {
+            alert(`Image upload failed: ${uploadError.message}`)
           }
-        }
-        
-        // Fallback: Use old file upload method if Cloudinary failed or disabled
-        if (!useCloudinaryUpload && imageFile && imageFile.size > 0) {
-          setIsUploading(false) // We'll let the backend handle the upload
-          console.log('Using legacy file upload method...')
-          // The image will be uploaded by the backend - don't set imageUrl
-          slideData.imageUrl = editingItem?.imageUrl || '' // Keep existing or empty
+          return
+        } finally {
+          setIsUploading(false)
         }
       }
 
-      // Step 2: Save hero slide data to backend
+      // Step 2: Create/Update hero slide with image URL
       setIsSaving(true)
-      console.log('Step 2: Saving hero slide to backend...')
+      console.log('💾 Step 2: Saving hero slide to backend...')
+      console.log('📤 Sending slide data:', slideData)
       
       const { contentAPI } = await import('../../../services')
       
-      if (useCloudinaryUpload || !imageFile || imageFile.size === 0) {
-        // Use new URL-based method (Cloudinary already uploaded, or no new image)
-        console.log('🚀 Using URL-based API method')
-        console.log('📤 Sending slide data:', slideData)
-        
-        if (editingItem) {
-          console.log(`🟡 Updating hero slide ${editingItem.id}`)
-          const result = await contentAPI.heroSlides.updateWithUrl(editingItem.id, slideData)
-          console.log('✅ Hero slide updated successfully:', result)
-        } else {
-          console.log('🟢 Creating new hero slide')
-          const result = await contentAPI.heroSlides.createWithUrl(slideData)
-          console.log('✅ Hero slide created successfully:', result)
-        }
+      if (editingItem) {
+        console.log(`🟡 Updating hero slide ${editingItem.id}`)
+        const result = await contentAPI.heroSlides.updateWithUrl(editingItem.id, slideData)
+        console.log('✅ Hero slide updated successfully:', result)
       } else {
-        // Use fallback FormData method (backend will handle upload)
-        console.log('🚀 Using FormData fallback method')
-        const fallbackFormData = new FormData()
-        fallbackFormData.append('title', slideData.title)
-        fallbackFormData.append('subtitle', slideData.subtitle)
-        fallbackFormData.append('description', slideData.description)
-        fallbackFormData.append('order', slideData.order.toString())
-        fallbackFormData.append('isActive', slideData.isActive.toString())
-        if (imageFile) fallbackFormData.append('image', imageFile)
-        
-        console.log('📤 Sending FormData with file:', imageFile ? imageFile.name : 'no file')
-        
-        if (editingItem) {
-          console.log(`🟡 Updating hero slide ${editingItem.id} (FormData)`)
-          const result = await contentAPI.heroSlides.update(editingItem.id, fallbackFormData)
-          console.log('✅ Hero slide updated successfully (fallback method):', result)
-        } else {
-          console.log('🟢 Creating new hero slide (FormData)')
-          const result = await contentAPI.heroSlides.create(fallbackFormData)
-          console.log('✅ Hero slide created successfully (fallback method):', result)
-        }
+        console.log('🟢 Creating new hero slide')
+        const result = await contentAPI.heroSlides.createWithUrl(slideData)
+        console.log('✅ Hero slide created successfully:', result)
       }
 
-      // Step 3: Refresh data and close modal
+      // Step 3: Refresh and close
       await fetchHeroSlides()
       setShowModal(false)
       setEditingItem(null)
@@ -231,6 +191,42 @@ const HeroSlidesPage = () => {
     }
   }
 
+
+
+  const testBackend = async () => {
+    setIsTestingBackend(true)
+    setBackendTestResult(null)
+    
+    try {
+      console.log('🧪 Testing backend image upload...')
+      
+      // Create a simple test image (1x1 pixel PNG)
+      const testBlob = new Blob([new Uint8Array([
+        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D,
+        0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+        0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xDE, 0x00, 0x00, 0x00,
+        0x0C, 0x49, 0x44, 0x41, 0x54, 0x08, 0x99, 0x01, 0x01, 0x00, 0x00, 0x00,
+        0xFF, 0xFF, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0xE2, 0x21, 0xBC, 0x33,
+        0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82
+      ])], { type: 'image/png' });
+      
+      const testFile = new File([testBlob], 'backend-test.png', { type: 'image/png' });
+      
+      // Use the new upload API
+      const { contentAPI } = await import('../../../services');
+      const result = await contentAPI.uploadImage(testFile, 'hims-college/test');
+      
+      console.log('✅ Backend upload test successful:', result);
+      setBackendTestResult(`✅ Image upload working! URL: ${result.imageUrl.substring(0, 50)}...`);
+      
+    } catch (error) {
+      console.error('❌ Backend upload test error:', error);
+      setBackendTestResult(`❌ Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsTestingBackend(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -243,17 +239,48 @@ const HeroSlidesPage = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Hero Slides</h1>
-        <button
-          onClick={() => {
-            setEditingItem(null)
-            setShowModal(true)
-          }}
-          className="btn-primary flex items-center space-x-2"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Slide</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={testBackend}
+            disabled={isTestingBackend}
+            className="px-3 py-2 text-sm bg-green-100 text-green-700 rounded-md hover:bg-green-200 disabled:opacity-50 flex items-center space-x-2"
+          >
+            {isTestingBackend ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                <span>Testing...</span>
+              </>
+            ) : (
+              <>
+                <Upload className="w-4 h-4" />
+                <span>Test Image Upload</span>
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={() => {
+              setEditingItem(null)
+              setShowModal(true)
+            }}
+            className="btn-primary flex items-center space-x-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Slide</span>
+          </button>
+        </div>
       </div>
+
+      {/* Test Results */}
+      {backendTestResult && (
+        <div className={`mb-4 p-3 rounded-md ${
+          backendTestResult.startsWith('✅') 
+            ? 'bg-green-100 text-green-800 border border-green-200' 
+            : 'bg-red-100 text-red-800 border border-red-200'
+        }`}>
+          <strong>Backend Upload Test:</strong> {backendTestResult}
+        </div>
+      )}
 
       <div className="grid gap-6">
         {heroSlides.map((slide) => (
@@ -393,26 +420,9 @@ const HeroSlidesPage = () => {
                 </div>
               </div>
               <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Image {!editingItem && <span className="text-red-500">*</span>}
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs text-gray-500">Upload method:</span>
-                    <button
-                      type="button"
-                      onClick={() => setUseCloudinaryUpload(!useCloudinaryUpload)}
-                      className={`text-xs px-2 py-1 rounded ${
-                        useCloudinaryUpload 
-                          ? 'bg-blue-100 text-blue-700' 
-                          : 'bg-gray-100 text-gray-600'
-                      }`}
-                      disabled={isUploading || isSaving}
-                    >
-                      {useCloudinaryUpload ? 'Cloudinary' : 'Backend'}
-                    </button>
-                  </div>
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Image {!editingItem && <span className="text-red-500">*</span>}
+                </label>
                 <input
                   name="image"
                   type="file"
@@ -421,10 +431,7 @@ const HeroSlidesPage = () => {
                   disabled={isUploading || isSaving}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  {useCloudinaryUpload 
-                    ? 'Cloudinary: Direct upload (faster). Formats: JPEG, PNG, GIF, WebP. Max: 5MB' 
-                    : 'Backend: Upload through server. Formats: JPEG, PNG, GIF, WebP. Max: 5MB'
-                  }
+                  Accepted formats: JPEG, PNG, GIF, WebP. Max 50MB. Images are automatically compressed for optimal performance.
                 </p>
                 
                 {/* Progress Indicator */}
