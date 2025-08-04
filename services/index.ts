@@ -6,10 +6,18 @@ const API_BASE_URL = 'https://hims-college-backend.vercel.app';
 // const API_BASE_URL = 'https://your-production-api.com';
 // const API_BASE_URL = 'http://localhost:5000'; // Local development URL
 
-// Helper function to get full image URL
-export const getImageUrl = (imagePath: string) => {
+// Helper function to get full image URL with cache busting
+export const getImageUrl = (imagePath: string, forceRefresh: boolean = false) => {
   if (!imagePath) return '';
-  if (imagePath.startsWith('http')) return imagePath; // External URLs (Unsplash, etc.)
+  if (imagePath.startsWith('http')) {
+    // Add cache busting parameter for Cloudinary URLs
+    if (imagePath.includes('cloudinary.com')) {
+      const separator = imagePath.includes('?') ? '&' : '?';
+      const timestamp = forceRefresh ? Date.now() : Math.floor(Date.now() / 60000); // Refresh every minute or force refresh
+      return `${imagePath}${separator}v=${timestamp}`;
+    }
+    return imagePath; // External URLs (Unsplash, etc.)
+  }
   return `${API_BASE_URL}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`;
 };
 

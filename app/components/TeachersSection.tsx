@@ -24,13 +24,16 @@ const TeachersSection = () => {
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(0)
   const teachersPerPage = 3
+  const [refreshKey, setRefreshKey] = useState(0) // Add refresh key for cache busting
 
   // Fetch teachers from API
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
         const { contentAPI } = await import('../../services');
+        // Add cache busting parameter to force fresh data
         const data = await contentAPI.teachers.getAll();
+        console.log('📥 Fetched teachers data:', data);
         const mappedTeachers = data.map((teacher: any) => ({
           _id: teacher._id || teacher.id,
           id: teacher._id || teacher.id,
@@ -43,6 +46,7 @@ const TeachersSection = () => {
           education: teacher.education,
           isActive: teacher.isActive !== false
         }));
+        console.log('🔄 Mapped teachers data:', mappedTeachers);
         setTeachers(mappedTeachers.filter((t: Teacher) => t.isActive));
       } catch (error) {
         console.error('Failed to fetch teachers:', error);
@@ -91,6 +95,52 @@ const TeachersSection = () => {
     };
 
     fetchTeachers();
+  }, []);
+
+  // Add a function to force refresh teachers data
+  const forceRefreshTeachers = () => {
+    setLoading(true);
+    setTimeout(() => {
+      const fetchTeachers = async () => {
+        try {
+          const { contentAPI } = await import('../../services');
+          const data = await contentAPI.teachers.getAll();
+          console.log('🔄 Force refreshed teachers data:', data);
+          const mappedTeachers = data.map((teacher: any) => ({
+            _id: teacher._id || teacher.id,
+            id: teacher._id || teacher.id,
+            name: teacher.name,
+            position: teacher.position,
+            imageUrl: teacher.imageUrl,
+            expertise: teacher.expertise,
+            rating: teacher.rating || 5,
+            department: teacher.department,
+            education: teacher.education,
+            isActive: teacher.isActive !== false
+          }));
+          setTeachers(mappedTeachers.filter((t: Teacher) => t.isActive));
+        } catch (error) {
+          console.error('Force refresh failed:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchTeachers();
+    }, 1000); // 1 second delay to ensure cache is cleared
+  };
+
+  // Listen for storage events to refresh when admin updates teachers
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'teachersUpdated') {
+        console.log('🔄 Teachers updated, refreshing data...');
+        setRefreshKey(prev => prev + 1); // Force re-render with new cache key
+        forceRefreshTeachers();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const totalPages = Math.ceil(teachers.length / teachersPerPage);
@@ -173,13 +223,15 @@ const TeachersSection = () => {
                 {/* Teacher Image */}
                 <div className="relative h-80 overflow-hidden bg-gray-100">
                   <img
-                    src={getImageUrl(teacher.imageUrl) || getDefaultProfileImageUrl(teacher.name, 'teacher')}
+                    key={`${teacher._id}-${teacher.imageUrl}-${refreshKey}-${Date.now()}`}
+                    src={getImageUrl(teacher.imageUrl, true) || getDefaultProfileImageUrl(teacher.name, 'teacher')}
                     alt={teacher.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = getDefaultProfileImageUrl(teacher.name, 'teacher');
                     }}
+                    loading="lazy"
                   />
                   
                   {/* Rating Badge */}

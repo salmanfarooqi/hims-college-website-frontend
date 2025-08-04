@@ -11,7 +11,8 @@ import {
   Upload,
   Save,
   X,
-  Star
+  Star,
+  RefreshCw
 } from 'lucide-react'
 import { getImageUrl } from '../../../services'
 import { uploadTeacherImage } from '../../../utils/imageUpload'
@@ -38,6 +39,7 @@ const TeachersPage = () => {
   const [isUploading, setIsUploading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>('')
+  const [refreshKey, setRefreshKey] = useState(0) // Add refresh key for force refresh
 
   useEffect(() => {
     fetchTeachers()
@@ -46,19 +48,38 @@ const TeachersPage = () => {
   const fetchTeachers = async () => {
     try {
       const { contentAPI } = await import('../../../services')
-      const data = await contentAPI.teachers.getAllAdmin()
+      const data = await contentAPI.teachers.getAll()
+      console.log('📥 Fetched teachers data:', data)
       // Map the data to ensure we have both _id and id
       const mappedData = data.map((teacher: any) => ({
         ...teacher,
         id: teacher._id || teacher.id || 'unknown',
         _id: teacher._id || teacher.id || 'unknown'
       }))
+      console.log('🔄 Mapped teachers data:', mappedData)
       setTeachers(mappedData)
     } catch (error) {
       console.error('Failed to fetch teachers:', error)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Force refresh function
+  const forceRefresh = () => {
+    setRefreshKey(prev => prev + 1)
+    // Clear browser cache for images
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(name => {
+          caches.delete(name)
+        })
+      })
+    }
+    // Force reload after a short delay
+    setTimeout(() => {
+      window.location.reload()
+    }, 500)
   }
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +117,7 @@ const TeachersPage = () => {
         if (uploadResult.success && uploadResult.imageUrl) {
           imageUrl = uploadResult.imageUrl
           console.log('✅ Teacher image uploaded to Cloudinary:', imageUrl)
+          console.log('🔄 Image URL will be updated in database:', imageUrl)
         } else {
           throw new Error(uploadResult.error || 'Image upload failed')
         }
@@ -121,7 +143,14 @@ const TeachersPage = () => {
         await contentAPI.teachers.createWithData(teacherData)
       }
 
-      fetchTeachers()
+      // Force refresh with a small delay to ensure cache is cleared
+      setTimeout(() => {
+        fetchTeachers()
+        // Trigger storage event to refresh other components
+        localStorage.setItem('teachersUpdated', Date.now().toString())
+        // Force browser cache refresh for images
+        window.location.reload()
+      }, 1000)
       setShowModal(false)
       setEditingItem(null)
       resetImageState()
@@ -193,16 +222,25 @@ const TeachersPage = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Teachers Management</h1>
             <p className="text-gray-600">Manage your faculty members and their profiles</p>
           </div>
-          <button
-            onClick={() => {
-              setEditingItem(null)
-              setShowModal(true)
-            }}
-            className="btn-primary flex items-center space-x-2 px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all"
-          >
-            <Plus className="w-5 h-5" />
-            <span>Add New Teacher</span>
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={forceRefresh}
+              className="btn-secondary flex items-center space-x-2 px-4 py-3 rounded-lg shadow-sm hover:shadow-md transition-all"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Force Refresh</span>
+            </button>
+            <button
+              onClick={() => {
+                setEditingItem(null)
+                setShowModal(true)
+              }}
+              className="btn-primary flex items-center space-x-2 px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Add New Teacher</span>
+            </button>
+          </div>
         </div>
         
         {/* Stats */}
@@ -238,7 +276,8 @@ const TeachersPage = () => {
               {/* Teacher Image */}
               <div className="relative">
                 <img 
-                  src={getImageUrl(teacher.imageUrl) || getDefaultProfileImageUrl(teacher.name, 'teacher')}
+                  key={`${teacher.id}-${teacher.imageUrl}-${refreshKey}-${Date.now()}`}
+                  src={getImageUrl(teacher.imageUrl, true) || getDefaultProfileImageUrl(teacher.name, 'teacher')}
                   alt={teacher.name}
                   className="w-24 h-24 object-cover rounded-full shadow-md"
                   onError={(e) => {
@@ -461,7 +500,8 @@ const TeachersPage = () => {
                       <div className="space-y-2">
                         <p className="text-sm font-medium text-gray-700">Current Image:</p>
                         <img 
-                          src={getImageUrl(editingItem.imageUrl) || getDefaultProfileImageUrl(editingItem.name, 'teacher')} 
+                          key={`current-${editingItem.id}-${Date.now()}`}
+                          src={getImageUrl(editingItem.imageUrl, true) || getDefaultProfileImageUrl(editingItem.name, 'teacher')} 
                           alt="Current" 
                           className="w-full h-32 object-cover rounded-lg shadow-sm border border-gray-200"
                           onError={(e) => {
