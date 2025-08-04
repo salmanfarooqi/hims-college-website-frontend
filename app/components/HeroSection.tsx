@@ -217,7 +217,7 @@ const HeroSection = () => {
                 className="inline-block px-4 py-2 bg-blue-500/20 border border-blue-400/30 rounded-full text-blue-100 text-sm font-medium mb-6 backdrop-blur-sm"
               >
                 <Star className="w-4 h-4 inline mr-2" />
-                Excellence in Education Since 1995
+                Excellence in Education Since 2006
               </motion.div>
               
               <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-6 leading-tight">

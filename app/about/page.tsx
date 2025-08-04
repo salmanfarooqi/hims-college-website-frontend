@@ -20,7 +20,7 @@ const AboutPage = () => {
   ]
 
   const timeline = [
-    { year: "1995", title: "Foundation", description: "Excellence College was established with a vision to provide world-class education" },
+    { year: "2006", title: "Foundation", description: "Excellence College was established with a vision to provide world-class education" },
     { year: "2000", title: "First Graduation", description: "First batch of students graduated with outstanding results" },
     { year: "2005", title: "International Recognition", description: "Received international accreditation and partnerships" },
     { year: "2010", title: "Research Center", description: "Established state-of-the-art research facilities" },

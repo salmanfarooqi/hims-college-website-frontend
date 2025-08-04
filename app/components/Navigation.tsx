@@ -88,7 +88,7 @@ const Navigation = () => {
                   </span>
                   <span className="text-xs text-gray-400">•</span>
                   <span className="text-xs text-gray-500 font-medium">
-                    Since 1995
+                    Since 2006
                   </span>
                 </div>
               </div>

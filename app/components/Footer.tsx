@@ -62,7 +62,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">HIMS College</h3>
-                  <p className="text-blue-200 text-xs">Excellence Since 1995</p>
+                  <p className="text-blue-200 text-xs">Excellence Since 2006</p>
                 </div>
               </div>
 
@@ -228,7 +228,7 @@ const Footer = () => {
                 © {currentYear} HIMS Degree College. All rights reserved.
               </p>
               <p className="text-gray-400 text-xs">
-                Building futures since 1995 • Peshawar, Pakistan
+                Building futures since 2006 • Peshawar, Pakistan
               </p>
             </div>
             

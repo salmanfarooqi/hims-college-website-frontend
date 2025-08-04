@@ -1,9 +1,10 @@
 // API Configuration - Direct URL configuration (no env dependency)
-const API_BASE_URL = 'https://hims-college-backend.vercel.app';
+// const API_BASE_URL = 'https://hims-college-backend.vercel.app';
 // const API_BASE_URL = 'https://hims-college-backend.vercel.app'; // Local development URL
 
 // For production, change this to your production URL:
 // const API_BASE_URL = 'https://your-production-api.com';
+const API_BASE_URL = 'http://localhost:5000'; // Local development URL
 
 // Helper function to get full image URL
 export const getImageUrl = (imagePath: string) => {
@@ -262,12 +263,58 @@ export const contentAPI = {
       });
       return handleResponse(response);
     },
+    // New method - uses JSON data (no file upload)
+    createWithData: async (teacherData: {
+      name: string;
+      position: string;
+      expertise: string;
+      description: string;
+      rating: number;
+      order: number;
+      isActive: boolean;
+      imageUrl?: string;
+      email?: string;
+      phone?: string;
+      department?: string;
+      qualifications?: string;
+      experience?: string;
+    }) => {
+      const response = await fetch(`${API_BASE_URL}/api/content/admin/teachers`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(teacherData)
+      });
+      return handleResponse(response);
+    },
     update: async (id: string, formData: FormData) => {
       const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
       const response = await fetch(`${API_BASE_URL}/api/content/admin/teachers/${id}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
+      });
+      return handleResponse(response);
+    },
+    // New method - uses JSON data (no file upload)
+    updateWithData: async (id: string, teacherData: {
+      name?: string;
+      position?: string;
+      expertise?: string;
+      description?: string;
+      rating?: number;
+      order?: number;
+      isActive?: boolean;
+      imageUrl?: string;
+      email?: string;
+      phone?: string;
+      department?: string;
+      qualifications?: string;
+      experience?: string;
+    }) => {
+      const response = await fetch(`${API_BASE_URL}/api/content/admin/teachers/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(teacherData)
       });
       return handleResponse(response);
     },
@@ -280,10 +327,17 @@ export const contentAPI = {
     }
   },
 
-  // Students
+    // Students
   students: {
-    getAll: async () => {
-      const response = await fetch(`${API_BASE_URL}/api/content/students`);
+    getAll: async (year?: string) => {
+      const url = year && year !== 'all' 
+        ? `${API_BASE_URL}/api/content/students?year=${year}`
+        : `${API_BASE_URL}/api/content/students`;
+      const response = await fetch(url);
+      return handleResponse(response);
+    },
+    getYears: async () => {
+      const response = await fetch(`${API_BASE_URL}/api/content/students/years`);
       return handleResponse(response);
     },
     getAllAdmin: async () => {
@@ -336,6 +390,27 @@ export const contentAPI = {
     });
     
     console.log('📥 Upload response status:', response.status);
+    
+    return handleResponse(response);
+  },
+
+  // Direct image upload without Sharp processing (fallback for problematic images)
+  uploadImageDirect: async (file: File, folder: string = 'hims-college/hero-slides') => {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('folder', folder);
+    
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+    
+    console.log('📤 Uploading image directly (no compression)...');
+    
+    const response = await fetch(`${API_BASE_URL}/api/content/upload-image-direct`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+    
+    console.log('📥 Direct upload response status:', response.status);
     
     return handleResponse(response);
   },
@@ -400,4 +475,4 @@ export const healthAPI = {
 };
 
 // Export base URL for direct use if needed
-export { API_BASE_URL }; 
+export { API_BASE_URL };

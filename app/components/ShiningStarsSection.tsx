@@ -2,32 +2,39 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Star, Award, Trophy, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import { Star, Award, Trophy, ChevronLeft, ChevronRight, Quote, GraduationCap, Target, Users, TrendingUp } from 'lucide-react'
 import { getImageUrl } from '../../services'
 import Image from 'next/image'
 
 interface Student {
   id: number
   name: string
-  program: string
   imageUrl: string
-  achievement: string
-  gpa: string
-  quote: string
-  awards: string[]
+  year: string
+  profession: string
+  institute: string
+  program: string
 }
 
 const ShiningStarsSection = () => {
   const [shiningStars, setShiningStars] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedYear, setSelectedYear] = useState<string>('all')
+  const [availableYears, setAvailableYears] = useState<string[]>([])
 
   // Fetch students from API
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const { contentAPI } = await import('../../services');
-        const data = await contentAPI.students.getAll();
-        setShiningStars(data);
+        const data = await contentAPI.students.getAll(selectedYear);
+        // Map API data to include new fields with defaults
+        const mappedData = data.map((student: any) => ({
+          ...student,
+          completeDetail: student.completeDetail || '',
+          institute: student.institute || ''
+        }));
+        setShiningStars(mappedData);
       } catch (error) {
         console.error('Error fetching students:', error);
         // Fallback to default students
@@ -35,42 +42,34 @@ const ShiningStarsSection = () => {
           {
             id: 1,
             name: "Ahmed Khan",
-            program: "FSC Pre-Medical",
-            imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-            achievement: "Top 1% in Medical Entry Test",
-            gpa: "3.95",
-            quote: "HIMS Degree College provided me with the perfect foundation for my medical career. The faculty's dedication and support were incredible.",
-            awards: ["Academic Excellence", "Leadership Award", "Community Service"]
+            imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop&crop=face&q=80",
+            year: "2023",
+            profession: "MBBS Doctor",
+            institute: "Lahore General Hospital"
           },
           {
             id: 2,
             name: "Fatima Ali",
-            program: "FSC Engineering",
-            imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-            achievement: "Gold Medal in Physics Olympiad",
-            gpa: "3.98",
-            quote: "The engineering program at HIMS prepared me excellently for university. The practical labs and expert guidance made all the difference.",
-            awards: ["Physics Excellence", "Innovation Award", "Research Grant"]
+            imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop&crop=face&q=80",
+            year: "2023",
+            profession: "Software Engineer",
+            institute: "Google Pakistan"
           },
           {
             id: 3,
             name: "Usman Hassan",
-            program: "ICS Computer Science",
-            imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-            achievement: "National Coding Champion",
-            gpa: "3.92",
-            quote: "The computer science program at HIMS gave me the skills and confidence to pursue my passion for technology and innovation.",
-            awards: ["Programming Excellence", "Innovation Award", "Tech Leadership"]
+            imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=500&fit=crop&crop=face&q=80",
+            year: "2023",
+            profession: "Data Scientist",
+            institute: "Microsoft Pakistan"
           },
           {
             id: 4,
             name: "Ayesha Malik",
-            program: "FSC Pre-Medical",
-            imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
-            achievement: "Merit Position in Medical College",
-            gpa: "3.96",
-            quote: "The supportive environment and excellent teaching methods at HIMS helped me achieve my dreams of becoming a doctor.",
-            awards: ["Academic Excellence", "Merit Scholarship", "Community Service"]
+            imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=500&h=500&fit=crop&crop=face&q=80",
+            year: "2022",
+            profession: "Dentist",
+            institute: "Islamabad Dental Hospital"
           }
         ]);
       } finally {
@@ -79,18 +78,34 @@ const ShiningStarsSection = () => {
     };
 
     fetchStudents();
+  }, [selectedYear])
+
+  // Fetch available years
+  useEffect(() => {
+    const fetchYears = async () => {
+      try {
+        const { contentAPI } = await import('../../services');
+        const years = await contentAPI.students.getYears();
+        setAvailableYears(years);
+      } catch (error) {
+        console.error('Error fetching years:', error);
+        setAvailableYears(['2023', '2022', '2021']);
+      }
+    };
+
+    fetchYears();
   }, [])
 
   const achievements = [
-    { number: "5+", label: "Merit Positions", icon: Trophy },
-    { number: "100+", label: "Awards Won", icon: Award },
-    { number: "95%", label: "Success Rate", icon: ChevronLeft },
-    { number: "1000+", label: "Success Stories", icon: Star }
+    { number: "5+", label: "Merit Positions", icon: Trophy, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+    { number: "100+", label: "Awards Won", icon: Award, color: "text-purple-600", bgColor: "bg-purple-100" },
+    { number: "95%", label: "Success Rate", icon: TrendingUp, color: "text-green-600", bgColor: "bg-green-100" },
+    { number: "1000+", label: "Success Stories", icon: Users, color: "text-blue-600", bgColor: "bg-blue-100" }
   ]
 
   if (loading) {
     return (
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-yellow-50 to-orange-50">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
@@ -102,19 +117,23 @@ const ShiningStarsSection = () => {
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-yellow-50 to-orange-50">
+    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50">
       <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="inline-block px-6 py-3 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold mb-6 shadow-sm">
+            Student Achievements
+          </div>
+          <h2 className="text-5xl lg:text-6xl font-bold text-gray-900 mb-8">
             Our <span className="gradient-text">Shining Stars</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             Meet our exceptional students who have achieved remarkable success and continue to inspire 
             the next generation of learners with their dedication and achievements.
           </p>
@@ -126,19 +145,49 @@ const ShiningStarsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16"
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12"
         >
           {achievements.map((achievement, index) => (
-            <div key={achievement.label} className="text-center">
-              <div className="bg-white rounded-xl p-4 md:p-6 shadow-lg">
-                <div className="flex justify-center mb-2 md:mb-3">
-                  <achievement.icon className="w-6 h-6 md:w-8 md:h-8 text-yellow-500" />
+            <motion.div
+              key={achievement.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="text-center group"
+            >
+              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2">
+                <div className={`w-16 h-16 ${achievement.bgColor} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <achievement.icon className={`w-8 h-8 ${achievement.color}`} />
                 </div>
-                <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{achievement.number}</div>
-                <div className="text-xs md:text-sm text-gray-600">{achievement.label}</div>
+                <div className="text-3xl font-bold text-gray-900 mb-2">{achievement.number}</div>
+                <div className="text-sm text-gray-600 font-medium">{achievement.label}</div>
               </div>
-            </div>
+            </motion.div>
           ))}
+        </motion.div>
+
+        {/* Year Filter */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          viewport={{ once: true }}
+          className="flex justify-center mb-12"
+        >
+          <div className="bg-white rounded-full shadow-lg p-2 flex items-center space-x-2">
+            <span className="text-sm font-medium text-gray-700 px-4">Filter by Year:</span>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="bg-transparent border-none text-sm font-medium text-primary-600 focus:outline-none focus:ring-0"
+            >
+              <option value="all">All Years</option>
+              {availableYears.map((year) => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
         </motion.div>
 
         {/* Student Cards */}
@@ -146,48 +195,87 @@ const ShiningStarsSection = () => {
           {shiningStars.map((student, index) => (
             <motion.div
               key={student.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden card-hover"
+              className="group"
             >
-              <div className="relative">
-                <img 
-                  src={getImageUrl(student.imageUrl)} 
-                  alt={student.name}
-                  className="w-full h-64 object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'data:image/svg+xml,%3Csvg width="400" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="400" height="400" fill="%2310B981"/%3E%3Ctext x="200" y="200" text-anchor="middle" fill="white" font-size="24"%3ESTUDENT%3C/text%3E%3C/svg%3E';
-                  }}
-                />
-                <div className="absolute top-4 right-4 bg-yellow-400 rounded-full px-3 py-1 flex items-center space-x-1">
-                  <Star className="w-4 h-4 text-white fill-current" />
-                  <span className="text-sm font-semibold text-white">Star</span>
-                </div>
-                <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 rounded-lg px-3 py-2">
-                  <div className="text-sm font-semibold text-gray-900">{student.program}</div>
-                  <div className="text-xs text-gray-600">GPA: {student.gpa}</div>
-                </div>
-              </div>
-              
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{student.name}</h3>
-                <p className="text-primary-600 font-semibold mb-3">{student.achievement}</p>
-                
-                <div className="mb-4">
-                  <Quote className="w-4 h-4 text-gray-400 mb-2" />
-                  <p className="text-gray-600 text-sm italic leading-relaxed">"{student.quote}"</p>
+              <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-3">
+                {/* Student Image */}
+                <div className="relative h-80 overflow-hidden bg-gray-100">
+                  <img 
+                    src={getImageUrl(student.imageUrl)} 
+                    alt={student.name}
+                    className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'data:image/svg+xml,%3Csvg width="400" height="400" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="400" height="400" fill="%2310B981"/%3E%3Ctext x="200" y="200" text-anchor="middle" fill="white" font-size="24"%3ESTUDENT%3C/text%3E%3C/svg%3E';
+                    }}
+                  />
+                  
+                  {/* Year Badge */}
+                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                    <div className="text-sm font-bold text-gray-900">{student.year}</div>
+                  </div>
+
+                  {/* Profession Badge */}
+                  <div className="absolute bottom-4 right-4 bg-primary-600/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                    <div className="text-sm font-bold text-white">{student.profession}</div>
+                  </div>
                 </div>
                 
-                <div className="space-y-1">
-                  {student.awards.map((award, awardIndex) => (
-                    <div key={awardIndex} className="flex items-center space-x-2">
-                      <Award className="w-3 h-3 text-yellow-500" />
-                      <span className="text-xs text-gray-600">{award}</span>
+                {/* Student Info */}
+                <div className="p-6">
+                  {/* Name with Icon */}
+                  <div className="mb-4">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                        <Star className="w-5 h-5 text-primary-600" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
+                        {student.name}
+                      </h3>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Year with Icon */}
+                  <div className="mb-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                        <Target className="w-3 h-3 text-green-600" />
+                      </div>
+                      <p className="text-green-700 font-semibold text-sm">
+                        Year: {student.year}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Program with Icon */}
+                  <div className="mb-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+                        <GraduationCap className="w-3 h-3 text-blue-600" />
+                      </div>
+                      <p className="text-blue-700 font-semibold text-sm">
+                        Program: Shining Star
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Institute */}
+                  {student.institute && (
+                    <div className="mb-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center">
+                          <GraduationCap className="w-3 h-3 text-gray-600" />
+                        </div>
+                        <p className="text-gray-700 font-medium text-sm">
+                          Institute: {student.institute}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>

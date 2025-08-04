@@ -10,10 +10,10 @@ const TestimonialsSection = () => {
 
   const testimonials = [
     {
-      name: "Ahmed Khan",
+      name: "Dr Waqar Saeed",
       program: "FSC Pre-Medical",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-      quote: "HIMS Degree College provided me with the perfect foundation for my medical career. The faculty's dedication and support were incredible. I'm now studying at a top medical university.",
+      quote: "HIMS Degree College has been a transformative journey , shaping me into confident individual. Exceptional teaching Factulty ,mentors, and guides have illuminated my path.",
       rating: 5,
       achievement: "Admitted to Medical College"
     },

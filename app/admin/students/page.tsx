@@ -25,12 +25,10 @@ interface Student {
   firstName: string
   lastName: string
   name: string
-  program: string
   imageUrl: string
-  achievement: string
-  gpa: string
-  quote: string
-  awards: string[]
+  year: string
+  profession: string
+  institute: string
   order: number
   status: string
   isActive: boolean
@@ -70,12 +68,6 @@ const StudentsPage = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
-
-    // Parse awards from comma-separated string
-    const awards = formData.get('awards') as string;
-    if (awards) {
-      formData.set('awards', JSON.stringify(awards.split(',').map(award => award.trim())));
-    }
 
     try {
       const { contentAPI } = await import('../../../services');
@@ -196,18 +188,15 @@ const StudentsPage = () => {
                     <span className="text-sm text-gray-600">Shining Star</span>
                   </div>
                 </div>
-                <p className="text-sm text-primary-600 font-semibold">{student.program}</p>
-                <p className="text-sm text-gray-600">{student.achievement}</p>
-                <p className="text-sm text-gray-500 mt-2">GPA: {student.gpa}</p>
-                <p className="text-sm text-gray-500 italic mt-2">"{student.quote}"</p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {student.awards?.map((award, index) => (
-                    <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
-                      <Award className="w-3 h-3 mr-1" />
-                      {award}
-                    </span>
-                  ))}
-                </div>
+                {student.profession && (
+                  <p className="text-sm text-gray-600 font-medium">{student.profession}</p>
+                )}
+                {student.year && (
+                  <p className="text-sm text-gray-500">Year: {student.year}</p>
+                )}
+                {student.institute && (
+                  <p className="text-sm text-gray-500">Institute: {student.institute}</p>
+                )}
                 <div className="flex items-center space-x-4 mt-2">
                   <span className="text-xs text-gray-500">Order: {student.order}</span>
                 </div>
@@ -264,57 +253,52 @@ const StudentsPage = () => {
                     name="name"
                     defaultValue={editingItem?.name}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder="Full Name"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Program</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
                   <input
-                    name="program"
-                    defaultValue={editingItem?.program}
+                    name="year"
+                    type="text"
+                    defaultValue={editingItem?.year}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder="e.g., 2023"
                     required
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Achievement</label>
-                  <input
-                    name="achievement"
-                    defaultValue={editingItem?.achievement}
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Profession</label>
+                  <select
+                    name="profession"
+                    defaultValue={editingItem?.profession}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     required
-                  />
+                  >
+                    <option value="">Select Profession</option>
+                    <option value="MBBS Doctor">MBBS Doctor</option>
+                    <option value="Engineer">Engineer</option>
+                    <option value="Software Engineer">Software Engineer</option>
+                    <option value="Data Scientist">Data Scientist</option>
+                    <option value="Dentist">Dentist</option>
+                    <option value="Civil Engineer">Civil Engineer</option>
+                    <option value="Electrical Engineer">Electrical Engineer</option>
+                    <option value="Mechanical Engineer">Mechanical Engineer</option>
+                  </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">GPA</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Institute</label>
                   <input
-                    name="gpa"
-                    defaultValue={editingItem?.gpa}
+                    name="institute"
+                    defaultValue={editingItem?.institute}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder="Current workplace or institute"
                     required
                   />
                 </div>
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Quote</label>
-                <textarea
-                  name="quote"
-                  defaultValue={editingItem?.quote}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  rows={3}
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Awards (comma-separated)</label>
-                <input
-                  name="awards"
-                  defaultValue={editingItem?.awards?.join(', ')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  placeholder="Academic Excellence, Leadership Award, Community Service"
-                />
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Order</label>
@@ -322,6 +306,15 @@ const StudentsPage = () => {
                   name="order"
                   type="number"
                   defaultValue={editingItem?.order || 0}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                <input
+                  name="year"
+                  type="text"
+                  defaultValue={editingItem?.year}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
               </div>

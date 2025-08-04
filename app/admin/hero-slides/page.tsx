@@ -104,12 +104,20 @@ const HeroSlidesPage = () => {
       // Step 1: Upload image first if a new image is selected
       if (imageFile && imageFile.size > 0) {
         setIsUploading(true)
-        setUploadProgress(50) // Show progress
+        setUploadProgress(10) // Start progress
         
         console.log('📤 Step 1: Uploading image to backend...')
+        console.log('📏 File size:', Math.round(imageFile.size / 1024 / 1024 * 100) / 100, 'MB')
         
         try {
           const { contentAPI } = await import('../../../services')
+          
+          // Show compression progress for large files
+          if (imageFile.size > 10 * 1024 * 1024) { // >10MB
+            setUploadProgress(20)
+            console.log('📦 Large file detected, compression in progress...')
+          }
+          
           const uploadResult = await contentAPI.uploadImage(imageFile, 'hims-college/hero-slides')
           
           slideData.imageUrl = uploadResult.imageUrl
@@ -121,9 +129,37 @@ const HeroSlidesPage = () => {
           
           // Handle specific error types
           if (uploadError.message && uploadError.message.includes('413')) {
-            alert('Image file is too large. Please try a smaller image (under 50MB).')
+            alert(`Image file is too large (${Math.round(imageFile.size / 1024 / 1024)}MB). Please try a smaller image (under 100MB).`)
+          } else if (uploadError.message && uploadError.message.includes('IDAT stream error') || 
+                     uploadError.message && uploadError.message.includes('pngload_buffer')) {
+            // PNG processing error - offer fallback
+            const useDirectUpload = confirm(
+              'PNG processing failed. This can happen with certain PNG files. ' +
+              'Would you like to try uploading without compression? (This may result in a larger file size)'
+            )
+            
+            if (useDirectUpload) {
+              try {
+                console.log('🔄 Attempting direct upload without compression...')
+                setUploadProgress(30)
+                
+                const { contentAPI } = await import('../../../services')
+                const uploadResult = await contentAPI.uploadImageDirect(imageFile, 'hims-college/hero-slides')
+                
+                slideData.imageUrl = uploadResult.imageUrl
+                console.log('✅ Direct upload successful:', uploadResult.imageUrl)
+                setUploadProgress(100)
+              } catch (directUploadError: any) {
+                console.error('❌ Direct upload also failed:', directUploadError)
+                alert(`Direct upload failed: ${directUploadError.message}\n\nPlease try:\n1. Converting the image to JPEG format\n2. Using a smaller image\n3. Contacting support if the issue persists`)
+                return
+              }
+            } else {
+              alert('Upload cancelled. Please try converting the image to JPEG format or use a different image.')
+              return
+            }
           } else if (uploadError.message && uploadError.message.includes('compression')) {
-            alert('Failed to process image. Please try a different image format.')
+            alert('Failed to process image. Please try a different image format (JPEG recommended).')
           } else {
             alert(`Image upload failed: ${uploadError.message}`)
           }
