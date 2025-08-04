@@ -45,7 +45,8 @@ const ShiningStarsSection = () => {
             imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop&crop=face&q=80",
             year: "2023",
             profession: "MBBS Doctor",
-            institute: "Lahore General Hospital"
+            institute: "Lahore General Hospital",
+            program: "Shining Star"
           },
           {
             id: 2,
@@ -53,7 +54,8 @@ const ShiningStarsSection = () => {
             imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop&crop=face&q=80",
             year: "2023",
             profession: "Software Engineer",
-            institute: "Google Pakistan"
+            institute: "Google Pakistan",
+            program: "Shining Star"
           },
           {
             id: 3,
@@ -61,7 +63,8 @@ const ShiningStarsSection = () => {
             imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=500&fit=crop&crop=face&q=80",
             year: "2023",
             profession: "Data Scientist",
-            institute: "Microsoft Pakistan"
+            institute: "Microsoft Pakistan",
+            program: "Shining Star"
           },
           {
             id: 4,
@@ -69,7 +72,8 @@ const ShiningStarsSection = () => {
             imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=500&h=500&fit=crop&crop=face&q=80",
             year: "2022",
             profession: "Dentist",
-            institute: "Islamabad Dental Hospital"
+            institute: "Islamabad Dental Hospital",
+            program: "Shining Star"
           }
         ]);
       } finally {
@@ -258,7 +262,7 @@ const ShiningStarsSection = () => {
                         <GraduationCap className="w-3 h-3 text-blue-600" />
                       </div>
                       <p className="text-blue-700 font-semibold text-sm">
-                        Program: Shining Star
+                        Program: {student.program}
                       </p>
                     </div>
                   </div>
