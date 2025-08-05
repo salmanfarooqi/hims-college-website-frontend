@@ -47,9 +47,16 @@ const TeachersPage = () => {
 
   const fetchTeachers = async () => {
     try {
+      setIsLoading(true)
       const { contentAPI } = await import('../../../services')
+      
+      // Add cache busting parameter
+      const timestamp = Date.now()
+      console.log('🔄 Fetching teachers with cache busting:', timestamp)
+      
       const data = await contentAPI.teachers.getAll()
       console.log('📥 Fetched teachers data:', data)
+      
       // Map the data to ensure we have both _id and id
       const mappedData = data.map((teacher: any) => ({
         ...teacher,
@@ -58,8 +65,14 @@ const TeachersPage = () => {
       }))
       console.log('🔄 Mapped teachers data:', mappedData)
       setTeachers(mappedData)
+      
+      // Update refresh key to force re-render
+      setRefreshKey(prev => prev + 1)
+      
     } catch (error) {
       console.error('Failed to fetch teachers:', error)
+      // Show error to user
+      alert('Failed to fetch teachers. Please try refreshing the page.')
     } finally {
       setIsLoading(false)
     }
@@ -149,14 +162,29 @@ const TeachersPage = () => {
       // Show success message
       alert('Teacher updated successfully!')
       
-      // Force refresh with a small delay to ensure cache is cleared
-      setTimeout(() => {
-        fetchTeachers()
-        // Trigger storage event to refresh other components
-        localStorage.setItem('teachersUpdated', Date.now().toString())
-        // Force browser cache refresh for images
-        window.location.reload()
-      }, 1000)
+      // Clear any cached data and refresh
+      setRefreshKey(prev => prev + 1)
+      
+      // Force refresh with cache busting
+      setTimeout(async () => {
+        try {
+          await fetchTeachers()
+          // Trigger storage event to refresh other components
+          localStorage.setItem('teachersUpdated', Date.now().toString())
+          // Force browser cache refresh for images
+          if ('caches' in window) {
+            caches.keys().then(names => {
+              names.forEach(name => {
+                caches.delete(name)
+              })
+            })
+          }
+        } catch (error) {
+          console.error('Error refreshing teachers:', error)
+          // Fallback to page reload if fetch fails
+          window.location.reload()
+        }
+      }, 500)
       setShowModal(false)
       setEditingItem(null)
       resetImageState()
