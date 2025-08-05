@@ -135,6 +135,9 @@ const TeachersPage = () => {
         imageUrl
       }
 
+      console.log('📤 Sending teacher data to API:', teacherData)
+      console.log('🖼️ Image URL being sent:', imageUrl)
+
       const { contentAPI } = await import('../../../services')
       
       if (editingItem) {
@@ -143,6 +146,9 @@ const TeachersPage = () => {
         await contentAPI.teachers.createWithData(teacherData)
       }
 
+      // Show success message
+      alert('Teacher updated successfully!')
+      
       // Force refresh with a small delay to ensure cache is cleared
       setTimeout(() => {
         fetchTeachers()
@@ -500,8 +506,8 @@ const TeachersPage = () => {
                       <div className="space-y-2">
                         <p className="text-sm font-medium text-gray-700">Current Image:</p>
                         <img 
-                          key={`current-${editingItem.id}-${Date.now()}`}
-                          src={getImageUrl(editingItem.imageUrl, true) || getDefaultProfileImageUrl(editingItem.name, 'teacher')} 
+                          key={`current-${editingItem.id}-${Date.now()}-${Math.random()}`}
+                          src={`${getImageUrl(editingItem.imageUrl, true)}?t=${Date.now()}` || getDefaultProfileImageUrl(editingItem.name, 'teacher')} 
                           alt="Current" 
                           className="w-full h-32 object-cover rounded-lg shadow-sm border border-gray-200"
                           onError={(e) => {

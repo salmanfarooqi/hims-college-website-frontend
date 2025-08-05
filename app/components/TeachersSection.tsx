@@ -224,7 +224,7 @@ const TeachersSection = () => {
                 <div className="relative h-80 overflow-hidden bg-gray-100">
                   <img
                     key={`${teacher._id}-${teacher.imageUrl}-${refreshKey}-${Date.now()}`}
-                    src={getImageUrl(teacher.imageUrl, true) || getDefaultProfileImageUrl(teacher.name, 'teacher')}
+                    src={`${getImageUrl(teacher.imageUrl, true)}?t=${Date.now()}` || getDefaultProfileImageUrl(teacher.name, 'teacher')}
                     alt={teacher.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {

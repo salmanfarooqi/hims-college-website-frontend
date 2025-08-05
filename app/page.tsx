@@ -6,6 +6,8 @@ import AboutSection from './components/AboutSection'
 import ProgramsSection from './components/ProgramsSection'
 import TeachersSection from './components/TeachersSection'
 import FacilitiesSection from './components/FacilitiesSection'
+import HostelFacilitiesSection from './components/HostelFacilitiesSection'
+import FeeStructureSection from './components/FeeStructureSection'
 import ShiningStarsSection from './components/ShiningStarsSection'
 import TestimonialsSection from './components/TestimonialsSection'
 import CTASection from './components/CTASection'
@@ -20,6 +22,8 @@ export default function HomePage() {
       <ProgramsSection />
       <TeachersSection />
       <FacilitiesSection />
+      <HostelFacilitiesSection />
+      <FeeStructureSection />
       <ShiningStarsSection />
       <TestimonialsSection />
       <CTASection />

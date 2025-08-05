@@ -326,6 +326,40 @@ export const contentAPI = {
       });
       return handleResponse(response);
     },
+    // New method - specifically for updating teachers with image URLs
+    updateWithUrl: async (id: string, teacherData: {
+      name?: string;
+      position?: string;
+      expertise?: string;
+      description?: string;
+      rating?: number;
+      order?: number;
+      isActive?: boolean;
+      imageUrl?: string;
+      email?: string;
+      phone?: string;
+      department?: string;
+      qualifications?: string;
+      experience?: string;
+    }) => {
+      const url = `${API_BASE_URL}/api/content/admin/teachers-url/${id}`;
+      const headers = getAuthHeaders();
+      
+      console.log('🌐 API Call: PUT', url);
+      console.log('📋 Headers:', headers);
+      console.log('📤 Data:', teacherData);
+      
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(teacherData)
+      });
+      
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      return handleResponse(response);
+    },
     delete: async (id: string) => {
       const response = await fetch(`${API_BASE_URL}/api/content/admin/teachers/${id}`, {
         method: 'DELETE',
