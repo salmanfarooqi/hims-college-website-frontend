@@ -27,12 +27,35 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const router = useRouter()
   const pathname = usePathname()
 
-  useEffect(() => {
+  // Check authentication on every render to ensure it's always up to date
+  const checkAuthStatus = () => {
     const token = localStorage.getItem('adminToken')
-    if (token) {
-      setIsAuthenticated(true)
+    const isAuth = !!token
+    console.log('🔐 Auth check - Token present:', !!token, 'Is authenticated:', isAuth)
+    return isAuth
+  }
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const authStatus = checkAuthStatus()
+      console.log('🔄 Setting auth state to:', authStatus)
+      setIsAuthenticated(authStatus)
+      setIsLoading(false)
     }
-    setIsLoading(false)
+
+    console.log('🚀 Layout useEffect running - checking auth...')
+    checkAuth()
+
+    // Listen for storage changes (in case token is removed from another tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'adminToken') {
+        console.log('📦 Storage change detected for adminToken')
+        checkAuth()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
   // Close sidebar when route changes on mobile
@@ -42,6 +65,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken')
+    setIsAuthenticated(false)
     router.push('/admin')
   }
 
@@ -65,7 +89,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     )
   }
 
-  if (!isAuthenticated) {
+  // Always check current auth status before rendering
+  const currentAuthStatus = checkAuthStatus()
+  console.log('🎨 Rendering layout - Current auth status:', currentAuthStatus, 'State auth status:', isAuthenticated)
+  
+  if (!currentAuthStatus) {
+    console.log('❌ Not authenticated - rendering children only')
     return <>{children}</>
   }
 

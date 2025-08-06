@@ -1,10 +1,10 @@
 // API Configuration - Direct URL configuration (no env dependency)
-const API_BASE_URL = 'https://hims-college-backend.vercel.app';
+// const API_BASE_URL = 'https://hims-college-backend.vercel.app';
 // const API_BASE_URL = 'https://hims-college-backend.vercel.app'; // Local development URL
 
 // For production, change this to your production URL:
 // const API_BASE_URL = 'https://your-production-api.com';
-// const API_BASE_URL = 'http://localhost:5000'; // Local development URL
+const API_BASE_URL = 'http://localhost:5000'; // Local development URL
 
 // Helper function to get full image URL with cache busting
 export const getImageUrl = (imagePath: string, forceRefresh: boolean = false) => {
@@ -287,17 +287,29 @@ export const contentAPI = {
       qualifications?: string;
       experience?: string;
     }) => {
+      // Convert JSON data to FormData for compatibility with existing endpoint
+      const formData = new FormData();
+      
+      // Add all fields to FormData
+      formData.append('name', teacherData.name);
+      formData.append('position', teacherData.position);
+      formData.append('expertise', teacherData.expertise);
+      formData.append('description', teacherData.description);
+      formData.append('rating', teacherData.rating.toString());
+      formData.append('order', teacherData.order.toString());
+      formData.append('isActive', teacherData.isActive.toString());
+      
+      // Add optional fields if provided
+      if (teacherData.imageUrl) formData.append('imageUrl', teacherData.imageUrl);
+      if (teacherData.email) formData.append('email', teacherData.email);
+      if (teacherData.phone) formData.append('phone', teacherData.phone);
+      if (teacherData.department) formData.append('department', teacherData.department);
+      if (teacherData.qualifications) formData.append('qualifications', teacherData.qualifications);
+      if (teacherData.experience) formData.append('experience', teacherData.experience);
+
+      const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
       const response = await fetch(`${API_BASE_URL}/api/content/admin/teachers`, {
         method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(teacherData)
-      });
-      return handleResponse(response);
-    },
-    update: async (id: string, formData: FormData) => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
-      const response = await fetch(`${API_BASE_URL}/api/content/admin/teachers/${id}`, {
-        method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
       });

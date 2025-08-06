@@ -192,50 +192,7 @@ const AboutPage = () => {
       </section>
 
       {/* Timeline */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Our <span className="gradient-text">Journey</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              A timeline of our growth and achievements over the years.
-            </p>
-          </motion.div>
-
-          <div className="relative">
-            <div className="absolute left-1/2 transform -translate-x-px h-full w-0.5 bg-primary-200"></div>
-            <div className="space-y-8">
-              {timeline.map((item, index) => (
-                <motion.div
-                  key={item.year}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
-                >
-                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                    <div className="bg-white rounded-xl p-6 shadow-lg">
-                      <div className="text-2xl font-bold text-primary-600 mb-2">{item.year}</div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                      <p className="text-gray-600">{item.description}</p>
-                    </div>
-                  </div>
-                  <div className="w-4 h-4 bg-primary-600 rounded-full border-4 border-white shadow-lg"></div>
-                  <div className="w-1/2"></div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+    
 
       {/* Stats */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-600 to-primary-800 text-white">
@@ -255,7 +212,7 @@ const AboutPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { number: "25+", label: "Years of Excellence", icon: GraduationCap },
               { number: "10,000+", label: "Graduates", icon: Users },

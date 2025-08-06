@@ -15,7 +15,7 @@ const ApplyPage = () => {
     {
       step: "02",
       title: "Pay Application Fee",
-      description: "Pay Rs. 200 application fee via EasyPaisa and upload transaction receipt",
+      description: "Pay Rs. 500 application fee via EasyPaisa and upload transaction receipt",
       icon: CreditCard
     },
     {
@@ -40,7 +40,7 @@ const ApplyPage = () => {
 
   const requirements = [
     "Completed application form",
-    "Application fee payment (Rs. 200)",
+    "Application fee payment (Rs. 500)",
     "EasyPaisa transaction receipt",
     "Valid transaction ID",
     "Previous academic records",
@@ -220,7 +220,7 @@ const ApplyPage = () => {
                   <h3 className="text-xl font-bold text-gray-900">Application Fee</h3>
                 </div>
                 <div className="bg-primary-50 rounded-lg p-4 mb-4">
-                  <p className="text-3xl font-bold text-primary-800">Rs. 200</p>
+                  <p className="text-3xl font-bold text-primary-800">Rs. 500</p>
                   <p className="text-sm text-primary-600">One-time application fee</p>
                 </div>
                 <ul className="space-y-2 text-sm text-gray-600">
@@ -252,7 +252,7 @@ const ApplyPage = () => {
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start">
                     <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-1 rounded mr-2 mt-0.5">1</span>
-                    <span className="text-gray-600">Send Rs. 200 to our EasyPaisa account</span>
+                    <span className="text-gray-600">Send Rs. 500 to our EasyPaisa account</span>
                   </div>
                   <div className="flex items-start">
                     <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-1 rounded mr-2 mt-0.5">2</span>

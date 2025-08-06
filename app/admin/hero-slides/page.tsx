@@ -286,12 +286,8 @@ const HeroSlidesPage = () => {
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
                 <span>Testing...</span>
               </>
-            ) : (
-              <>
-                <Upload className="w-4 h-4" />
-                <span>Test Image Upload</span>
-              </>
-            )}
+            ) :null
+            }
           </button>
 
           <button

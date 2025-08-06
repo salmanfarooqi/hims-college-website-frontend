@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Star, ChevronLeft, ChevronRight, Users, GraduationCap, User } from 'lucide-react'
+import { Star, ChevronLeft, ChevronRight, Users, GraduationCap, User, BookOpen, Award } from 'lucide-react'
 import { getImageUrl } from '../../services'
 import { getDefaultProfileImageUrl } from '../../components/DefaultProfileImage'
 
@@ -263,18 +263,16 @@ const TeachersSection = () => {
                     </p>
                   </div>
 
-                  {/* Department */}
-                  <div className="mb-3">
-                    <div className="inline-block bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
-                      {teacher.department || teacher.expertise}
-                    </div>
-                  </div>
-
-                  {/* Education */}
-                  {teacher.education && (
-                    <div className="mb-4">
-                      <p className="text-sm text-gray-600 font-medium">Education:</p>
-                      <p className="text-sm text-gray-700">{teacher.education}</p>
+                  {/* Expertise with Icon */}
+                  {teacher.expertise && (
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <Award className="w-4 h-4 text-green-600" />
+                      </div>
+                      <div>
+                        {/* <p className="text-sm text-gray-600 font-medium">Expertise</p> */}
+                        <p className="text-sm text-gray-700">{teacher.expertise}</p>
+                      </div>
                     </div>
                   )}
                   

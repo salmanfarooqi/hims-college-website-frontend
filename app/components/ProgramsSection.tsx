@@ -189,7 +189,7 @@ const ProgramsSection = () => {
             Program <span className="text-yellow-300">Success</span>
           </h3>
           
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}

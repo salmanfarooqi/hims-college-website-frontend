@@ -21,6 +21,38 @@ const HeroSection = () => {
   const [slides, setSlides] = useState<HeroSlide[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+   const [imagesLoaded, setImagesLoaded] = useState<boolean[]>([])
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false)
+
+  // Preload images function
+  const preloadImages = (slides: HeroSlide[]) => {
+    const imagePromises = slides.map((slide, index) => {
+      return new Promise<void>((resolve, reject) => {
+        const img = new window.Image()
+        img.onload = () => {
+          setImagesLoaded(prev => {
+            const newState = [...prev]
+            newState[index] = true
+            return newState
+          })
+          resolve()
+        }
+        img.onerror = () => {
+          setImagesLoaded(prev => {
+            const newState = [...prev]
+            newState[index] = true // Mark as loaded even on error to prevent infinite loading
+            return newState
+          })
+          resolve() // Don't reject to allow other images to load
+        }
+        img.src = getImageUrl(slide.imageUrl)
+      })
+    })
+
+    Promise.all(imagePromises).then(() => {
+      setAllImagesLoaded(true)
+    })
+  }
 
   // Fetch hero slides from API
   useEffect(() => {
@@ -39,6 +71,9 @@ const HeroSection = () => {
             description: slide.description
           }));
           setSlides(mappedSlides);
+          setImagesLoaded(new Array(mappedSlides.length).fill(false))
+          // Start preloading images
+          preloadImages(mappedSlides)
         } else {
           setError('No hero slides found. Please add slides from the admin panel.');
         }
@@ -53,15 +88,15 @@ const HeroSection = () => {
     fetchSlides()
   }, [])
 
-  // Auto-rotate slides every 6 seconds
+  // Auto-rotate slides every 6 seconds (only after images are loaded)
   useEffect(() => {
-    if (slides.length === 0) return
+    if (slides.length === 0 || !allImagesLoaded) return
     
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 6000)
     return () => clearInterval(timer)
-  }, [slides.length])
+  }, [slides.length, allImagesLoaded])
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -102,13 +137,28 @@ const HeroSection = () => {
     { number: "5+", label: "Programs Offered", icon: Award }
   ]
 
-  if (loading) {
+  if (loading || !allImagesLoaded) {
     return (
       <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-primary-50 to-primary-100">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-600 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-lg text-primary-700 font-medium">Loading hero slides...</p>
+            <p className="text-lg text-primary-700 font-medium">
+              {loading ? 'Loading hero slides...' : 'Preparing images...'}
+            </p>
+            {!loading && slides.length > 0 && (
+              <div className="mt-4">
+                <div className="w-64 bg-gray-200 rounded-full h-2 mx-auto">
+                  <div 
+                    className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${(imagesLoaded.filter(Boolean).length / slides.length) * 100}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-primary-600 mt-2">
+                  {imagesLoaded.filter(Boolean).length} of {slides.length} images loaded
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -185,11 +235,14 @@ const HeroSection = () => {
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="absolute inset-0"
           >
-            <img
+            <Image
               src={getImageUrl(slides[currentSlide].imageUrl)}
               alt={slides[currentSlide].title}
-              className="w-full h-full object-cover"
-              style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+              fill
+              className="object-cover"
+              priority={currentSlide === 0}
+              quality={90}
+              sizes="100vw"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.src = 'data:image/svg+xml,%3Csvg width="1200" height="600" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="1200" height="600" fill="%23374151"/%3E%3Ctext x="600" y="300" text-anchor="middle" fill="white" font-size="32"%3EHero Image%3C/text%3E%3C/svg%3E';
@@ -207,32 +260,52 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
               className="max-w-5xl mx-auto"
             >
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
                 className="inline-block px-4 py-2 bg-blue-500/20 border border-blue-400/30 rounded-full text-blue-100 text-sm font-medium mb-6 backdrop-blur-sm"
               >
                 <Star className="w-4 h-4 inline mr-2" />
                 Excellence in Education Since 2006
               </motion.div>
               
-              <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold mb-6 leading-tight">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="text-4xl md:text-6xl lg:text-8xl font-bold mb-6 leading-tight"
+              >
                 <span className="block">{slides[currentSlide].title}</span>
-              </h1>
+              </motion.h1>
               
-              <p className="text-xl md:text-2xl lg:text-3xl font-light mb-4 text-blue-100 leading-relaxed">
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                className="text-xl md:text-2xl lg:text-3xl font-light mb-4 text-blue-100 leading-relaxed"
+              >
                 {slides[currentSlide].subtitle}
-              </p>
+              </motion.p>
               
-              <p className="text-lg md:text-xl lg:text-2xl mb-10 max-w-4xl mx-auto leading-relaxed text-blue-50 opacity-90">
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="text-lg md:text-xl lg:text-2xl mb-10 max-w-4xl mx-auto leading-relaxed text-blue-50 opacity-90"
+              >
                 {slides[currentSlide].description}
-              </p>
+              </motion.p>
               
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.9 }}
+                className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center"
+              >
                 <Link href="/apply" className="group inline-flex items-center px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-full text-base sm:text-lg transition-all duration-300 transform hover:scale-105 shadow-xl">
                   <span>Apply Now</span>
                   <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -242,7 +315,7 @@ const HeroSection = () => {
                   <span>Learn More</span>
                   <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -363,4 +436,4 @@ const HeroSection = () => {
   )
 }
 
-export default HeroSection 
+export default HeroSection

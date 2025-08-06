@@ -103,10 +103,14 @@ const AdminDashboard = () => {
     try {
       const { adminAPI } = await import('../../services')
       const data = await adminAPI.login(email, password)
+      console.log('✅ Login successful - setting token:', data.token ? 'Present' : 'Missing')
       localStorage.setItem('adminToken', data.token)
       setIsAuthenticated(true)
       fetchApplications()
       fetchStatistics()
+      console.log('🔄 Reloading page to update layout...')
+      // Force a page refresh to ensure the layout re-renders with the new auth state
+      window.location.reload()
     } catch (error: any) {
       console.error('Login failed:', error)
       setLoginError(error.message || 'Login failed. Please check your credentials.')

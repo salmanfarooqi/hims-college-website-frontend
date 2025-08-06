@@ -8,7 +8,8 @@ import Image from 'next/image'
 
 interface Student {
   id: number
-  name: string
+  firstName: string,
+  lastName: string
   imageUrl: string
   year: string
   profession: string
@@ -39,42 +40,7 @@ const ShiningStarsSection = () => {
         console.error('Error fetching students:', error);
         // Fallback to default students
         setShiningStars([
-          {
-            id: 1,
-            name: "Ahmed Khan",
-            imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop&crop=face&q=80",
-            year: "2023",
-            profession: "MBBS Doctor",
-            institute: "Lahore General Hospital",
-            program: "Shining Star"
-          },
-          {
-            id: 2,
-            name: "Fatima Ali",
-            imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&h=500&fit=crop&crop=face&q=80",
-            year: "2023",
-            profession: "Software Engineer",
-            institute: "Google Pakistan",
-            program: "Shining Star"
-          },
-          {
-            id: 3,
-            name: "Usman Hassan",
-            imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=500&fit=crop&crop=face&q=80",
-            year: "2023",
-            profession: "Data Scientist",
-            institute: "Microsoft Pakistan",
-            program: "Shining Star"
-          },
-          {
-            id: 4,
-            name: "Ayesha Malik",
-            imageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=500&h=500&fit=crop&crop=face&q=80",
-            year: "2022",
-            profession: "Dentist",
-            institute: "Islamabad Dental Hospital",
-            program: "Shining Star"
-          }
+       
         ]);
       } finally {
         setLoading(false);
@@ -210,7 +176,7 @@ const ShiningStarsSection = () => {
                 <div className="relative h-80 overflow-hidden bg-gray-100">
                   <img 
                     src={getImageUrl(student.imageUrl)} 
-                    alt={student.name}
+                    alt={student.firstName}
                     className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
@@ -238,7 +204,7 @@ const ShiningStarsSection = () => {
                         <Star className="w-5 h-5 text-primary-600" />
                       </div>
                       <h3 className="text-2xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
-                        {student.name}
+                        {student.firstName+" " + student.lastName}
                       </h3>
                     </div>
                   </div>

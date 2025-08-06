@@ -113,7 +113,7 @@ const HostelFacilitiesSection = () => {
             Hostel <span className="text-yellow-300">Highlights</span>
           </h3>
           
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {hostelStats.map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -134,26 +134,7 @@ const HostelFacilitiesSection = () => {
         </motion.div>
 
         {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mt-12"
-        >
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Ready to Experience Our Hostel?
-            </h3>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Join our vibrant community and enjoy a comfortable, secure, and supportive living environment 
-              that enhances your academic journey.
-            </p>
-            <button className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
-              Apply for Hostel
-            </button>
-          </div>
-        </motion.div>
+     
       </div>
     </section>
   )

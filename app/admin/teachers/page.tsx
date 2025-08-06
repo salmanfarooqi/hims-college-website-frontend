@@ -14,16 +14,15 @@ import {
   Star,
   RefreshCw
 } from 'lucide-react'
+import { toast } from 'react-toastify'
 import { getImageUrl } from '../../../services'
-import { uploadTeacherImage } from '../../../utils/imageUpload'
-import { getDefaultProfileImageUrl } from '../../../components/DefaultProfileImage'
 
 interface Teacher {
   id: string
   name: string
   position: string
   expertise: string
-  imageUrl: string
+  imageUrl?: string
   rating: number
   description: string
   order: number
@@ -35,7 +34,6 @@ const TeachersPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingItem, setEditingItem] = useState<Teacher | null>(null)
-  const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>('')
@@ -54,7 +52,8 @@ const TeachersPage = () => {
       const timestamp = Date.now()
       console.log('🔄 Fetching teachers with cache busting:', timestamp)
       
-      const data = await contentAPI.teachers.getAll()
+      // Use admin endpoint to get ALL teachers (not just active ones)
+      const data = await contentAPI.teachers.getAllAdmin()
       console.log('📥 Fetched teachers data:', data)
       
       // Map the data to ensure we have both _id and id
@@ -72,7 +71,7 @@ const TeachersPage = () => {
     } catch (error) {
       console.error('Failed to fetch teachers:', error)
       // Show error to user
-      alert('Failed to fetch teachers. Please try refreshing the page.')
+      toast.error('Failed to fetch teachers. Please try refreshing the page.')
     } finally {
       setIsLoading(false)
     }
@@ -107,7 +106,6 @@ const TeachersPage = () => {
   const resetImageState = () => {
     setSelectedImage(null)
     setPreviewUrl('')
-    setUploadProgress(0)
     setIsUploading(false)
   }
 
@@ -121,31 +119,28 @@ const TeachersPage = () => {
       setIsUploading(true)
       let imageUrl = editingItem?.imageUrl || ''
 
-      // Upload image to Cloudinary if a new image is selected
+      // Upload image to backend if a new image is selected
       if (selectedImage) {
-        const uploadResult = await uploadTeacherImage(selectedImage, (progress) => {
-          setUploadProgress(progress)
-        })
-
-        if (uploadResult.success && uploadResult.imageUrl) {
+        try {
+          const { contentAPI } = await import('../../../services')
+          const uploadResult = await contentAPI.uploadImage(selectedImage, 'hims-college/teachers')
           imageUrl = uploadResult.imageUrl
-          console.log('✅ Teacher image uploaded to Cloudinary:', imageUrl)
-          console.log('🔄 Image URL will be updated in database:', imageUrl)
-        } else {
-          throw new Error(uploadResult.error || 'Image upload failed')
+          console.log('✅ Teacher image uploaded to backend:', imageUrl)
+        } catch (uploadError) {
+          console.error('Image upload failed:', uploadError)
+          throw new Error('Image upload failed. Please try again.')
         }
       }
 
-      // Prepare teacher data
+      // Prepare teacher data with essential fields only
       const teacherData = {
         name: formData.get('name') as string,
         position: formData.get('position') as string,
         expertise: formData.get('expertise') as string,
-        description: formData.get('description') as string,
         rating: parseFloat(formData.get('rating') as string) || 5,
-        order: parseInt(formData.get('order') as string) || 0,
-        isActive: formData.get('isActive') === 'true',
-        imageUrl
+        order: parseInt(formData.get('order') as string) || 1,
+        isActive: true, // Default to active
+        imageUrl: imageUrl || undefined // Only include if not empty
       }
 
       console.log('📤 Sending teacher data to API:', teacherData)
@@ -155,12 +150,11 @@ const TeachersPage = () => {
       
       if (editingItem) {
         await contentAPI.teachers.updateWithData(editingItem.id, teacherData)
+        toast.success('Teacher updated successfully!')
       } else {
         await contentAPI.teachers.createWithData(teacherData)
+        toast.success('Teacher created successfully!')
       }
-
-      // Show success message
-      alert('Teacher updated successfully!')
       
       // Clear any cached data and refresh
       setRefreshKey(prev => prev + 1)
@@ -190,52 +184,73 @@ const TeachersPage = () => {
       resetImageState()
     } catch (error: any) {
       console.error('Save failed:', error)
-      alert(error.message || 'Save failed')
+      toast.error(error.message || 'Save failed')
     } finally {
       setIsUploading(false)
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this teacher?')) return
+    // Use toast for confirmation instead of confirm
+    const confirmDelete = () => {
+      toast.dismiss()
+      performDelete(id)
+    }
 
-    try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch(`https://hims-college-backend.vercel.app/api/content/admin/teachers/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+    const cancelDelete = () => {
+      toast.dismiss()
+    }
 
-      if (response.ok) {
-        fetchTeachers()
-      } else {
-        alert('Failed to delete')
+    toast.warn(
+      <div className="flex flex-col space-y-3">
+        <p>Are you sure you want to delete this teacher?</p>
+        <div className="flex space-x-2">
+          <button
+            onClick={confirmDelete}
+            className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+          >
+            Delete
+          </button>
+          <button
+            onClick={cancelDelete}
+            className="px-3 py-1 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: false,
       }
+    )
+  }
+
+  const performDelete = async (id: string) => {
+    try {
+      const { contentAPI } = await import('../../../services')
+      await contentAPI.teachers.delete(id)
+      toast.success('Teacher deleted successfully!')
+      fetchTeachers()
     } catch (error) {
       console.error('Delete failed:', error)
-      alert('Delete failed')
+      toast.error('Delete failed')
     }
   }
 
   const toggleActive = async (id: string, isActive: boolean) => {
     try {
-      const token = localStorage.getItem('adminToken')
-      const response = await fetch(`https://hims-college-backend.vercel.app/api/content/admin/teachers/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ isActive: !isActive })
-      })
-
-      if (response.ok) {
-        fetchTeachers()
-      }
+      const { contentAPI } = await import('../../../services')
+      await contentAPI.teachers.updateWithData(id, { isActive: !isActive })
+      toast.success(`Teacher ${!isActive ? 'activated' : 'deactivated'} successfully!`)
+      fetchTeachers()
     } catch (error) {
       console.error('Toggle failed:', error)
+      toast.error('Failed to update teacher status')
     }
   }
 
@@ -309,16 +324,20 @@ const TeachersPage = () => {
             <div className="flex items-center space-x-6">
               {/* Teacher Image */}
               <div className="relative">
-                <img 
-                  key={`${teacher.id}-${teacher.imageUrl}-${refreshKey}-${Date.now()}`}
-                  src={getImageUrl(teacher.imageUrl, true) || getDefaultProfileImageUrl(teacher.name, 'teacher')}
-                  alt={teacher.name}
-                  className="w-24 h-24 object-cover rounded-full shadow-md"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = getDefaultProfileImageUrl(teacher.name, 'teacher');
-                  }}
-                />
+                {teacher.imageUrl ? (
+                  <img 
+                    key={`${teacher.id}-${teacher.imageUrl}-${refreshKey}-${Date.now()}`}
+                    src={getImageUrl(teacher.imageUrl, true)}
+                    alt={teacher.name}
+                    className="w-24 h-24 object-cover rounded-full shadow-md"
+                  />
+                ) : (
+                  <div className="w-24 h-24 bg-gray-200 rounded-full shadow-md flex items-center justify-center">
+                    <span className="text-gray-500 text-lg font-semibold">
+                      {teacher.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                    </span>
+                  </div>
+                )}
                 {/* Status Indicator */}
                 <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white ${
                   teacher.isActive ? 'bg-green-500' : 'bg-gray-400'
@@ -349,6 +368,7 @@ const TeachersPage = () => {
                     {teacher.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </div>
+
               </div>
 
               {/* Action Buttons */}
@@ -455,33 +475,24 @@ const TeachersPage = () => {
                 </div>
               </div>
 
-              {/* Description */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-                <textarea
-                  name="description"
-                  defaultValue={editingItem?.description}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
-                  placeholder="Brief description about the teacher's expertise and experience..."
-                />
-              </div>
-
-              {/* Order */}
+              {/* Order Field */}
               <div className="mb-6">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Display Order</label>
                 <input
                   name="order"
                   type="number"
-                  defaultValue={editingItem?.order || 0}
+                  min="1"
+                  defaultValue={editingItem?.order || 1}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  placeholder="0"
+                  placeholder="Enter display order (1, 2, 3...)"
+                  required
                 />
+                <p className="text-sm text-gray-500 mt-1">Lower numbers will appear first in the list</p>
               </div>
 
               {/* Image Upload */}
               <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Profile Image</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Profile Image (Optional)</label>
                 <div className="space-y-4">
                   <input
                     type="file"
@@ -489,19 +500,17 @@ const TeachersPage = () => {
                     onChange={handleImageSelect}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                   />
+                  <p className="text-sm text-gray-500">Leave empty if you don't want to upload an image. Teachers without images will show initials instead.</p>
                   
                   {/* Upload Progress */}
                   {isUploading && (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Uploading to Cloudinary...</span>
-                        <span className="text-primary-600 font-medium">{uploadProgress}%</span>
+                        <span className="text-gray-600">Uploading image...</span>
+                        <span className="text-primary-600 font-medium">Processing...</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${uploadProgress}%` }}
-                        ></div>
+                        <div className="bg-primary-600 h-2 rounded-full animate-pulse"></div>
                       </div>
                     </div>
                   )}
@@ -535,13 +544,9 @@ const TeachersPage = () => {
                         <p className="text-sm font-medium text-gray-700">Current Image:</p>
                         <img 
                           key={`current-${editingItem.id}-${Date.now()}-${Math.random()}`}
-                          src={`${getImageUrl(editingItem.imageUrl, true)}?t=${Date.now()}` || getDefaultProfileImageUrl(editingItem.name, 'teacher')} 
+                          src={`${getImageUrl(editingItem.imageUrl, true)}?t=${Date.now()}`} 
                           alt="Current" 
                           className="w-full h-32 object-cover rounded-lg shadow-sm border border-gray-200"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = getDefaultProfileImageUrl(editingItem.name, 'teacher');
-                          }}
                         />
                       </div>
                     )}

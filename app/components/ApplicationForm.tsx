@@ -49,18 +49,17 @@ const ApplicationForm = () => {
   // Debug function to test API connectivity
   const testApiConnection = async () => {
     try {
-      console.log('Testing API connection to:', 'https://hims-college-backend.vercel.app/api/applications')
-      const response = await fetch('https://hims-college-backend.vercel.app/api/applications', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      console.log('Response status:', response.status)
-      console.log('Response headers:', response.headers)
-      const data = await response.json()
-      console.log('API Response:', data)
+      const { applicationsAPI } = await import('../../services')
+      console.log('Testing API connection to applications endpoint')
+      
+      // Create a test FormData object
+      const testFormData = new FormData()
+      testFormData.append('firstName', 'Test')
+      testFormData.append('lastName', 'User')
+      testFormData.append('email', 'test@example.com')
+      
+      const response = await applicationsAPI.submit(testFormData)
+      console.log('API Response:', response)
       toast.success('API connection successful!')
     } catch (error) {
       console.error('API connection failed:', error)

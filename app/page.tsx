@@ -20,11 +20,12 @@ export default function HomePage() {
       <HeroSection />
       <AboutSection />
       <ProgramsSection />
+      <ShiningStarsSection />
       <TeachersSection />
       <FacilitiesSection />
       <HostelFacilitiesSection />
       <FeeStructureSection />
-      <ShiningStarsSection />
+    
       <TestimonialsSection />
       <CTASection />
       <ApplicationTracker />
