@@ -45,9 +45,9 @@ const FacilitiesSection = () => {
   ]
 
   const campusStats = [
-    { number: "5+", label: "Classrooms" },
-    { number: "15+", label: "Laboratories" },
-    { number: "5+", label: "Computer Labs" },
+    { number: "10+", label: "Classrooms" },
+    { number: "2+", label: "Laboratories" },
+    { number: "2+", label: "Computer Labs" },
     { number: "100%", label: "Wi-Fi Coverage" }
   ]
 

@@ -1,6 +1,14 @@
 {
-  "/not-found": "app/not-found.js",
-  "/page": "app/page.js",
+  "/_not-found": "app/_not-found.js",
   "/about/page": "app/about/page.js",
-  "/contact/page": "app/contact/page.js"
+  "/apply/page": "app/apply/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/page": "app/page.js",
+  "/admin/applications/page": "app/admin/applications/page.js",
+  "/admin/content/page": "app/admin/content/page.js",
+  "/admin/hero-slides/page": "app/admin/hero-slides/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/settings/page": "app/admin/settings/page.js",
+  "/admin/students/page": "app/admin/students/page.js",
+  "/admin/teachers/page": "app/admin/teachers/page.js"
 }

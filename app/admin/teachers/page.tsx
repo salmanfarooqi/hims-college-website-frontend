@@ -137,6 +137,7 @@ const TeachersPage = () => {
         name: formData.get('name') as string,
         position: formData.get('position') as string,
         expertise: formData.get('expertise') as string,
+        description: formData.get('description') as string,
         rating: parseFloat(formData.get('rating') as string) || 5,
         order: parseInt(formData.get('order') as string) || 1,
         isActive: true, // Default to active
@@ -473,6 +474,19 @@ const TeachersPage = () => {
                     required
                   />
                 </div>
+              </div>
+
+              {/* Description Field */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                <textarea
+                  name="description"
+                  defaultValue={editingItem?.description}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  placeholder="Enter a brief description about the teacher's background, experience, or achievements"
+                  rows={4}
+                  required
+                />
               </div>
 
               {/* Order Field */}
