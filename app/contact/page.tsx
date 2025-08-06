@@ -9,25 +9,25 @@ const ContactPage = () => {
     {
       icon: Phone,
       title: 'Phone',
-      details: ['+92 (xxx) xxx-xxxx', '+92 (xxx) xxx-xxxx'],
+      details: ['0915243868', '03005928890'],
       color: 'text-blue-600'
     },
     {
       icon: Mail,
       title: 'Email',
-      details: ['info@hims.edu.pk', 'admissions@hims.edu.pk'],
+      details: ['himscollege06@gmail.com', ],
       color: 'text-green-600'
     },
     {
       icon: MapPin,
       title: 'Address',
-      details: ['HIMS College Campus', 'Your City, Province, Pakistan'],
+      details: ['HIMS Degree College ', 'Peshawar ,Kpk , Pakistan'],
       color: 'text-purple-600'
     },
     {
       icon: Clock,
       title: 'Office Hours',
-      details: ['Mon - Fri: 8:00 AM - 5:00 PM', 'Sat: 9:00 AM - 2:00 PM'],
+      details: ['Mon - Sat: 8:00 AM - 5:00 PM', 'Sat: 9:00 AM - 2:00 PM'],
       color: 'text-orange-600'
     }
   ]
@@ -35,26 +35,26 @@ const ContactPage = () => {
   const departments = [
     {
       name: 'Admissions Office',
-      email: 'admissions@hims.edu.pk',
-      phone: '+92 (xxx) xxx-xxxx',
+      email: 'himscollege06@gmail.com',
+      phone: '03159877044 ',
       description: 'Application inquiries, enrollment, and student services'
     },
     {
       name: 'Academic Affairs',
-      email: 'academics@hims.edu.pk',
-      phone: '+92 (xxx) xxx-xxxx',
+      email: 'himscollege06@gmail.com',
+      phone: '03229053724',
       description: 'Curriculum, courses, and academic programs'
     },
     {
       name: 'Student Support',
-      email: 'support@hims.edu.pk',
-      phone: '+92 (xxx) xxx-xxxx',
+      email: 'himscollege06@gmail.com',
+      phone: '03229053724',
       description: 'Student counseling, guidance, and general support'
     },
     {
       name: 'Finance Office',
-      email: 'finance@hims.edu.pk',
-      phone: '+92 (xxx) xxx-xxxx',
+      email: 'himscollege06@gmail.com',
+      phone: '03139559818',
       description: 'Fee payments, scholarships, and financial aid'
     }
   ]

@@ -8,9 +8,9 @@ const FeeStructureSection = () => {
     {
       name: "FSC Pre-Engineering",
       duration: "2 Years",
-      firstYear: "PKR 25,000",
-      secondYear: "PKR 20,000",
-      total: "PKR 45,000",
+      firstYear: "PKR 62000",
+      secondYear: "PKR 55,000",
+      total: "PKR 117,000",
       features: [
         "Advanced mathematics and physics",
         "Engineering fundamentals",
@@ -21,9 +21,9 @@ const FeeStructureSection = () => {
     {
       name: "FSC Pre-Medical",
       duration: "2 Years",
-      firstYear: "PKR 28,000",
-      secondYear: "PKR 22,000",
-      total: "PKR 50,000",
+      firstYear: "PKR 62000",
+      secondYear: "PKR 55,000",
+      total: "PKR 117,000",
       features: [
         "Biology and chemistry focus",
         "Medical field preparation",
@@ -34,9 +34,9 @@ const FeeStructureSection = () => {
     {
       name: "FSC Pre-Computer Science",
       duration: "2 Years",
-      firstYear: "PKR 26,000",
-      secondYear: "PKR 22,000",
-      total: "PKR 48,000",
+      firstYear: "PKR 62000",
+      secondYear: "PKR 55,000",
+      total: "PKR 117,000",
       features: [
         "Computer programming basics",
         "Information technology",
