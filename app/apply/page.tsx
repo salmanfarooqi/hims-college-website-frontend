@@ -92,7 +92,7 @@ const ApplyPage = () => {
               makes it easy to join our community of learners and achievers.
             </p>
             <div className="mt-8 bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm inline-block">
-              <p className="text-lg font-semibold">Application Fee: <span className="text-yellow-300">Rs. 200</span></p>
+              <p className="text-lg font-semibold">Application Fee: <span className="text-yellow-300">Rs. 500</span></p>
               <p className="text-sm text-primary-100">Pay via EasyPaisa • Non-refundable</p>
             </div>
           </motion.div>
@@ -278,6 +278,7 @@ const ApplyPage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
             className="text-center mb-12"
+            
           >
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               Application <span className="gradient-text">Requirements</span>
