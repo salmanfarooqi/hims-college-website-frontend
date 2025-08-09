@@ -75,7 +75,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { name: 'Hero Slides', href: '/admin/hero-slides', icon: ImageIcon },
     { name: 'Teachers', href: '/admin/teachers', icon: GraduationCap },
     { name: 'Students', href: '/admin/students', icon: Star },
-    { name: 'Settings', href: '/admin/settings', icon: Settings },
+    // { name: 'Settings', href: '/admin/settings', icon: Settings },
   ]
 
   if (isLoading) {

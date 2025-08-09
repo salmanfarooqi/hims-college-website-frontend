@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Award, Users, BookOpen, Globe, Star, GraduationCap, Trophy, Target } from 'lucide-react'
 import Image from 'next/image'
+import Footer from '../components/Footer'
 
 const AboutPage = () => {
   const achievements = [
@@ -237,6 +238,7 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
+      <Footer/>
     </div>
   )
 }

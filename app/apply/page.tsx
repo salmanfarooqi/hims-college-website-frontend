@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Calendar, Clock, Award, ArrowRight, CheckCircle, FileText, GraduationCap, DollarSign, CreditCard } from 'lucide-react'
 import ApplicationForm from '../components/ApplicationForm'
+import Footer from '../components/Footer'
 
 const ApplyPage = () => {
   const applicationSteps = [
@@ -331,47 +332,7 @@ const ApplyPage = () => {
       </section>
 
       {/* Important Dates */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold mb-4">
-              Important <span className="text-yellow-300">Dates</span>
-            </h2>
-            <p className="text-xl text-primary-100 max-w-3xl mx-auto">
-              Mark these important dates in your calendar for the upcoming academic year.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { title: "Application Deadline", date: "March 15, 2024", icon: Calendar },
-              { title: "Document Review", date: "March 20 - April 5", icon: Clock },
-              { title: "Admission Results", date: "April 10, 2024", icon: Award }
-            ].map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white bg-opacity-10 rounded-xl p-6 backdrop-blur-sm text-center"
-              >
-                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                <p className="text-primary-100">{item.date}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+    <Footer/>
     </div>
   )
 }

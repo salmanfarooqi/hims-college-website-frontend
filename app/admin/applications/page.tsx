@@ -323,7 +323,7 @@ const ApplicationsPage = () => {
                           </button>
                           {application.transactionReceipt && (
                             <a 
-                              href={`https://hims-college-backend.vercel.app/${application.transactionReceipt}`}
+                              href={application.transactionReceipt.startsWith('http') ? application.transactionReceipt : `https://hims-college-backend.vercel.app/${application.transactionReceipt}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center"
@@ -494,7 +494,7 @@ const ApplicationsPage = () => {
                         {selectedApplication.transactionReceipt ? (
                           <div className="mt-2">
                             <a 
-                              href={`https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`}
+                              href={selectedApplication.transactionReceipt.startsWith('http') ? selectedApplication.transactionReceipt : `https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"

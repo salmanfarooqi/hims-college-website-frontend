@@ -385,7 +385,7 @@ const ApplicationForm = () => {
               <div>
                 <h4 className="font-bold text-gray-900 mb-2">Payment Instructions</h4>
                 <div className="space-y-2 text-sm text-gray-700">
-                  <p><strong>Application Fee:</strong> <span className="text-2xl font-bold text-yellow-600">PKR 200</span></p>
+                  <p><strong>Application Fee:</strong> <span className="text-2xl font-bold text-yellow-600">PKR 500</span></p>
                   <p><strong>Payment Method:</strong> Easypaisa</p>
                   <p><strong>Account Number:</strong> <span className="font-mono bg-gray-100 px-2 py-1 rounded">03001234567</span></p>
                   <p><strong>Account Title:</strong> HIMS Degree College</p>
@@ -395,7 +395,7 @@ const ApplicationForm = () => {
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <h5 className="font-semibold text-yellow-800 mb-2">How to Pay:</h5>
               <ol className="list-decimal list-inside space-y-1 text-sm text-yellow-700">
-                <li>Send PKR 200 to the above Easypaisa number</li>
+                <li>Send PKR 500 to the above Easypaisa number</li>
                 <li>Take a screenshot of the transaction receipt</li>
                 <li>Fill the transaction details below</li>
                 <li>Upload the receipt image</li>

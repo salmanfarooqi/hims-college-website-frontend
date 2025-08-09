@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { MapPin, Phone, Mail, Clock, Send, MessageCircle, User, Building } from 'lucide-react'
 import Link from 'next/link'
+import Footer from '../components/Footer'
 
 const ContactPage = () => {
   const contactInfo = [
@@ -307,6 +308,7 @@ const ContactPage = () => {
           </div>
         </div>
       </section>
+      <Footer/>
     </div>
   )
 }
