@@ -421,9 +421,9 @@ const HeroSection = () => {
                   viewport={{ once: true }}
                   className="text-center group"
                 >
-                  <div className="bg-white/10 rounded-2xl p-6 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 group-hover:scale-105">
+                  <div className="bg-white/10 rounded-2xl p-4 md:p-6 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 group-hover:scale-105">
                     <stat.icon className="w-8 h-8 mx-auto mb-4 text-blue-200" />
-                    <div className="text-4xl lg:text-5xl font-bold mb-2 text-blue-100">{stat.number}</div>
+                    <div className="text-3xl lg:text-5xl font-bold mb-2 text-blue-100">{stat.number}</div>
                     <div className="text-primary-100 font-medium">{stat.label}</div>
                   </div>
                 </motion.div>

@@ -1,7 +1,5 @@
 {
-  "/contact/page": "app/contact/page.js",
-  "/apply/page": "app/apply/page.js",
-  "/admin/applications/page": "app/admin/applications/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/admin/settings/page": "app/admin/settings/page.js"
+  "/not-found": "app/not-found.js",
+  "/page": "app/page.js",
+  "/admin/page": "app/admin/page.js"
 }

@@ -3039,6 +3039,10 @@ video {
     padding: 3rem;
   }
 
+  .md\:p-6 {
+    padding: 1.5rem;
+  }
+
   .md\:text-left {
     text-align: left;
   }
