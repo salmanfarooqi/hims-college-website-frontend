@@ -185,9 +185,9 @@ const ShiningStarsSection = () => {
                   />
                   
                   {/* Year Badge */}
-                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                  {/* <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
                     <div className="text-sm font-bold text-gray-900">{student.year}</div>
-                  </div>
+                  </div> */}
 
                   {/* Profession Badge */}
                   <div className="absolute bottom-4 right-4 bg-primary-600/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
