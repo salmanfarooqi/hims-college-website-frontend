@@ -67,7 +67,7 @@ const ShiningStarsSection = () => {
   }, [])
 
   const achievements = [
-    { number: "5+", label: "Merit Positions", icon: Trophy, color: "text-yellow-600", bgColor: "bg-yellow-100" },
+    { number: "50+", label: "Merit Positions", icon: Trophy, color: "text-yellow-600", bgColor: "bg-yellow-100" },
     { number: "100+", label: "Awards Won", icon: Award, color: "text-purple-600", bgColor: "bg-purple-100" },
     { number: "95%", label: "Success Rate", icon: TrendingUp, color: "text-green-600", bgColor: "bg-green-100" },
     { number: "1000+", label: "Success Stories", icon: Users, color: "text-blue-600", bgColor: "bg-blue-100" }

@@ -12,7 +12,7 @@ const TestimonialsSection = () => {
     {
       name: "Dr Waqar Saeed",
       program: "FSC Pre-Medical",
-      image: "/download.png",
+      image: "/DR WAQAR SAEED.jpg",
       quote: "HIMS Degree College has been a transformative journey , shaping me into confident individual. Exceptional teaching Factulty ,mentors, and guides have illuminated my path.",
       rating: 5,
       achievement: "Deputy Director of Health Department"
@@ -20,7 +20,7 @@ const TestimonialsSection = () => {
     {
       name: "Engr Shakir Hussain",
       program: "FSC pre-Engineering",
-              image:"/download.png",
+              image:"/SHAKIR HUSSAIN.jpg",
       quote: "The engineering program at HIMS prepared me excellently for university. The practical labs and expert guidance made all the difference in my academic journey.",
       rating: 5,
       achievement: "Internationall Resercher in south korea"
@@ -28,7 +28,7 @@ const TestimonialsSection = () => {
     {
       name: "Dr Haider Ali",
       program: "FSC Pre-Medical",
-      image: "/download.png",
+      image: "/DR HAIDER ALI.jpg",
       quote: "Join Hims to become a doctor. The faculty's dedication and the college's resources were instrumental in my success. I am grateful for the support I received.",
       rating: 5,
       achievement: "TMO at khyber Teaching Hospital"
@@ -36,7 +36,7 @@ const TestimonialsSection = () => {
     {
       name: "Dr Nazir Gull",
       program: "FSC Pre-Medical",
-      image: "/download.png",
+      image: "/DR NAZEER GULL.jpg",
       quote: "The supportive environment and excellent teaching methods at HIMS helped me achieve my dreams. The teachers truly care about student success.",
       rating: 5,
       achievement: "FCPS Orthopedic khyber medical college"
@@ -45,9 +45,9 @@ const TestimonialsSection = () => {
 
 
     {
-      name: "Dr Basit Hassan",
+      name: "Dr Qasim Khan",
       program: "FSC Pre-Medical",
-      image: "/download.png",
+      image: "/DR QASIN KHAN.jpg",
       quote: "Hims degree college is a place where dreams take flight. The faculty's expertise and the college's resources were invaluable in my journey to becoming a doctor.",
       rating: 5,
       achievement: "FCPS Genral surgery CMH abottabad"
@@ -55,7 +55,7 @@ const TestimonialsSection = () => {
     {
       name: "Dr Shahid Shah",
       program: "FSC Pre-Medical",
-      image: "/download.png",
+      image: "/Shahid Shah.jpg",
       quote: "HIMS Degree College provided me with the perfect foundation for my medical career. The faculty's expertise and the college's resources were invaluable.",
       rating: 5,
       achievement: "PMC faisalabad"
