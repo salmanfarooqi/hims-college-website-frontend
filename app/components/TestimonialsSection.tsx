@@ -102,7 +102,7 @@ const TestimonialsSection = () => {
             <div className="flex flex-col lg:flex-row items-center gap-8">
               <div className="lg:w-1/3 text-center lg:text-left">
                 <div className="relative inline-block">
-                  <Image
+                  <img
                     src={testimonials[currentTestimonial].image}
                     alt={testimonials[currentTestimonial].name}
                     width={200}
