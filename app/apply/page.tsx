@@ -247,7 +247,7 @@ const ApplyPage = () => {
                 </div>
                                  <div className="bg-green-50 rounded-lg p-4 mb-4">
                    <p className="font-semibold text-green-800">EasyPaisa Account</p>
-                   <p className="text-lg font-mono text-green-700">0300-1234567</p>
+                   <p className="text-lg font-mono text-green-700">03005928890</p>
                    <p className="text-sm text-green-600">Available 24/7</p>
                  </div>
                 <div className="space-y-3 text-sm">

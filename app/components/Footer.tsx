@@ -164,7 +164,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-white font-medium text-sm">Phone</p>
-                  <p className="text-gray-300 text-xs">0300-1234567</p>
+                  <p className="text-gray-300 text-xs">03005928890</p>
                 </div>
               </div>
               
@@ -174,7 +174,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-white font-medium text-sm">Email</p>
-                  <p className="text-gray-300 text-xs">info@hims.edu.pk</p>
+                  <p className="text-gray-300 text-xs">himscollege06@gmail.com</p>
                 </div>
               </div>
               

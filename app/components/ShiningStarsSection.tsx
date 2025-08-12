@@ -138,7 +138,7 @@ const ShiningStarsSection = () => {
         </motion.div>
 
         {/* Year Filter */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -158,7 +158,7 @@ const ShiningStarsSection = () => {
               ))}
             </select>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Student Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -210,7 +210,7 @@ const ShiningStarsSection = () => {
                   </div>
 
                   {/* Year with Icon */}
-                  <div className="mb-4">
+                  {/* <div className="mb-4">
                     <div className="flex items-center space-x-2">
                       <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
                         <Target className="w-3 h-3 text-green-600" />
@@ -219,7 +219,7 @@ const ShiningStarsSection = () => {
                         Year: {student.year}
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Program with Icon */}
                   <div className="mb-4">

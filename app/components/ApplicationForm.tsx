@@ -388,7 +388,7 @@ const ApplicationForm = () => {
                   <p><strong>Application Fee:</strong> <span className="text-2xl font-bold text-yellow-600">PKR 500</span></p>
                   <p><strong>Payment Method:</strong> Easypaisa</p>
                   <p><strong>Account Number:</strong> <span className="font-mono bg-gray-100 px-2 py-1 rounded">03001234567</span></p>
-                  <p><strong>Account Title:</strong> HIMS Degree College</p>
+                  <p><strong>Account Title:</strong> Nasir Ahmad Khan </p>
                 </div>
               </div>
             </div>
