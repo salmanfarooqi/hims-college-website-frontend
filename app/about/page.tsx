@@ -45,7 +45,7 @@ const AboutPage = () => {
               About <span className="text-yellow-300">HIMS Degree College</span>
             </h1>
                           <p className="text-xl text-primary-100 max-w-3xl mx-auto">
-                Empowering students with knowledge, skills, and character for over 25 years. 
+                Empowering students with knowledge, skills, and character for over 18 years. 
                 We are committed to academic excellence, innovation in education, and preparing future leaders.
               </p>
           </motion.div>

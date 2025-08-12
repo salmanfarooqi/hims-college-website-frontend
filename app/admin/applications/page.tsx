@@ -283,7 +283,7 @@ const ApplicationsPage = () => {
                       <div className="space-y-2">
                         <div className="flex items-center">
                           <CreditCard className="w-4 h-4 mr-2 text-green-600" />
-                          <span className="text-sm font-semibold text-green-600">Rs. {application.paymentAmount}</span>
+                          <span className="text-sm font-semibold text-green-600">Rs. 500</span>
                         </div>
                         <div className="text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
                           {application.transactionId}
@@ -470,7 +470,7 @@ const ApplicationsPage = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700">Application Fee</label>
-                          <p className="mt-1 text-lg font-bold text-green-600">Rs. {selectedApplication.paymentAmount}</p>
+                          <p className="mt-1 text-lg font-bold text-green-600">Rs. 500</p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700">Payment Method</label>
