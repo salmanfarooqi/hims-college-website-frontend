@@ -287,6 +287,10 @@ const StudentsPage = () => {
                     <option value="Civil Engineer">Civil Engineer</option>
                     <option value="Electrical Engineer">Electrical Engineer</option>
                     <option value="Mechanical Engineer">Mechanical Engineer</option>
+                    <option value=" Engineer"> Engineer</option>
+                    <option value="Army">Army</option>
+                    <option value="AirForce">airfore</option>
+                    <option value="Police">Police</option>
                   </select>
                 </div>
                 <div>

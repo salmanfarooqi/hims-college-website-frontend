@@ -228,7 +228,7 @@ const ShiningStarsSection = () => {
                         <GraduationCap className="w-3 h-3 text-blue-600" />
                       </div>
                       <p className="text-blue-700 font-semibold text-sm">
-                        Program: {student.profession}
+                        {student.profession}
                       </p>
                     </div>
                   </div>
