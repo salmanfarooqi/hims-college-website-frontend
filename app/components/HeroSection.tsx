@@ -124,7 +124,7 @@ const HeroSection = () => {
     {
       icon: Award,
       title: "Proven Excellence",
-      description: "25+ years of academic excellence with outstanding graduate success rates",
+      description: "18+ years of academic excellence with outstanding graduate success rates",
       color: "bg-gradient-to-br from-yellow-50 to-yellow-100 text-yellow-700",
       iconColor: "text-yellow-600"
     }

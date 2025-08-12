@@ -113,7 +113,7 @@ const HeroSlidesPage = () => {
           const { contentAPI } = await import('../../../services')
           
           // Show compression progress for large files
-          if (imageFile.size > 10 * 1024 * 1024) { // >10MB
+          if (imageFile.size > 2 * 1024 * 1024) { // >2MB
             setUploadProgress(20)
             console.log('📦 Large file detected, compression in progress...')
           }
@@ -129,7 +129,7 @@ const HeroSlidesPage = () => {
           
           // Handle specific error types
           if (uploadError.message && uploadError.message.includes('413')) {
-            alert(`Image file is too large (${Math.round(imageFile.size / 1024 / 1024)}MB). Please try a smaller image (under 100MB).`)
+            alert(`Image file is too large (${Math.round(imageFile.size / 1024 / 1024)}MB). Please try a smaller image (under 4MB).`)
           } else if (uploadError.message && uploadError.message.includes('IDAT stream error') || 
                      uploadError.message && uploadError.message.includes('pngload_buffer')) {
             // PNG processing error - offer fallback
@@ -463,7 +463,7 @@ const HeroSlidesPage = () => {
                   disabled={isUploading || isSaving}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Accepted formats: JPEG, PNG, GIF, WebP. Max 50MB. Images are automatically compressed for optimal performance.
+                  Accepted formats: JPEG, PNG, GIF, WebP. Max 4MB. Images are automatically compressed for optimal performance.
                 </p>
                 
                 {/* Progress Indicator */}

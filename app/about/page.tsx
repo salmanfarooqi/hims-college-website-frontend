@@ -215,7 +215,7 @@ const AboutPage = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { number: "25+", label: "Years of Excellence", icon: GraduationCap },
+              { number: "18+", label: "Years of Excellence", icon: GraduationCap },
               { number: "10,000+", label: "Graduates", icon: Users },
               { number: "95%", label: "Employment Rate", icon: Award },
               { number: "5+", label: "Programs Offered", icon: BookOpen }

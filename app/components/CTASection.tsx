@@ -19,7 +19,7 @@ const CTASection = () => {
     {
       icon: Award,
       title: "Proven Success",
-      description: "25+ years of academic excellence and student success"
+      description: "18+ years of academic excellence and student success"
     }
   ]
 
