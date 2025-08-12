@@ -191,9 +191,9 @@ const StudentsPage = () => {
                 {student.profession && (
                   <p className="text-sm text-gray-600 font-medium">{student.profession}</p>
                 )}
-                {student.year && (
+                {/* {student.year && (
                   <p className="text-sm text-gray-500">Year: {student.year}</p>
-                )}
+                )} */}
                 {student.institute && (
                   <p className="text-sm text-gray-500">Institute: {student.institute}</p>
                 )}
@@ -257,7 +257,7 @@ const StudentsPage = () => {
                     required
                   />
                 </div>
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
                   <input
                     name="year"
@@ -267,7 +267,7 @@ const StudentsPage = () => {
                     placeholder="e.g., 2023"
                     required
                   />
-                </div>
+                </div> */}
               </div>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
@@ -313,7 +313,7 @@ const StudentsPage = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
               </div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
                 <input
                   name="year"
@@ -321,7 +321,7 @@ const StudentsPage = () => {
                   defaultValue={editingItem?.year}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
-              </div>
+              </div> */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
                 <input
