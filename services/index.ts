@@ -87,9 +87,9 @@ export const applicationsAPI = {
     return handleResponse(response);
   },
 
-  // Get application status by email
-  getStatusByEmail: async (email: string) => {
-    const response = await fetch(`${API_BASE_URL}/api/applications/status/${encodeURIComponent(email)}`);
+  // Get application status by phone
+  getStatusByPhone: async (phone: string) => {
+    const response = await fetch(`${API_BASE_URL}/api/applications/status/phone/${encodeURIComponent(phone)}`);
     return handleResponse(response);
   },
 

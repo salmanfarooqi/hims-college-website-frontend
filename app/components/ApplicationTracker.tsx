@@ -28,22 +28,22 @@ interface ApplicationStatus {
   id: number
   firstName: string
   lastName: string
-  email: string
-  program: string
+  phone?: string
+  group?: string
   status: 'pending' | 'reviewed' | 'approved' | 'rejected'
   applicationDate: string
   notes?: string
 }
 
 const ApplicationTracker = () => {
-  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [application, setApplication] = useState<ApplicationStatus | null>(null)
   const [error, setError] = useState('')
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email.trim()) return
+    if (!phone.trim()) return
 
     setIsLoading(true)
     setError('')
@@ -51,10 +51,10 @@ const ApplicationTracker = () => {
 
     try {
       const { applicationsAPI } = await import('../../services');
-      const data = await applicationsAPI.getStatusByEmail(email);
+      const data = await applicationsAPI.getStatusByPhone(phone);
       setApplication(data);
     } catch (error: any) {
-      setError(error.message || 'Application not found. Please check your email address and try again.');
+      setError(error.message || 'Application not found. Please check your phone number and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -200,17 +200,17 @@ const ApplicationTracker = () => {
             <div className="space-y-6">
               <div>
                 <label className="block text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <Mail className="w-5 h-5 mr-2 text-blue-600" />
-                  Enter Your Application Email Address
+                  <Phone className="w-5 h-5 mr-2 text-blue-600" />
+                  Enter Your Application Phone Number
                 </label>
                 <div className="relative">
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     required
                     className="w-full px-6 py-5 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-inner"
-                    placeholder="student@example.com"
+                    placeholder="03xxxxxxxxx or +923xxxxxxxxx"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -219,13 +219,13 @@ const ApplicationTracker = () => {
                 </div>
                 <p className="text-sm text-gray-600 mt-2 flex items-center">
                   <Info className="w-4 h-4 mr-1" />
-                  Use the same email address you provided during application submission
+                  Use the same phone number you provided during application submission
                 </p>
               </div>
               
               <motion.button
                 type="submit"
-                disabled={isLoading || !email.trim()}
+                disabled={isLoading || !phone.trim()}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white font-semibold py-5 px-8 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg"
@@ -383,8 +383,8 @@ const ApplicationTracker = () => {
                     <div className="space-y-4">
                       {[
                         { label: 'Full Name', value: `${application.firstName} ${application.lastName}`, icon: User },
-                        { label: 'Email', value: application.email, icon: Mail },
-                        { label: 'Program', value: application.program, icon: BookOpen },
+                        { label: 'Phone', value: application.phone || '', icon: Phone },
+                        { label: 'Group', value: application.group || '', icon: BookOpen },
                         { label: 'Applied', value: new Date(application.applicationDate).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',

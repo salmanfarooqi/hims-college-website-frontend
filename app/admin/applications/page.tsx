@@ -29,17 +29,32 @@ interface Application {
   _id: string
   firstName: string
   lastName: string
+  fatherName: string
   email: string
   phone: string
+  guardianPhone: string
   dateOfBirth: string
   gender: 'male' | 'female' | 'other'
+  class: string
+  group: string
   address: string
   city: string
   state: string
   zipCode: string
-  program: string
-  previousSchool: string
-  previousGrade: string
+  education: {
+    metric: {
+      year: string
+      rollNumber: string
+      marks: string
+      school: string
+    }
+  }
+  documents: {
+    dmcMetric: string
+    passportPhoto: string
+    fatherCNIC: string
+    migrationCertificate?: string
+  }
   paymentAmount: string
   easypaisaNumber: string
   transactionId: string
@@ -56,7 +71,7 @@ const ApplicationsPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [programFilter, setProgramFilter] = useState('all')
+  const [groupFilter, setGroupFilter] = useState('all')
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null)
   const [showModal, setShowModal] = useState(false)
 
@@ -134,15 +149,15 @@ const ApplicationsPage = () => {
       app.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.program.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.phone.includes(searchTerm) ||
       app.city.toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesStatus = statusFilter === 'all' || app.status === statusFilter
-    const matchesProgram = programFilter === 'all' || app.program === programFilter
+    const matchesGroup = groupFilter === 'all' || app.group === groupFilter
     
-    return matchesSearch && matchesStatus && matchesProgram
+    return matchesSearch && matchesStatus && matchesGroup
   })
 
   if (isLoading) {
@@ -171,7 +186,7 @@ const ApplicationsPage = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search by name, email, phone, or transaction ID..."
+                placeholder="Search by name, email, phone, group, or transaction ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -188,6 +203,17 @@ const ApplicationsPage = () => {
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
+            </select>
+            <select
+              value={groupFilter}
+              onChange={(e) => setGroupFilter(e.target.value)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="all">All Groups</option>
+              <option value="FSC Pre-Medical">FSC Pre-Medical</option>
+              <option value="FSC Pre-Engineering">FSC Pre-Engineering</option>
+              <option value="FSC Pre-Computer Science">FSC Pre-Computer Science</option>
+              <option value="Arts">Arts</option>
             </select>
             <button
               onClick={fetchApplications}
@@ -218,7 +244,7 @@ const ApplicationsPage = () => {
                   Contact & Location
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Program & Academic
+                  Group & Education
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Payment Details
@@ -269,13 +295,13 @@ const ApplicationsPage = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-medium text-gray-900 mb-1">{application.program}</div>
+                        <div className="text-sm font-medium text-gray-900 mb-1">{application.group}</div>
                         <div className="text-xs text-gray-500">
                           <div className="flex items-center mb-1">
                             <GraduationCap className="w-3 h-3 mr-1" />
-                            {application.previousSchool}
+                            Class: {application.class}
                           </div>
-                          <div>Grade: {application.previousGrade}</div>
+                          <div>School: {application.education.metric.school}</div>
                         </div>
                       </div>
                     </td>
@@ -283,7 +309,7 @@ const ApplicationsPage = () => {
                       <div className="space-y-2">
                         <div className="flex items-center">
                           <CreditCard className="w-4 h-4 mr-2 text-green-600" />
-                          <span className="text-sm font-semibold text-green-600">Rs. 500</span>
+                          <span className="text-sm font-semibold text-green-600">Rs. {application.paymentAmount}</span>
                         </div>
                         <div className="text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
                           {application.transactionId}
@@ -435,24 +461,36 @@ const ApplicationsPage = () => {
                     </div>
                   </div>
 
-                  {/* Academic Information */}
+                  {/* Education Information */}
                   <div className="bg-purple-50 p-6 rounded-lg">
                     <h4 className="font-bold text-purple-900 mb-4 flex items-center">
                       <GraduationCap className="w-5 h-5 mr-2" />
-                      Academic Information
+                      Education Information
                     </h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Program Applied For</label>
-                        <p className="mt-1 text-sm text-gray-900 font-medium">{selectedApplication.program}</p>
+                        <label className="block text-sm font-medium text-gray-700">Group Applied For</label>
+                        <p className="mt-1 text-sm text-gray-900 font-medium">{selectedApplication.group}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Previous Grade/Result</label>
-                        <p className="mt-1 text-sm text-gray-900 font-medium">{selectedApplication.previousGrade}</p>
+                        <label className="block text-sm font-medium text-gray-700">Class</label>
+                        <p className="mt-1 text-sm text-gray-900 font-medium">{selectedApplication.class}</p>
                       </div>
-                      <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700">Previous School/Institution</label>
-                        <p className="mt-1 text-sm text-gray-900">{selectedApplication.previousSchool}</p>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Metric Year</label>
+                        <p className="mt-1 text-sm text-gray-900 font-medium">{selectedApplication.education.metric.year}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Roll Number</label>
+                        <p className="mt-1 text-sm text-gray-900 font-medium">{selectedApplication.education.metric.rollNumber}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Marks</label>
+                        <p className="mt-1 text-sm text-gray-900 font-medium">{selectedApplication.education.metric.marks}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">School</label>
+                        <p className="mt-1 text-sm text-gray-900 font-medium">{selectedApplication.education.metric.school}</p>
                       </div>
                     </div>
                   </div>
@@ -470,7 +508,7 @@ const ApplicationsPage = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700">Application Fee</label>
-                          <p className="mt-1 text-lg font-bold text-green-600">Rs. 500</p>
+                          <p className="mt-1 text-lg font-bold text-green-600">Rs. {selectedApplication.paymentAmount}</p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700">Payment Method</label>

@@ -2,70 +2,58 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { FileText, Upload, Loader2, CreditCard, Receipt } from 'lucide-react'
+import { FileText, Upload, Loader2, CreditCard, Receipt, User, GraduationCap } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { applicationsAPI } from '../../services'
 
 interface ApplicationData {
-  firstName: string
-  lastName: string
-  email: string
+  name: string
+  fatherName: string
   phone: string
+  guardianPhone: string
   dateOfBirth: string
   gender: string
+  class: string
+  group: string
   address: string
-  city: string
-  state: string
-  zipCode: string
-  program: string
-  previousSchool: string
-  previousGrade: string
-  transactionId: string
+  'education[metric][year]': string
+  'education[metric][rollNumber]': string
+  'education[metric][marks]': string
+  'education[metric][school]': string
   easypaisaNumber: string
+  transactionId: string
 }
 
 const ApplicationForm = () => {
+  const isValidPkPhone = (value: string) => /^(?:\+92|0)3\d{9}$/.test(value.trim())
+
   const [formData, setFormData] = useState<ApplicationData>({
-    firstName: '',
-    lastName: '',
-    email: '',
+    name: '',
+    fatherName: '',
     phone: '',
+    guardianPhone: '',
     dateOfBirth: '',
     gender: '',
+    class: '',
+    group: '',
     address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    program: '',
-    previousSchool: '',
-    previousGrade: '',
-    transactionId: '',
-    easypaisaNumber: ''
+    'education[metric][year]': '',
+    'education[metric][rollNumber]': '',
+    'education[metric][marks]': '',
+    'education[metric][school]': '',
+    easypaisaNumber: '',
+    transactionId: ''
   })
 
-  const [transactionReceipt, setTransactionReceipt] = useState<File | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [documents, setDocuments] = useState({
+    dmcMetric: null as File | null,
+    passportPhoto: null as File | null,
+    fatherCNIC: null as File | null,
+    migrationCertificate: null as File | null,
+    transactionReceipt: null as File | null
+  })
 
-  // Debug function to test API connectivity
-  const testApiConnection = async () => {
-    try {
-      const { applicationsAPI } = await import('../../services')
-      console.log('Testing API connection to applications endpoint')
-      
-      // Create a test FormData object
-      const testFormData = new FormData()
-      testFormData.append('firstName', 'Test')
-      testFormData.append('lastName', 'User')
-      testFormData.append('email', 'test@example.com')
-      
-      const response = await applicationsAPI.submit(testFormData)
-      console.log('API Response:', response)
-      toast.success('API connection successful!')
-    } catch (error) {
-      console.error('API connection failed:', error)
-      toast.error(`API connection failed: ${error}`)
-    }
-  }
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -75,10 +63,11 @@ const ApplicationForm = () => {
     }))
   }
 
-  const handleReceiptChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setTransactionReceipt(e.target.files[0])
-    }
+  const handleDocumentChange = (field: keyof typeof documents, file: File | null) => {
+    setDocuments(prev => ({
+      ...prev,
+      [field]: file
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,33 +75,81 @@ const ApplicationForm = () => {
     setIsSubmitting(true)
 
     // Validate required fields
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || 
-        !formData.dateOfBirth || !formData.gender || !formData.address || !formData.city || 
-        !formData.state || !formData.zipCode || !formData.program || !formData.previousSchool || 
-        !formData.previousGrade || !formData.easypaisaNumber || !formData.transactionId) {
-      toast.error('Please fill in all required fields')
+    const requiredFields = [
+      'name', 'fatherName', 'guardianPhone',
+      'dateOfBirth', 'gender', 'class', 'group', 'address',
+      'education[metric][year]', 'education[metric][rollNumber]', 'education[metric][marks]', 'education[metric][school]',
+      'easypaisaNumber', 'transactionId'
+    ]
+
+    for (const field of requiredFields) {
+      if (!formData[field as keyof ApplicationData]) {
+        toast.error(`Please fill in ${field.replace(/\[.*?\]/g, '').replace(/([A-Z])/g, ' $1').toLowerCase()}`)
+        setIsSubmitting(false)
+        return
+      }
+    }
+
+    // Validate Pakistani phone numbers
+    if (formData.phone && !isValidPkPhone(formData.phone)) {
+      toast.error('Enter a valid Pakistani personal mobile (e.g., 03xxxxxxxxx or +923xxxxxxxxx)')
+      setIsSubmitting(false)
+      return
+    }
+    if (!isValidPkPhone(formData.guardianPhone)) {
+      toast.error('Enter a valid Pakistani guardian phone (e.g., 03xxxxxxxxx or +923xxxxxxxxx)')
+      setIsSubmitting(false)
+      return
+    }
+    if (!isValidPkPhone(formData.easypaisaNumber)) {
+      toast.error('Enter a valid Easypaisa number (e.g., 03xxxxxxxxx or +923xxxxxxxxx)')
       setIsSubmitting(false)
       return
     }
 
-    if (!transactionReceipt) {
-      toast.error('Please upload your transaction receipt')
-      setIsSubmitting(false)
-      return
+    // Validate required documents
+    const requiredDocuments = ['dmcMetric', 'passportPhoto', 'fatherCNIC', 'transactionReceipt']
+    for (const doc of requiredDocuments) {
+      if (!documents[doc as keyof typeof documents]) {
+        toast.error(`Please upload ${doc.replace(/([A-Z])/g, ' $1').toLowerCase()}`)
+        setIsSubmitting(false)
+        return
+      }
     }
 
     try {
       const formDataToSend = new FormData()
-      
-      // Append form data
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value)
-      })
 
-      // Append transaction receipt
-      if (transactionReceipt) {
-        formDataToSend.append('transactionReceipt', transactionReceipt)
-      }
+      // Split name into first and last name
+      const nameParts = (formData.name || '').trim().split(/\s+/)
+      const firstName = nameParts[0] || ''
+      const lastName = nameParts.slice(1).join(' ') || ''
+
+      // Append mapped fields
+      formDataToSend.append('firstName', firstName)
+      formDataToSend.append('lastName', lastName)
+      formDataToSend.append('fatherName', formData.fatherName)
+      if (formData.phone) formDataToSend.append('phone', formData.phone)
+      formDataToSend.append('guardianPhone', formData.guardianPhone)
+      formDataToSend.append('dateOfBirth', formData.dateOfBirth)
+      formDataToSend.append('gender', formData.gender)
+      formDataToSend.append('class', formData.class)
+      formDataToSend.append('group', formData.group)
+      formDataToSend.append('address', formData.address)
+      // city/state/zip removed per requirement
+      formDataToSend.append('education[metric][year]', formData['education[metric][year]'])
+      formDataToSend.append('education[metric][rollNumber]', formData['education[metric][rollNumber]'])
+      formDataToSend.append('education[metric][marks]', formData['education[metric][marks]'])
+      formDataToSend.append('education[metric][school]', formData['education[metric][school]'])
+      formDataToSend.append('easypaisaNumber', formData.easypaisaNumber)
+      formDataToSend.append('transactionId', formData.transactionId)
+
+      // Append documents
+      Object.entries(documents).forEach(([key, file]) => {
+        if (file) {
+          formDataToSend.append(key, file)
+        }
+      })
 
       const result = await applicationsAPI.submit(formDataToSend)
       
@@ -120,31 +157,42 @@ const ApplicationForm = () => {
       
       // Reset form
       setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
+        name: '',
+        fatherName: '',
         phone: '',
+        guardianPhone: '',
         dateOfBirth: '',
         gender: '',
+        class: '',
+        group: '',
         address: '',
         city: '',
         state: '',
         zipCode: '',
-        program: '',
-        previousSchool: '',
-        previousGrade: '',
-        transactionId: '',
-        easypaisaNumber: ''
+        'education[metric][year]': '',
+        'education[metric][rollNumber]': '',
+        'education[metric][marks]': '',
+        'education[metric][school]': '',
+        easypaisaNumber: '',
+        transactionId: ''
       })
-      setTransactionReceipt(null)
+      setDocuments({
+        dmcMetric: null,
+        passportPhoto: null,
+        fatherCNIC: null,
+        migrationCertificate: null,
+        transactionReceipt: null
+      })
       
-      // Reset file input
-      const fileInput = document.getElementById('receipt-upload') as HTMLInputElement
-      if (fileInput) fileInput.value = ''
+      // Reset file inputs
+      const fileInputs = ['dmc-metric', 'passport-photo', 'father-cnic', 'migration-certificate', 'receipt-upload']
+      fileInputs.forEach(id => {
+        const input = document.getElementById(id) as HTMLInputElement
+        if (input) input.value = ''
+      })
     } catch (error: any) {
       console.error('Submission error:', error)
       
-      // Handle different types of errors
       if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
         toast.error('Connection failed. Please check if you\'re connected to the internet and try again.')
       } else if (error.message?.includes('CORS')) {
@@ -167,8 +215,6 @@ const ApplicationForm = () => {
       viewport={{ once: true }}
       className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
     >
-     
-
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Personal Information */}
         <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl p-6 border border-primary-200">
@@ -180,47 +226,47 @@ const ApplicationForm = () => {
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">First Name *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Name *</label>
               <input
                 type="text"
-                name="firstName"
-                value={formData.firstName}
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your first name"
+                placeholder="Enter your full name"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Last Name *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Father's Name *</label>
               <input
                 type="text"
-                name="lastName"
-                value={formData.lastName}
+                name="fatherName"
+                value={formData.fatherName}
                 onChange={handleInputChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your last name"
+                placeholder="Enter your father's name"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your email address"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Personal Mobile *</label>
               <input
                 type="tel"
                 name="phone"
                 value={formData.phone}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                placeholder="03xxxxxxxxx"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Guardian Phone Number *</label>
+              <input
+                type="tel"
+                name="guardianPhone"
+                value={formData.guardianPhone}
                 onChange={handleInputChange}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
@@ -256,17 +302,59 @@ const ApplicationForm = () => {
           </div>
         </div>
 
+        {/* Academic Information */}
+        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+          <div className="flex items-center mb-6">
+            <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
+              <span className="text-white text-sm font-bold">2</span>
+            </div>
+            <h3 className="text-xl font-bold text-green-900">Academic Information</h3>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Class *</label>
+              <select
+                name="class"
+                value={formData.class}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              >
+                <option value="">Select class</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Group *</label>
+              <select
+                name="group"
+                value={formData.group}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+              >
+                <option value="">Select a group</option>
+                <option value="FSC Pre-Medical">FSC Pre-Medical</option>
+                <option value="FSC Pre-Engineering">FSC Pre-Engineering</option>
+                <option value="FSC Pre-Computer Science">FSC Pre-Computer Science</option>
+                <option value="Arts">Arts</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         {/* Address Information */}
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
           <div className="flex items-center mb-6">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-              <span className="text-white text-sm font-bold">2</span>
+              <span className="text-white text-sm font-bold">3</span>
             </div>
             <h3 className="text-xl font-bold text-blue-900">Address Information</h3>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Complete Address *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Home Address *</label>
               <textarea
                 name="address"
                 value={formData.address}
@@ -274,128 +362,224 @@ const ApplicationForm = () => {
                 required
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your complete address"
+                placeholder="Enter your complete home address"
               />
-            </div>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">City *</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter your city"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Province/State *</label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  placeholder="e.g., Punjab, Sindh"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Postal Code *</label>
-                <input
-                  type="text"
-                  name="zipCode"
-                  value={formData.zipCode}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter postal code"
-                />
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Academic Information */}
-        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+        {/* Education Information */}
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
           <div className="flex items-center mb-6">
-            <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
-              <span className="text-white text-sm font-bold">3</span>
+            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+              <span className="text-white text-sm font-bold">4</span>
             </div>
-            <h3 className="text-xl font-bold text-green-900">Academic Information</h3>
+            <h3 className="text-xl font-bold text-purple-900">Education Information</h3>
           </div>
+          <div className="bg-white rounded-xl p-6 border border-purple-300">
+            <h4 className="font-bold text-purple-900 mb-4 flex items-center">
+              <GraduationCap className="w-5 h-5 mr-2" />
+              Metric Details
+            </h4>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Year *</label>
+                <input
+                  type="text"
+                  name="education[metric][year]"
+                  value={formData['education[metric][year]']}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., 2023"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Roll Number *</label>
+                <input
+                  type="text"
+                  name="education[metric][rollNumber]"
+                  value={formData['education[metric][rollNumber]']}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter roll number"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Marks *</label>
+              <input
+                type="text"
+                name="education[metric][marks]"
+                value={formData['education[metric][marks]']}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                placeholder="e.g., 850/1100 or 85%"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">School *</label>
+              <input
+                type="text"
+                name="education[metric][school]"
+                value={formData['education[metric][school]']}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                placeholder="Enter school name"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+        {/* Documents Upload */}
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+          <div className="flex items-center mb-6">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+              <span className="text-white text-sm font-bold">5</span>
+            </div>
+            <h3 className="text-xl font-bold text-blue-900">Documents Upload</h3>
+          </div>
+          
           <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Program of Interest *</label>
-              <select
-                name="program"
-                value={formData.program}
-                onChange={handleInputChange}
+            {/* DMC of Metric */}
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
+              <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+              <p className="text-gray-700 mb-2 font-medium">DMC of Metric *</p>
+              <p className="text-sm text-gray-500 mb-4">Upload your metric result card</p>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf"
+                onChange={(e) => handleDocumentChange('dmcMetric', e.target.files?.[0] || null)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                className="hidden"
+                id="dmc-metric"
+              />
+              <label
+                htmlFor="dmc-metric"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
               >
-                <option value="">Select a program</option>
-                <option value="FSC Pre-Medical">FSC Pre-Medical (2 Years)</option>
-                <option value="FSC Pre-Engineering">FSC Pre-Engineering (2 Years)</option>
-                <option value="Computer Science">Computer Science (2 Years)</option>
-              </select>
+                <Upload className="w-4 h-4 mr-2" />
+                Choose File
+              </label>
+              {documents.dmcMetric && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-700 font-medium">Selected: {documents.dmcMetric.name}</p>
+                </div>
+              )}
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Previous School/College *</label>
+
+            {/* Passport Photo */}
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
+              <User className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+              <p className="text-gray-700 mb-2 font-medium">Passport Size Photo *</p>
+              <p className="text-sm text-gray-500 mb-4">Upload your recent photo</p>
               <input
-                type="text"
-                name="previousSchool"
-                value={formData.previousSchool}
-                onChange={handleInputChange}
+                type="file"
+                accept=".jpg,.jpeg,.png"
+                onChange={(e) => handleDocumentChange('passportPhoto', e.target.files?.[0] || null)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your previous institution"
+                className="hidden"
+                id="passport-photo"
               />
+              <label
+                htmlFor="passport-photo"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Choose Photo
+              </label>
+              {documents.passportPhoto && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-700 font-medium">Selected: {documents.passportPhoto.name}</p>
+                </div>
+              )}
             </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Previous Grade/Result *</label>
+
+            {/* Father CNIC */}
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
+              <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+              <p className="text-gray-700 mb-2 font-medium">Father CNIC *</p>
+              <p className="text-sm text-gray-500 mb-4">Upload father's CNIC copy</p>
               <input
-                type="text"
-                name="previousGrade"
-                value={formData.previousGrade}
-                onChange={handleInputChange}
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf"
+                onChange={(e) => handleDocumentChange('fatherCNIC', e.target.files?.[0] || null)}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your grade/percentage/CGPA"
+                className="hidden"
+                id="father-cnic"
               />
+              <label
+                htmlFor="father-cnic"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Choose File
+              </label>
+              {documents.fatherCNIC && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-700 font-medium">Selected: {documents.fatherCNIC.name}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Migration Certificate (Optional) */}
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
+              <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+              <p className="text-gray-700 mb-2 font-medium">Migration Certificate</p>
+              <p className="text-sm text-gray-500 mb-4">Optional - if applicable</p>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf"
+                onChange={(e) => handleDocumentChange('migrationCertificate', e.target.files?.[0] || null)}
+                className="hidden"
+                id="migration-certificate"
+              />
+              <label
+                htmlFor="migration-certificate"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Choose File
+              </label>
+              {documents.migrationCertificate && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-700 font-medium">Selected: {documents.migrationCertificate.name}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Application Fee Payment */}
-        <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-6 border border-yellow-200">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
           <div className="flex items-center mb-6">
-            <div className="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center mr-3">
-              <span className="text-white text-sm font-bold">4</span>
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+              <span className="text-white text-sm font-bold">6</span>
             </div>
-            <h3 className="text-xl font-bold text-yellow-900">Application Fee Payment</h3>
+            <h3 className="text-xl font-bold text-blue-900">Application Fee Payment</h3>
           </div>
           
           {/* Payment Instructions */}
-          <div className="bg-white rounded-xl p-6 mb-6 border border-yellow-300">
+          <div className="bg-white rounded-xl p-6 mb-6 border border-blue-300">
             <div className="flex items-start mb-4">
-              <CreditCard className="w-6 h-6 text-yellow-600 mr-3 mt-1" />
+              <CreditCard className="w-6 h-6 text-blue-600 mr-3 mt-1" />
               <div>
                 <h4 className="font-bold text-gray-900 mb-2">Payment Instructions</h4>
                 <div className="space-y-2 text-sm text-gray-700">
-                  <p><strong>Application Fee:</strong> <span className="text-2xl font-bold text-yellow-600">PKR 500</span></p>
+                  <p><strong>Application Fee:</strong> <span className="text-2xl font-bold text-blue-600">PKR 200</span></p>
                   <p><strong>Payment Method:</strong> Easypaisa</p>
-                  <p><strong>Account Number:</strong> <span className="font-mono bg-gray-100 px-2 py-1 rounded">03001234567</span></p>
-                  <p><strong>Account Title:</strong> Nasir Ahmad Khan </p>
+                  <p><strong>Account Number:</strong> <span className="font-mono bg-gray-100 px-2 py-1 rounded">03005928890</span></p>
+                  <p><strong>Account Title:</strong> Nasir Ahmad Khan</p>
                 </div>
               </div>
             </div>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h5 className="font-semibold text-yellow-800 mb-2">How to Pay:</h5>
-              <ol className="list-decimal list-inside space-y-1 text-sm text-yellow-700">
-                <li>Send PKR 500 to the above Easypaisa number</li>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h5 className="font-semibold text-blue-800 mb-2">How to Pay:</h5>
+              <ol className="list-decimal list-inside space-y-1 text-sm text-blue-700">
+                <li>Send PKR 200 to the above Easypaisa number</li>
                 <li>Take a screenshot of the transaction receipt</li>
                 <li>Fill the transaction details below</li>
                 <li>Upload the receipt image</li>
@@ -412,7 +596,7 @@ const ApplicationForm = () => {
                 value={formData.easypaisaNumber}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 placeholder="03xxxxxxxxx"
               />
             </div>
@@ -424,7 +608,7 @@ const ApplicationForm = () => {
                 value={formData.transactionId}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 placeholder="Enter transaction ID from receipt"
               />
             </div>
@@ -432,36 +616,36 @@ const ApplicationForm = () => {
         </div>
 
         {/* Transaction Receipt Upload */}
-        <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
           <div className="flex items-center mb-6">
-            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
-              <span className="text-white text-sm font-bold">5</span>
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+              <span className="text-white text-sm font-bold">7</span>
             </div>
-            <h3 className="text-xl font-bold text-purple-900">Transaction Receipt</h3>
+            <h3 className="text-xl font-bold text-blue-900">Transaction Receipt</h3>
           </div>
-          <div className="border-2 border-dashed border-purple-300 rounded-xl p-8 text-center bg-white">
-            <Receipt className="w-12 h-12 text-purple-400 mx-auto mb-4" />
+          <div className="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center bg-white">
+            <Receipt className="w-12 h-12 text-blue-400 mx-auto mb-4" />
             <p className="text-gray-700 mb-2 font-medium">Upload Transaction Receipt *</p>
             <p className="text-sm text-gray-500 mb-4">Supported formats: JPG, PNG, PDF (Max size: 5MB)</p>
             <input
               type="file"
               accept=".jpg,.jpeg,.png,.pdf"
-              onChange={handleReceiptChange}
+              onChange={(e) => handleDocumentChange('transactionReceipt', e.target.files?.[0] || null)}
               required
               className="hidden"
               id="receipt-upload"
             />
             <label
               htmlFor="receipt-upload"
-              className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 cursor-pointer transition-colors duration-200"
+              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
             >
               <Upload className="w-5 h-5 mr-2" />
               Choose Receipt File
             </label>
-            {transactionReceipt && (
-              <div className="mt-4 p-4 bg-purple-50 rounded-lg">
-                <p className="text-sm text-purple-700 font-medium">Selected file:</p>
-                <p className="text-sm text-purple-600">{transactionReceipt.name}</p>
+            {documents.transactionReceipt && (
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-700 font-medium">Selected file:</p>
+                <p className="text-sm text-blue-600">{documents.transactionReceipt.name}</p>
               </div>
             )}
           </div>

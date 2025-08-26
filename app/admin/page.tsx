@@ -30,17 +30,32 @@ interface Application {
   _id: string
   firstName: string
   lastName: string
+  fatherName: string
   email: string
   phone: string
+  guardianPhone: string
   dateOfBirth: string
   gender: 'male' | 'female' | 'other'
+  class: string
+  group: string
   address: string
   city: string
   state: string
   zipCode: string
-  program: string
-  previousSchool: string
-  previousGrade: string
+  education: {
+    metric: {
+      year: string
+      rollNumber: string
+      marks: string
+      school: string
+    }
+  }
+  documents: {
+    dmcMetric: string
+    passportPhoto: string
+    fatherCNIC: string
+    migrationCertificate?: string
+  }
   paymentAmount: string
   easypaisaNumber: string
   transactionId: string
@@ -187,7 +202,7 @@ const AdminDashboard = () => {
       app.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.program.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.transactionId.toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesStatus = statusFilter === 'all' || app.status === statusFilter
@@ -398,7 +413,7 @@ const AdminDashboard = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search by name, email, program, or transaction ID..."
+                placeholder="Search by name, email, group, or transaction ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -476,7 +491,7 @@ const AdminDashboard = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div>{application.program}</div>
+                      <div>{application.group}</div>
                       <div className="text-xs text-gray-500">{application.city}, {application.state}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -576,8 +591,12 @@ const AdminDashboard = () => {
                       <p className="mt-1 text-sm text-gray-900">{selectedApplication.gender}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Program</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.program}</p>
+                      <label className="block text-sm font-medium text-gray-700">Group</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.group}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Class</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.class}</p>
                     </div>
                   </div>
                 </div>
@@ -605,17 +624,25 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                {/* Academic Information */}
+                {/* Education Information */}
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Academic Information</h4>
+                  <h4 className="font-semibold text-gray-900 mb-3">Education Information</h4>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Previous School</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.previousSchool}</p>
+                      <label className="block text-sm font-medium text-gray-700">Metric Year</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.education.metric.year}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Previous Grade</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.previousGrade}</p>
+                      <label className="block text-sm font-medium text-gray-700">Roll Number</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.education.metric.rollNumber}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Marks</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.education.metric.marks}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">School</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.education.metric.school}</p>
                     </div>
                   </div>
                 </div>
