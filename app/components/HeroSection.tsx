@@ -294,11 +294,15 @@ const HeroSection = () => {
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.8, delay: 0.8 }}
-                className="text-lg md:text-xl lg:text-2xl mb-10 max-w-4xl mx-auto leading-relaxed text-blue-50 opacity-90"
-              >
-                {slides[currentSlide].description}
-              </motion.p>
+                className="text-lg md:text-xl lg:text-2xl mb-10 max-w-4xl mx-auto leading-relaxed text-blue-50 opacity-90 line-clamp-3"
+                dangerouslySetInnerHTML={{ 
+                  __html: slides[currentSlide].description.length > 150 
+                    ? slides[currentSlide].description.substring(0, 150) + '...' 
+                    : slides[currentSlide].description 
+                }}
+              />
               
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
