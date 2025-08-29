@@ -562,9 +562,9 @@ const ApplicationForm = () => {
             </div>
 
             {/* Migration Certificate (Optional) */}
-            {/* <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
               <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <p className="text-gray-700 mb-2 font-medium">Migration Certificate</p>
+              <p className="text-gray-700 mb-2 font-medium">Migration Certificate (optional)</p>
               <p className="text-sm text-gray-500 mb-4">Optional - if applicable</p>
               <input
                 type="file"
@@ -585,7 +585,7 @@ const ApplicationForm = () => {
                   <p className="text-sm text-blue-700 font-medium">Selected: {documents.migrationCertificate.name}</p>
                 </div>
               )}
-            </div> */}
+            </div>
           </div>
         </div>
 
