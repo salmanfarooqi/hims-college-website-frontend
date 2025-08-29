@@ -22,7 +22,13 @@ import {
   Loader,
   X,
   CreditCard,
-  Receipt
+  Receipt,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  GraduationCap,
+  Info
 } from 'lucide-react'
 import { API_BASE_URL } from '../../services'
 
@@ -31,18 +37,21 @@ interface Application {
   firstName: string
   lastName: string
   fatherName: string
-  email: string
-  phone: string
+  email?: string
+  phone?: string
   guardianPhone: string
   dateOfBirth: string
   gender: 'male' | 'female' | 'other'
   class: string
   group: string
   address: string
-  city: string
-  state: string
-  zipCode: string
-  education: {
+  // New simplified education fields
+  metricYear?: string
+  metricRollNumber?: string
+  metricMarks?: string
+  metricSchool?: string
+  // Legacy nested structure (for backward compatibility)
+  education?: {
     metric: {
       year: string
       rollNumber: string
@@ -139,7 +148,6 @@ const AdminDashboard = () => {
       setIsLoading(true)
       const { applicationsAPI } = await import('../../services')
       const data = await applicationsAPI.getAll()
-      console.log('Applications data:', data) // Debug log
       // Handle different API response formats
       const applicationsArray = Array.isArray(data) ? data : (data.applications || [])
       setApplications(applicationsArray)
@@ -155,7 +163,6 @@ const AdminDashboard = () => {
     try {
       const { applicationsAPI } = await import('../../services')
       const data = await applicationsAPI.getStatistics()
-      console.log('Statistics data:', data) // Debug log
       setStatistics(data)
     } catch (error) {
       console.error('Failed to fetch statistics:', error)
@@ -201,7 +208,7 @@ const AdminDashboard = () => {
     const matchesSearch = 
       app.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (app.email && app.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
       app.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.transactionId.toLowerCase().includes(searchTerm.toLowerCase())
     
@@ -209,6 +216,8 @@ const AdminDashboard = () => {
     
     return matchesSearch && matchesStatus
   })
+
+
 
   if (isLoading) {
     return (
@@ -441,6 +450,8 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+
+
       {/* Applications Table */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
@@ -451,22 +462,19 @@ const AdminDashboard = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Student
+                  Student Info
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Program
+                  Contact & Location
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Payment
+                  Group & Education
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
+                  Payment Details
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  Status & Actions
                 </th>
               </tr>
             </thead>
@@ -475,60 +483,91 @@ const AdminDashboard = () => {
                 const StatusIcon = getStatusIcon(application.status)
                 return (
                   <tr key={application._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                          <span className="text-primary-600 font-medium">
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
+                          <span className="text-primary-700 font-bold text-sm">
                             {application.firstName[0]}{application.lastName[0]}
                           </span>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-semibold text-gray-900">
                             {application.firstName} {application.lastName}
                           </div>
-                          <div className="text-sm text-gray-500">{application.email}</div>
+                          <div className="text-xs text-gray-500 flex items-center">
+                            <User className="w-3 h-3 mr-1" />
+                            {application.gender} • DOB: {new Date(application.dateOfBirth).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div>{application.group}</div>
-                      <div className="text-xs text-gray-500">{application.city}, {application.state}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div className="flex items-center">
-                        <CreditCard className="w-4 h-4 text-green-600 mr-1" />
-                        Rs. {application.paymentAmount}
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center text-sm text-gray-900">
+                          <Mail className="w-3 h-3 mr-2 text-gray-400" />
+                          <span className="truncate">{application.email || 'Not provided'}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Phone className="w-3 h-3 mr-2 text-gray-400" />
+                          {application.phone || 'Not provided'}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Phone className="w-3 h-3 mr-2 text-gray-400" />
+                          Guardian: {application.guardianPhone}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <MapPin className="w-3 h-3 mr-2 text-gray-400" />
+                          <span className="truncate">{application.address}</span>
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500">ID: {application.transactionId}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(application.createdAt).toLocaleDateString()}
+                    <td className="px-6 py-4">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900 mb-1">{application.group}</div>
+                        <div className="text-xs text-gray-500">
+                          <div className="flex items-center mb-1">
+                            <GraduationCap className="w-3 h-3 mr-1" />
+                            Class: {application.class}
+                          </div>
+                          <div>Group: {application.group}</div>
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
-                        <StatusIcon className="w-4 h-4 mr-1" />
-                        {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
-                      </span>
+                    <td className="px-6 py-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <CreditCard className="w-4 h-4 mr-2 text-green-600" />
+                          <span className="text-sm font-semibold text-green-600">Rs. {application.paymentAmount}</span>
+                        </div>
+                        <div className="text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
+                          {application.transactionId}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(application.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => {
-                          setSelectedApplication(application)
-                          setShowModal(true)
-                        }}
-                        className="text-primary-600 hover:text-primary-900 mr-3"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedApplication(application)
-                          setShowModal(true)
-                        }}
-                        className="text-gray-600 hover:text-gray-900"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
+                    <td className="px-6 py-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
+                            <StatusIcon className="w-3 h-3 mr-1" />
+                            {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => {
+                              setSelectedApplication(application)
+                              setShowModal(true)
+                            }}
+                            className="text-primary-600 hover:text-primary-700 text-xs font-medium flex items-center"
+                          >
+                            <Eye className="w-3 h-3 mr-1" />
+                            Details
+                          </button>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 )
@@ -574,11 +613,11 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Email</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.email}</p>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.email || 'Not provided'}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Phone</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.phone}</p>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.phone || 'Not provided'}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
@@ -604,22 +643,10 @@ const AdminDashboard = () => {
                 {/* Address Information */}
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-3">Address Information</h4>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="md:col-span-3">
-                      <label className="block text-sm font-medium text-gray-700">Address</label>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Home Address</label>
                       <p className="mt-1 text-sm text-gray-900">{selectedApplication.address}</p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">City</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.city}</p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">State</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.state}</p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">ZIP Code</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.zipCode}</p>
                     </div>
                   </div>
                 </div>
@@ -630,19 +657,19 @@ const AdminDashboard = () => {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Metric Year</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.education.metric.year}</p>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.metricYear || selectedApplication.education?.metric?.year || 'Not provided'}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Roll Number</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.education.metric.rollNumber}</p>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.metricRollNumber || selectedApplication.education?.metric?.rollNumber || 'Not provided'}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Marks</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.education.metric.marks}</p>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.metricMarks || selectedApplication.education?.metric?.marks || 'Not provided'}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">School</label>
-                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.education.metric.school}</p>
+                      <p className="mt-1 text-sm text-gray-900">{selectedApplication.metricSchool || selectedApplication.education?.metric?.school || 'Not provided'}</p>
                     </div>
                   </div>
                 </div>
@@ -682,6 +709,196 @@ const AdminDashboard = () => {
                         </a>
                       </div>
                     )}
+                  </div>
+                </div>
+
+                {/* Documents Section */}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                    <FileText className="w-5 h-5 mr-2 text-blue-600" />
+                    Documents
+                  </h4>
+                  
+                  {/* Academic Documents */}
+                  <div className="mb-6">
+                    <h5 className="font-semibold text-blue-800 mb-3 flex items-center">
+                      <GraduationCap className="w-4 h-4 mr-2" />
+                      Academic Documents
+                    </h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white p-4 rounded-lg border border-blue-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">📚 DMC of Metric</label>
+                        {selectedApplication.documents?.dmcMetric ? (
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-2">
+                              <a 
+                                href={selectedApplication.documents.dmcMetric.startsWith('http') ? selectedApplication.documents.dmcMetric : `https://hims-college-backend.vercel.app/${selectedApplication.documents.dmcMetric}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
+                              >
+                                <FileText className="w-4 h-4 mr-2" />
+                                View Document
+                              </a>
+                              <button
+                                onClick={() => {
+                                  if (selectedApplication.documents?.dmcMetric) {
+                                    const url = selectedApplication.documents.dmcMetric.startsWith('http') 
+                                      ? selectedApplication.documents.dmcMetric 
+                                      : `https://hims-college-backend.vercel.app/${selectedApplication.documents.dmcMetric}`;
+                                    window.open(url, '_blank');
+                                  }
+                                }}
+                                className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download
+                              </button>
+                            </div>
+                            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                              {selectedApplication.documents.dmcMetric.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-red-600 font-medium flex items-center">
+                            <XCircle className="w-4 h-4 mr-2" />
+                            Not uploaded
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="bg-white p-4 rounded-lg border border-blue-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">📝 Migration Certificate</label>
+                        {selectedApplication.documents?.migrationCertificate ? (
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-2">
+                              <a 
+                                href={selectedApplication.documents.migrationCertificate.startsWith('http') ? selectedApplication.documents.migrationCertificate : `https://hims-college-backend.vercel.app/${selectedApplication.documents.migrationCertificate}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm font-medium transition-colors"
+                              >
+                                <FileText className="w-4 h-4 mr-2" />
+                                View Certificate
+                              </a>
+                              <button
+                                onClick={() => {
+                                  if (selectedApplication.documents?.migrationCertificate) {
+                                    const url = selectedApplication.documents.migrationCertificate.startsWith('http') 
+                                      ? selectedApplication.documents.migrationCertificate 
+                                      : `https://hims-college-backend.vercel.app/${selectedApplication.documents.migrationCertificate}`;
+                                    window.open(url, '_blank');
+                                  }
+                                }}
+                                className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download
+                              </button>
+                            </div>
+                            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                              {selectedApplication.documents.migrationCertificate.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-gray-600 font-medium flex items-center">
+                            <span className="text-yellow-600 mr-2">📝</span>
+                            Optional - Not uploaded
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Personal Documents */}
+                  <div className="mb-6">
+                    <h5 className="font-semibold text-blue-800 mb-3 flex items-center">
+                      <User className="w-4 h-4 mr-2" />
+                      Personal Documents
+                    </h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white p-4 rounded-lg border border-blue-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">🖼️ Passport Photo</label>
+                        {selectedApplication.documents?.passportPhoto ? (
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-2">
+                              <a 
+                                href={selectedApplication.documents.passportPhoto.startsWith('http') ? selectedApplication.documents.passportPhoto : `https://hims-college-backend.vercel.app/${selectedApplication.documents.passportPhoto}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
+                              >
+                                <User className="w-4 h-4 mr-2" />
+                                View Photo
+                              </a>
+                              <button
+                                onClick={() => {
+                                  if (selectedApplication.documents?.passportPhoto) {
+                                    const url = selectedApplication.documents.passportPhoto.startsWith('http') 
+                                      ? selectedApplication.documents.passportPhoto 
+                                      : `https://hims-college-backend.vercel.app/${selectedApplication.documents.passportPhoto}`;
+                                    window.open(url, '_blank');
+                                  }
+                                }}
+                                className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download
+                              </button>
+                            </div>
+                            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                              {selectedApplication.documents.passportPhoto.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-red-600 font-medium flex items-center">
+                            <XCircle className="w-4 h-4 mr-2" />
+                            Not uploaded
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="bg-white p-4 rounded-lg border border-blue-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">🆔 Father's CNIC</label>
+                        {selectedApplication.documents?.fatherCNIC ? (
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-2">
+                              <a 
+                                href={selectedApplication.documents.fatherCNIC.startsWith('http') ? selectedApplication.documents.fatherCNIC : `https://hims-college-backend.vercel.app/${selectedApplication.documents.fatherCNIC}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium transition-colors"
+                              >
+                                <FileText className="w-4 h-4 mr-2" />
+                                View CNIC
+                              </a>
+                              <button
+                                onClick={() => {
+                                  if (selectedApplication.documents?.fatherCNIC) {
+                                    const url = selectedApplication.documents.fatherCNIC.startsWith('http') 
+                                      ? selectedApplication.documents.fatherCNIC 
+                                      : `https://hims-college-backend.vercel.app/${selectedApplication.documents.fatherCNIC}`;
+                                    window.open(url, '_blank');
+                                  }
+                                }}
+                                className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download
+                              </button>
+                            </div>
+                            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                              {selectedApplication.documents.fatherCNIC.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-red-600 font-medium flex items-center">
+                            <XCircle className="w-4 h-4 mr-2" />
+                            Not uploaded
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 

@@ -16,10 +16,10 @@ interface ApplicationData {
   class: string
   group: string
   address: string
-  'education[metric][year]': string
-  'education[metric][rollNumber]': string
-  'education[metric][marks]': string
-  'education[metric][school]': string
+  metricYear: string
+  metricRollNumber: string
+  metricMarks: string
+  metricSchool: string
   easypaisaNumber: string
   transactionId: string
 }
@@ -37,10 +37,10 @@ const ApplicationForm = () => {
     class: '',
     group: '',
     address: '',
-    'education[metric][year]': '',
-    'education[metric][rollNumber]': '',
-    'education[metric][marks]': '',
-    'education[metric][school]': '',
+    metricYear: '',
+    metricRollNumber: '',
+    metricMarks: '',
+    metricSchool: '',
     easypaisaNumber: '',
     transactionId: ''
   })
@@ -78,13 +78,14 @@ const ApplicationForm = () => {
     const requiredFields = [
       'name', 'fatherName', 'guardianPhone',
       'dateOfBirth', 'gender', 'class', 'group', 'address',
-      'education[metric][year]', 'education[metric][rollNumber]', 'education[metric][marks]', 'education[metric][school]',
+      'metricYear', 'metricRollNumber', 'metricMarks', 'metricSchool',
       'easypaisaNumber', 'transactionId'
     ]
 
     for (const field of requiredFields) {
-      if (!formData[field as keyof ApplicationData]) {
-        toast.error(`Please fill in ${field.replace(/\[.*?\]/g, '').replace(/([A-Z])/g, ' $1').toLowerCase()}`)
+      if (!formData[field as keyof ApplicationData] || formData[field as keyof ApplicationData].trim() === '') {
+        const fieldName = field.replace(/([A-Z])/g, ' $1').toLowerCase()
+        toast.error(`Please fill in ${fieldName}`)
         setIsSubmitting(false)
         return
       }
@@ -125,6 +126,45 @@ const ApplicationForm = () => {
       const firstName = nameParts[0] || ''
       const lastName = nameParts.slice(1).join(' ') || ''
 
+      // Debug: Log form data being sent
+      console.log('📋 Form data being sent:', {
+        firstName,
+        lastName,
+        fatherName: formData.fatherName,
+        phone: formData.phone,
+        guardianPhone: formData.guardianPhone,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender,
+        class: formData.class,
+        group: formData.group,
+        address: formData.address,
+        education: {
+          metric: {
+            year: formData.metricYear,
+            rollNumber: formData.metricRollNumber,
+            marks: formData.metricMarks,
+            school: formData.metricSchool
+          }
+        },
+        easypaisaNumber: formData.easypaisaNumber,
+        transactionId: formData.transactionId
+      })
+
+      // Debug: Log individual education field values
+      console.log('🎓 Education field values:', {
+        metricYear: formData.metricYear,
+        metricRollNumber: formData.metricRollNumber,
+        metricMarks: formData.metricMarks,
+        metricSchool: formData.metricSchool
+      })
+
+      // Debug: Log FormData contents
+      console.log('📤 FormData entries:')
+      const entries = Array.from(formDataToSend.entries())
+      entries.forEach(([key, value]) => {
+        console.log(`${key}: ${value}`)
+      })
+
       // Append mapped fields
       formDataToSend.append('firstName', firstName)
       formDataToSend.append('lastName', lastName)
@@ -137,10 +177,10 @@ const ApplicationForm = () => {
       formDataToSend.append('group', formData.group)
       formDataToSend.append('address', formData.address)
       // city/state/zip removed per requirement
-      formDataToSend.append('education[metric][year]', formData['education[metric][year]'])
-      formDataToSend.append('education[metric][rollNumber]', formData['education[metric][rollNumber]'])
-      formDataToSend.append('education[metric][marks]', formData['education[metric][marks]'])
-      formDataToSend.append('education[metric][school]', formData['education[metric][school]'])
+      formDataToSend.append('metricYear', formData.metricYear)
+      formDataToSend.append('metricRollNumber', formData.metricRollNumber)
+      formDataToSend.append('metricMarks', formData.metricMarks)
+      formDataToSend.append('metricSchool', formData.metricSchool)
       formDataToSend.append('easypaisaNumber', formData.easypaisaNumber)
       formDataToSend.append('transactionId', formData.transactionId)
 
@@ -166,10 +206,10 @@ const ApplicationForm = () => {
         class: '',
         group: '',
         address: '',
-        'education[metric][year]': '',
-        'education[metric][rollNumber]': '',
-        'education[metric][marks]': '',
-        'education[metric][school]': '',
+        metricYear: '',
+        metricRollNumber: '',
+        metricMarks: '',
+        metricSchool: '',
         easypaisaNumber: '',
         transactionId: ''
       })
@@ -247,15 +287,14 @@ const ApplicationForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Personal Mobile *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Personal Mobile</label>
               <input
                 type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                required
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                placeholder="03xxxxxxxxx"
+                placeholder="03xxxxxxxxx (Optional)"
               />
             </div>
             <div>
@@ -379,12 +418,12 @@ const ApplicationForm = () => {
               Metric Details
             </h4>
             <div className="grid md:grid-cols-2 gap-6">
-              <div>
+                            <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Year *</label>
                 <input
                   type="text"
-                  name="education[metric][year]"
-                  value={formData['education[metric][year]']}
+                  name="metricYear"
+                  value={formData.metricYear}
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
@@ -395,8 +434,8 @@ const ApplicationForm = () => {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Roll Number *</label>
                 <input
                   type="text"
-                  name="education[metric][rollNumber]"
-                  value={formData['education[metric][rollNumber]']}
+                  name="metricRollNumber"
+                  value={formData.metricRollNumber}
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
@@ -405,28 +444,28 @@ const ApplicationForm = () => {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Marks *</label>
-              <input
-                type="text"
-                name="education[metric][marks]"
-                value={formData['education[metric][marks]']}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="e.g., 850/1100 or 85%"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">School *</label>
-              <input
-                type="text"
-                name="education[metric][school]"
-                value={formData['education[metric][school]']}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter school name"
-              />
-            </div>
+                <input
+                  type="text"
+                  name="metricMarks"
+                  value={formData.metricMarks}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., 850/1100 or 85%"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">School *</label>
+                <input
+                  type="text"
+                  name="metricSchool"
+                  value={formData.metricSchool}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter school name"
+                />
+              </div>
           </div>
         </div>
       </div>
@@ -523,7 +562,7 @@ const ApplicationForm = () => {
             </div>
 
             {/* Migration Certificate (Optional) */}
-            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
+            {/* <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
               <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
               <p className="text-gray-700 mb-2 font-medium">Migration Certificate</p>
               <p className="text-sm text-gray-500 mb-4">Optional - if applicable</p>
@@ -546,7 +585,7 @@ const ApplicationForm = () => {
                   <p className="text-sm text-blue-700 font-medium">Selected: {documents.migrationCertificate.name}</p>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
 
