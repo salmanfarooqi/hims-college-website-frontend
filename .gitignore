@@ -3,4 +3,4 @@ dist/s.next/
 
 node_modules/
 
-dist/
+dist/node_modules/ 
