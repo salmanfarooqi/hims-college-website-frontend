@@ -708,76 +708,126 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                {/* Documents - Simple cards for uploaded documents */}
+                {/* Documents Section - Improved Width and Style */}
                 {selectedApplication.documents && (
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3 flex items-center text-sm sm:text-base">
-                      <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-600" />
-                      Uploaded Documents
+                  <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-6 rounded-2xl border border-slate-200 shadow-lg">
+                    <h4 className="font-bold text-slate-900 mb-6 flex items-center text-lg">
+                      <FileText className="w-6 h-6 mr-3 text-blue-600" />
+                      Application Documents
                     </h4>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       {/* DMC of Metric */}
                       {selectedApplication.documents.dmcMetric && (
-                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
-                          <div className="flex items-center">
-                            <span className="text-lg mr-2">📚</span>
-                            <div>
-                              <div className="font-medium text-gray-700 text-sm">DMC of Metric</div>
-                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mr-4">
+                                <span className="text-xl">📚</span>
+                              </div>
+                              <div>
+                                <h5 className="font-semibold text-slate-900 text-base">DMC of Metric</h5>
+                                <p className="text-green-600 text-sm font-medium">✓ Uploaded</p>
+                              </div>
                             </div>
+                            <button
+                              onClick={() => window.open(selectedApplication.documents.dmcMetric.startsWith('http') ? selectedApplication.documents.dmcMetric : `https://hims-college-backend.vercel.app/${selectedApplication.documents.dmcMetric}`, '_blank')}
+                              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
+                            >
+                              View Document
+                            </button>
                           </div>
                         </div>
                       )}
 
                       {/* Passport Photo */}
                       {selectedApplication.documents.passportPhoto && (
-                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
-                          <div className="flex items-center">
-                            <span className="text-lg mr-2">🖼️</span>
-                            <div>
-                              <div className="font-medium text-gray-700 text-sm">Passport Photo</div>
-                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center mr-4">
+                                <span className="text-xl">🖼️</span>
+                              </div>
+                              <div>
+                                <h5 className="font-semibold text-slate-900 text-base">Passport Photo</h5>
+                                <p className="text-green-600 text-sm font-medium">✓ Uploaded</p>
+                              </div>
                             </div>
+                            <button
+                              onClick={() => window.open(selectedApplication.documents.passportPhoto.startsWith('http') ? selectedApplication.documents.passportPhoto : `https://hims-college-backend.vercel.app/${selectedApplication.documents.passportPhoto}`, '_blank')}
+                              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
+                            >
+                              View Photo
+                            </button>
                           </div>
                         </div>
                       )}
 
                       {/* Father's CNIC */}
                       {selectedApplication.documents.fatherCNIC && (
-                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
-                          <div className="flex items-center">
-                            <span className="text-lg mr-2">🆔</span>
-                            <div>
-                              <div className="font-medium text-gray-700 text-sm">Father's CNIC</div>
-                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center mr-4">
+                                <span className="text-xl">🆔</span>
+                              </div>
+                              <div>
+                                <h5 className="font-semibold text-slate-900 text-base">Father's CNIC</h5>
+                                <p className="text-green-600 text-sm font-medium">✓ Uploaded</p>
+                              </div>
                             </div>
+                            <button
+                              onClick={() => window.open(selectedApplication.documents.fatherCNIC.startsWith('http') ? selectedApplication.documents.fatherCNIC : `https://hims-college-backend.vercel.app/${selectedApplication.documents.fatherCNIC}`, '_blank')}
+                              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
+                            >
+                              View CNIC
+                            </button>
                           </div>
                         </div>
                       )}
 
                       {/* Migration Certificate */}
                       {selectedApplication.documents.migrationCertificate && (
-                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
-                          <div className="flex items-center">
-                            <span className="text-lg mr-2">📝</span>
-                            <div>
-                              <div className="font-medium text-gray-700 text-sm">Migration Certificate</div>
-                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center mr-4">
+                                <span className="text-xl">📝</span>
+                              </div>
+                              <div>
+                                <h5 className="font-semibold text-slate-900 text-base">Migration Certificate</h5>
+                                <p className="text-green-600 text-sm font-medium">✓ Uploaded</p>
+                              </div>
                             </div>
+                            <button
+                              onClick={() => window.open(selectedApplication.documents.migrationCertificate.startsWith('http') ? selectedApplication.documents.migrationCertificate : `https://hims-college-backend.vercel.app/${selectedApplication.documents.migrationCertificate}`, '_blank')}
+                              className="px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg hover:from-orange-700 hover:to-orange-800 text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
+                            >
+                              View Certificate
+                            </button>
                           </div>
                         </div>
                       )}
 
                       {/* Transaction Receipt */}
                       {selectedApplication.transactionReceipt && (
-                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
-                          <div className="flex items-center">
-                            <span className="text-lg mr-2">🧾</span>
-                            <div>
-                              <div className="font-medium text-gray-700 text-sm">Transaction Receipt</div>
-                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-10 h-10 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-lg flex items-center justify-center mr-4">
+                                <span className="text-xl">🧾</span>
+                              </div>
+                              <div>
+                                <h5 className="font-semibold text-slate-900 text-base">Transaction Receipt</h5>
+                                <p className="text-green-600 text-sm font-medium">✓ Uploaded</p>
+                              </div>
                             </div>
+                            <button
+                              onClick={() => window.open(selectedApplication.transactionReceipt.startsWith('http') ? selectedApplication.transactionReceipt : `https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`, '_blank')}
+                              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-700 hover:to-emerald-800 text-sm font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
+                            >
+                              View Receipt
+                            </button>
                           </div>
                         </div>
                       )}

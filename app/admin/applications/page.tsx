@@ -679,451 +679,120 @@ const ApplicationsPage = () => {
                     </div>
                   </div>
 
-                  {/* Documents Information */}
-                  <div className="bg-orange-50 p-6 rounded-lg">
-                    <h4 className="font-bold text-orange-900 mb-4 flex items-center">
-                      <FileText className="w-5 h-5 mr-2" />
-                      Education Documents & Files
+
+
+                  {/* Documents Section - Improved Width and Style */}
+                  <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl border border-slate-200 shadow-lg">
+                    <h4 className="font-bold text-slate-900 mb-8 flex items-center text-xl">
+                      <FileText className="w-7 h-7 mr-4 text-blue-600" />
+                      Application Documents
                     </h4>
                     
-                    {/* Education Documents Section */}
-                    <div className="mb-6">
-                      <h5 className="font-semibold text-orange-800 mb-3 flex items-center">
-                        <GraduationCap className="w-4 h-4 mr-2" />
-                        Academic Documents
-                      </h5>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-white p-4 rounded-lg border border-orange-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">📚 DMC of Metric</label>
-                          {selectedApplication.documents.dmcMetric ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={selectedApplication.documents.dmcMetric.startsWith('http') ? selectedApplication.documents.dmcMetric : `https://hims-college-backend.vercel.app/${selectedApplication.documents.dmcMetric}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
-                                >
-                                  <FileText className="w-4 h-4 mr-2" />
-                                  View Document
-                                </a>
-                                <button
-                                  onClick={() => {
-                                    if (selectedApplication.documents.dmcMetric) {
-                                      const url = selectedApplication.documents.dmcMetric.startsWith('http') 
-                                        ? selectedApplication.documents.dmcMetric 
-                                        : `https://hims-college-backend.vercel.app/${selectedApplication.documents.dmcMetric}`;
-                                      window.open(url, '_blank');
-                                    }
-                                  }}
-                                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                {selectedApplication.documents.dmcMetric.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
-                              </div>
+                    <div className="grid grid-cols-1 gap-6">
+                      {/* DMC of Metric */}
+                      {selectedApplication.documents?.dmcMetric && (
+                        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                          <div className="flex items-center mb-4">
+                            <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center mr-4">
+                              <span className="text-2xl">📚</span>
                             </div>
-                          ) : (
-                            <div className="text-red-600 font-medium flex items-center">
-                              <XCircle className="w-4 h-4 mr-2" />
-                              Not uploaded
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="bg-white p-4 rounded-lg border border-orange-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">📝 Migration Certificate</label>
-                          {selectedApplication.documents.migrationCertificate ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={selectedApplication.documents.migrationCertificate.startsWith('http') ? selectedApplication.documents.migrationCertificate : `https://hims-college-backend.vercel.app/${selectedApplication.documents.migrationCertificate}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm font-medium transition-colors"
-                                >
-                                  <FileText className="w-4 h-4 mr-2" />
-                                  View Certificate
-                                </a>
-                                <button
-                                  onClick={() => {
-                                    if (selectedApplication.documents.migrationCertificate) {
-                                      const url = selectedApplication.documents.migrationCertificate.startsWith('http') 
-                                        ? selectedApplication.documents.migrationCertificate 
-                                        : `https://hims-college-backend.vercel.app/${selectedApplication.documents.migrationCertificate}`;
-                                      window.open(url, '_blank');
-                                    }
-                                  }}
-                                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                {selectedApplication.documents.migrationCertificate.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="text-gray-600 font-medium flex items-center">
-                              <span className="text-yellow-600 mr-2">📝</span>
-                              Optional - Not uploaded
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Personal Documents Section */}
-                    <div className="mb-6">
-                      <h5 className="font-semibold text-orange-800 mb-3 flex items-center">
-                        <User className="w-4 h-4 mr-2" />
-                        Personal Documents
-                      </h5>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-white p-4 rounded-lg border border-orange-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">🖼️ Passport Photo</label>
-                          {selectedApplication.documents.passportPhoto ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={selectedApplication.documents.passportPhoto.startsWith('http') ? selectedApplication.documents.passportPhoto : `https://hims-college-backend.vercel.app/${selectedApplication.documents.passportPhoto}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                                >
-                                  <User className="w-4 h-4 mr-2" />
-                                  View Photo
-                                </a>
-                                <button
-                                  onClick={() => {
-                                    if (selectedApplication.documents.passportPhoto) {
-                                      const url = selectedApplication.documents.passportPhoto.startsWith('http') 
-                                        ? selectedApplication.documents.passportPhoto 
-                                        : `https://hims-college-backend.vercel.app/${selectedApplication.documents.passportPhoto}`;
-                                      window.open(url, '_blank');
-                                    }
-                                  }}
-                                  className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                {selectedApplication.documents.passportPhoto.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="text-red-600 font-medium flex items-center">
-                              <XCircle className="w-4 h-4 mr-2" />
-                              Not uploaded
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="bg-white p-4 rounded-lg border border-orange-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">🆔 Father's CNIC</label>
-                          {selectedApplication.documents.fatherCNIC ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={selectedApplication.documents.fatherCNIC.startsWith('http') ? selectedApplication.documents.fatherCNIC : `https://hims-college-backend.vercel.app/${selectedApplication.documents.fatherCNIC}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium transition-colors"
-                                >
-                                  <FileText className="w-4 h-4 mr-2" />
-                                  View CNIC
-                                </a>
-                                <button
-                                  onClick={() => {
-                                    if (selectedApplication.documents.fatherCNIC) {
-                                      const url = selectedApplication.documents.fatherCNIC.startsWith('http') 
-                                        ? selectedApplication.documents.fatherCNIC 
-                                        : `https://hims-college-backend.vercel.app/${selectedApplication.documents.fatherCNIC}`;
-                                      window.open(url, '_blank');
-                                    }
-                                  }}
-                                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                {selectedApplication.documents.fatherCNIC.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="text-red-600 font-medium flex items-center">
-                              <XCircle className="w-4 h-4 mr-2" />
-                              Not uploaded
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Payment Receipt Section */}
-                    <div>
-                      <h5 className="font-semibold text-orange-800 mb-3 flex items-center">
-                        <Receipt className="w-4 h-4 mr-2" />
-                        Payment Receipt
-                      </h5>
-                      <div className="bg-white p-4 rounded-lg border border-orange-200">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">💳 Transaction Receipt</label>
-                        {selectedApplication.transactionReceipt ? (
-                          <div className="space-y-3">
-                            <div className="flex items-center space-x-2">
-                              <a 
-                                href={selectedApplication.transactionReceipt.startsWith('http') ? selectedApplication.transactionReceipt : `https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
-                              >
-                                <Receipt className="w-4 h-4 mr-2" />
-                                View Receipt
-                              </a>
-                              <button
-                                onClick={() => {
-                                  if (selectedApplication.transactionReceipt) {
-                                    const url = selectedApplication.transactionReceipt.startsWith('http') 
-                                      ? selectedApplication.transactionReceipt 
-                                      : `https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`;
-                                    window.open(url, '_blank');
-                                  }
-                                }}
-                                className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                              >
-                                <Download className="w-4 h-4 mr-2" />
-                                Download
-                              </button>
-                            </div>
-                            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                              {selectedApplication.transactionReceipt.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
+                            <div>
+                              <h5 className="font-bold text-slate-900 text-base">DMC of Metric</h5>
+                              <p className="text-green-600 text-sm font-medium">✓ Uploaded</p>
                             </div>
                           </div>
-                        ) : (
-                          <div className="text-red-600 font-medium flex items-center">
-                            <XCircle className="w-4 h-4 mr-2" />
-                            No receipt uploaded
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Documents Information */}
-                  <div className="bg-orange-50 p-6 rounded-lg">
-                    <h4 className="font-bold text-orange-900 mb-4 flex items-center">
-                      <FileText className="w-5 h-5 mr-2" />
-                      Education Documents & Files
-                    </h4>
-                    
-                    {/* Education Documents Section */}
-                    <div className="mb-6">
-                      <h5 className="font-semibold text-orange-800 mb-3 flex items-center">
-                        <GraduationCap className="w-4 h-4 mr-2" />
-                        Academic Documents
-                      </h5>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-white p-4 rounded-lg border border-orange-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">📚 DMC of Metric</label>
-                          {selectedApplication.documents.dmcMetric ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={selectedApplication.documents.dmcMetric.startsWith('http') ? selectedApplication.documents.dmcMetric : `https://hims-college-backend.vercel.app/${selectedApplication.documents.dmcMetric}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
-                                >
-                                  <FileText className="w-4 h-4 mr-2" />
-                                  View Document
-                                </a>
-                                <button
-                                  onClick={() => window.open(selectedApplication.documents.dmcMetric.startsWith('http') ? selectedApplication.documents.dmcMetric : `https://hims-college-backend.vercel.app/${selectedApplication.documents.dmcMetric}`, '_blank')}
-                                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                {selectedApplication.documents.dmcMetric.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="text-red-600 font-medium flex items-center">
-                              <XCircle className="w-4 h-4 mr-2" />
-                              Not uploaded
-                            </div>
-                          )}
+                          <button
+                            onClick={() => window.open(selectedApplication.documents.dmcMetric.startsWith('http') ? selectedApplication.documents.dmcMetric : `https://hims-college-backend.vercel.app/${selectedApplication.documents.dmcMetric}`, '_blank')}
+                            className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 text-sm font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+                          >
+                            View Document
+                          </button>
                         </div>
+                      )}
 
-                        <div className="bg-white p-4 rounded-lg border border-orange-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">📝 Migration Certificate</label>
-                          {selectedApplication.documents.migrationCertificate ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={selectedApplication.documents.migrationCertificate.startsWith('http') ? selectedApplication.documents.migrationCertificate : `https://hims-college-backend.vercel.app/${selectedApplication.documents.migrationCertificate}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm font-medium transition-colors"
-                                >
-                                  <FileText className="w-4 h-4 mr-2" />
-                                  View Certificate
-                                </a>
-                                <button
-                                  onClick={() => {
-                                    if (selectedApplication.documents.migrationCertificate) {
-                                      const url = selectedApplication.documents.migrationCertificate.startsWith('http') 
-                                        ? selectedApplication.documents.migrationCertificate 
-                                        : `https://hims-college-backend.vercel.app/${selectedApplication.documents.migrationCertificate}`;
-                                      window.open(url, '_blank');
-                                    }
-                                  }}
-                                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                {selectedApplication.documents.migrationCertificate.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
-                              </div>
+                      {/* Passport Photo */}
+                      {selectedApplication.documents?.passportPhoto && (
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                          <div className="flex items-center mb-3">
+                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                              <span className="text-xl">🖼️</span>
                             </div>
-                          ) : (
-                            <div className="text-gray-600 font-medium flex items-center">
-                              <span className="text-yellow-600 mr-2">📝</span>
-                              Optional - Not uploaded
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Personal Documents Section */}
-                    <div className="mb-6">
-                      <h5 className="font-semibold text-orange-800 mb-3 flex items-center">
-                        <User className="w-4 h-4 mr-2" />
-                        Personal Documents
-                      </h5>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-white p-4 rounded-lg border border-orange-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">🖼️ Passport Photo</label>
-                          {selectedApplication.documents.passportPhoto ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={selectedApplication.documents.passportPhoto.startsWith('http') ? selectedApplication.documents.passportPhoto : `https://hims-college-backend.vercel.app/${selectedApplication.documents.passportPhoto}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                                >
-                                  <User className="w-4 h-4 mr-2" />
-                                  View Photo
-                                </a>
-                                <button
-                                  onClick={() => window.open(selectedApplication.documents.passportPhoto.startsWith('http') ? selectedApplication.documents.passportPhoto : `https://hims-college-backend.vercel.app/${selectedApplication.documents.passportPhoto}`, '_blank')}
-                                  className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                {selectedApplication.documents.passportPhoto.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="text-red-600 font-medium flex items-center">
-                              <XCircle className="w-4 h-4 mr-2" />
-                              Not uploaded
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="bg-white p-4 rounded-lg border border-orange-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">🆔 Father's CNIC</label>
-                          {selectedApplication.documents.fatherCNIC ? (
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <a 
-                                  href={selectedApplication.documents.fatherCNIC.startsWith('http') ? selectedApplication.documents.fatherCNIC : `https://hims-college-backend.vercel.app/${selectedApplication.documents.fatherCNIC}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium transition-colors"
-                                >
-                                  <FileText className="w-4 h-4 mr-2" />
-                                  View CNIC
-                                </a>
-                                <button
-                                  onClick={() => window.open(selectedApplication.documents.fatherCNIC.startsWith('http') ? selectedApplication.documents.fatherCNIC : `https://hims-college-backend.vercel.app/${selectedApplication.documents.fatherCNIC}`, '_blank')}
-                                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  Download
-                                </button>
-                              </div>
-                              <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                {selectedApplication.documents.fatherCNIC.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="text-red-600 font-medium flex items-center">
-                              <XCircle className="w-4 h-4 mr-2" />
-                              Not uploaded
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Payment Receipt Section */}
-                    <div>
-                      <h5 className="font-semibold text-orange-800 mb-3 flex items-center">
-                        <Receipt className="w-4 h-4 mr-2" />
-                        Payment Receipt
-                      </h5>
-                      <div className="bg-white p-4 rounded-lg border border-orange-200">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">💳 Transaction Receipt</label>
-                        {selectedApplication.transactionReceipt ? (
-                          <div className="space-y-3">
-                            <div className="flex items-center space-x-2">
-                              <a 
-                                href={selectedApplication.transactionReceipt.startsWith('http') ? selectedApplication.transactionReceipt : `https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
-                              >
-                                <Receipt className="w-4 h-4 mr-2" />
-                                View Receipt
-                              </a>
-                              <button
-                                onClick={() => window.open(selectedApplication.transactionReceipt.startsWith('http') ? selectedApplication.transactionReceipt : `https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`, '_blank')}
-                                className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors"
-                              >
-                                <Download className="w-4 h-4 mr-2" />
-                                Download
-                              </button>
-                            </div>
-                            <div className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                              {selectedApplication.transactionReceipt.includes('cloudinary.com') ? '☁️ Cloudinary Link' : '📁 Uploaded File'}
+                            <div>
+                              <h5 className="font-semibold text-gray-900 text-sm">Passport Photo</h5>
+                              <p className="text-green-600 text-xs font-medium">✓ Uploaded</p>
                             </div>
                           </div>
-                        ) : (
-                          <div className="text-red-600 font-medium flex items-center">
-                            <XCircle className="w-4 h-4 mr-2" />
-                            No receipt uploaded
+                          <button
+                            onClick={() => window.open(selectedApplication.documents.passportPhoto.startsWith('http') ? selectedApplication.documents.passportPhoto : `https://hims-college-backend.vercel.app/${selectedApplication.documents.passportPhoto}`, '_blank')}
+                            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium transition-colors shadow-sm"
+                          >
+                            View Photo
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Father's CNIC */}
+                      {selectedApplication.documents?.fatherCNIC && (
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                          <div className="flex items-center mb-3">
+                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                              <span className="text-xl">🆔</span>
+                            </div>
+                            <div>
+                              <h5 className="font-semibold text-gray-900 text-sm">Father's CNIC</h5>
+                              <p className="text-green-600 text-xs font-medium">✓ Uploaded</p>
+                            </div>
                           </div>
-                        )}
-                      </div>
+                          <button
+                            onClick={() => window.open(selectedApplication.documents.fatherCNIC.startsWith('http') ? selectedApplication.documents.fatherCNIC : `https://hims-college-backend.vercel.app/${selectedApplication.documents.fatherCNIC}`, '_blank')}
+                            className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium transition-colors shadow-sm"
+                          >
+                            View CNIC
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Migration Certificate */}
+                      {selectedApplication.documents?.migrationCertificate && (
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                          <div className="flex items-center mb-3">
+                            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                              <span className="text-xl">📝</span>
+                            </div>
+                            <div>
+                              <h5 className="font-semibold text-gray-900 text-sm">Migration Certificate</h5>
+                              <p className="text-green-600 text-xs font-medium">✓ Uploaded</p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => window.open(selectedApplication.documents.migrationCertificate.startsWith('http') ? selectedApplication.documents.migrationCertificate : `https://hims-college-backend.vercel.app/${selectedApplication.documents.migrationCertificate}`, '_blank')}
+                            className="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm font-medium transition-colors shadow-sm"
+                          >
+                            View Certificate
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Transaction Receipt */}
+                      {selectedApplication.transactionReceipt && (
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                          <div className="flex items-center mb-3">
+                            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                              <span className="text-xl">🧾</span>
+                            </div>
+                            <div>
+                              <h5 className="font-semibold text-gray-900 text-sm">Transaction Receipt</h5>
+                              <p className="text-green-600 text-xs font-medium">✓ Uploaded</p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => window.open(selectedApplication.transactionReceipt.startsWith('http') ? selectedApplication.transactionReceipt : `https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`, '_blank')}
+                            className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium transition-colors shadow-sm"
+                          >
+                            View Receipt
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1161,21 +830,15 @@ const ApplicationsPage = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">Transaction Receipt</label>
-                        {selectedApplication.transactionReceipt ? (
-                          <div className="mt-2">
-                            <a 
-                              href={selectedApplication.transactionReceipt.startsWith('http') ? selectedApplication.transactionReceipt : `https://hims-college-backend.vercel.app/${selectedApplication.transactionReceipt}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
-                            >
-                              <Receipt className="w-4 h-4 mr-2" />
-                              View Receipt
-                            </a>
-                          </div>
-                        ) : (
-                          <p className="mt-1 text-sm text-red-600">No receipt uploaded</p>
-                        )}
+                        <div className="mt-2">
+                          <span className="text-sm text-gray-600">
+                            {selectedApplication.transactionReceipt ? (
+                              <span className="text-green-600 font-medium">✓ Receipt uploaded</span>
+                            ) : (
+                              <span className="text-red-600 font-medium">✗ Receipt not uploaded</span>
+                            )}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
