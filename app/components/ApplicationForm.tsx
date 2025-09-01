@@ -250,18 +250,18 @@ const ApplicationForm = () => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
       viewport={{ once: true }}
-      className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
+      className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-100 mx-2 sm:mx-0"
     >
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
         {/* Personal Information */}
-        <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl p-6 border border-primary-200">
-          <div className="flex items-center mb-6">
+        <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl p-4 sm:p-6 border border-primary-200">
+          <div className="flex items-center mb-4 sm:mb-6">
             <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center mr-3">
               <span className="text-white text-sm font-bold">1</span>
             </div>
-            <h3 className="text-xl font-bold text-primary-900">Personal Information</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-primary-900">Personal Information</h3>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Name *</label>
               <input
@@ -270,7 +270,7 @@ const ApplicationForm = () => {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-base"
                 placeholder="Enter your full name"
               />
             </div>
@@ -282,7 +282,7 @@ const ApplicationForm = () => {
                 value={formData.fatherName}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-base"
                 placeholder="Enter your father's name"
               />
             </div>
@@ -293,7 +293,7 @@ const ApplicationForm = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-base"
                 placeholder="03xxxxxxxxx (Optional)"
               />
             </div>
@@ -305,7 +305,7 @@ const ApplicationForm = () => {
                 value={formData.guardianPhone}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-base"
                 placeholder="03xxxxxxxxx"
               />
             </div>
@@ -317,7 +317,7 @@ const ApplicationForm = () => {
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-base"
               />
             </div>
             <div>
@@ -327,7 +327,7 @@ const ApplicationForm = () => {
                 value={formData.gender}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-base"
               >
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
@@ -339,14 +339,14 @@ const ApplicationForm = () => {
         </div>
 
         {/* Academic Information */}
-        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-          <div className="flex items-center mb-6">
+        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4 sm:p-6 border border-green-200">
+          <div className="flex items-center mb-4 sm:mb-6">
             <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
               <span className="text-white text-sm font-bold">2</span>
             </div>
-            <h3 className="text-xl font-bold text-green-900">Academic Information</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-green-900">Academic Information</h3>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Class *</label>
               <select
@@ -354,7 +354,7 @@ const ApplicationForm = () => {
                 value={formData.class}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-base"
               >
                 <option value="">Select class</option>
                 <option value="1st Year">1st Year</option>
@@ -368,7 +368,7 @@ const ApplicationForm = () => {
                 value={formData.group}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-base"
               >
                 <option value="">Select a group</option>
                 <option value="FSC Pre-Medical">FSC Pre-Medical</option>
@@ -381,12 +381,12 @@ const ApplicationForm = () => {
         </div>
 
         {/* Address Information */}
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-          <div className="flex items-center mb-6">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 border border-blue-200">
+          <div className="flex items-center mb-4 sm:mb-6">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
               <span className="text-white text-sm font-bold">3</span>
             </div>
-            <h3 className="text-xl font-bold text-blue-900">Address Information</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-blue-900">Address Information</h3>
           </div>
           <div className="space-y-4">
             <div>
@@ -397,7 +397,7 @@ const ApplicationForm = () => {
                 onChange={handleInputChange}
                 required
                 rows={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-base"
                 placeholder="Enter your complete home address"
               />
             </div>
@@ -405,20 +405,20 @@ const ApplicationForm = () => {
         </div>
 
         {/* Education Information */}
-        <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-          <div className="flex items-center mb-6">
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-4 sm:p-6 border border-purple-200">
+          <div className="flex items-center mb-4 sm:mb-6">
             <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
               <span className="text-white text-sm font-bold">4</span>
             </div>
-            <h3 className="text-xl font-bold text-purple-900">Education Information</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-purple-900">Education Information</h3>
           </div>
-          <div className="bg-white rounded-xl p-6 border border-purple-300">
+          <div className="bg-white rounded-xl p-4 sm:p-6 border border-purple-300">
             <h4 className="font-bold text-purple-900 mb-4 flex items-center">
               <GraduationCap className="w-5 h-5 mr-2" />
               Metric Details
             </h4>
-            <div className="grid md:grid-cols-2 gap-6">
-                            <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Year *</label>
                 <input
                   type="text"
@@ -426,7 +426,7 @@ const ApplicationForm = () => {
                   value={formData.metricYear}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-base"
                   placeholder="e.g., 2023"
                 />
               </div>
@@ -438,7 +438,7 @@ const ApplicationForm = () => {
                   value={formData.metricRollNumber}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-base"
                   placeholder="Enter roll number"
                 />
               </div>
@@ -450,7 +450,7 @@ const ApplicationForm = () => {
                   value={formData.metricMarks}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-base"
                   placeholder="e.g., 850/1100 or 85%"
                 />
               </div>
@@ -462,29 +462,29 @@ const ApplicationForm = () => {
                   value={formData.metricSchool}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-base"
                   placeholder="Enter school name"
                 />
               </div>
+            </div>
           </div>
         </div>
-      </div>
 
         {/* Documents Upload */}
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-          <div className="flex items-center mb-6">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 border border-blue-200">
+          <div className="flex items-center mb-4 sm:mb-6">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
               <span className="text-white text-sm font-bold">5</span>
             </div>
-            <h3 className="text-xl font-bold text-blue-900">Documents Upload</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-blue-900">Documents Upload</h3>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {/* DMC of Metric */}
-            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
-              <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <p className="text-gray-700 mb-2 font-medium">DMC of Metric *</p>
-              <p className="text-sm text-gray-500 mb-4">Upload your metric result card</p>
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-4 sm:p-6 text-center bg-white">
+              <FileText className="w-8 h-8 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-3 sm:mb-4" />
+              <p className="text-gray-700 mb-2 font-medium text-sm sm:text-base">DMC of Metric *</p>
+              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">Upload your metric result card</p>
               <input
                 type="file"
                 accept=".jpg,.jpeg,.png,.pdf"
@@ -495,23 +495,23 @@ const ApplicationForm = () => {
               />
               <label
                 htmlFor="dmc-metric"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
+                className="inline-flex items-center px-3 sm:px-4 py-2 sm:py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200 text-sm sm:text-base"
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Choose File
               </label>
               {documents.dmcMetric && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-700 font-medium">Selected: {documents.dmcMetric.name}</p>
+                <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-blue-50 rounded-lg">
+                  <p className="text-xs sm:text-sm text-blue-700 font-medium">Selected: {documents.dmcMetric.name}</p>
                 </div>
               )}
             </div>
 
             {/* Passport Photo */}
-            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
-              <User className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <p className="text-gray-700 mb-2 font-medium">Passport Size Photo *</p>
-              <p className="text-sm text-gray-500 mb-4">Upload your recent photo</p>
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-4 sm:p-6 text-center bg-white">
+              <User className="w-8 h-8 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-3 sm:mb-4" />
+              <p className="text-gray-700 mb-2 font-medium text-sm sm:text-base">Passport Size Photo *</p>
+              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">Upload your recent photo</p>
               <input
                 type="file"
                 accept=".jpg,.jpeg,.png"
@@ -522,23 +522,23 @@ const ApplicationForm = () => {
               />
               <label
                 htmlFor="passport-photo"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
+                className="inline-flex items-center px-3 sm:px-4 py-2 sm:py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200 text-sm sm:text-base"
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Choose Photo
               </label>
               {documents.passportPhoto && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-700 font-medium">Selected: {documents.passportPhoto.name}</p>
+                <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-blue-50 rounded-lg">
+                  <p className="text-xs sm:text-sm text-blue-700 font-medium">Selected: {documents.passportPhoto.name}</p>
                 </div>
               )}
             </div>
 
             {/* Father CNIC */}
-            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
-              <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <p className="text-gray-700 mb-2 font-medium">Father CNIC *</p>
-              <p className="text-sm text-gray-500 mb-4">Upload father's CNIC copy</p>
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-4 sm:p-6 text-center bg-white">
+              <FileText className="w-8 h-8 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-3 sm:mb-4" />
+              <p className="text-gray-700 mb-2 font-medium text-sm sm:text-base">Father CNIC *</p>
+              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">Upload father's CNIC copy</p>
               <input
                 type="file"
                 accept=".jpg,.jpeg,.png,.pdf"
@@ -549,23 +549,23 @@ const ApplicationForm = () => {
               />
               <label
                 htmlFor="father-cnic"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
+                className="inline-flex items-center px-3 sm:px-4 py-2 sm:py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200 text-sm sm:text-base"
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Choose File
               </label>
               {documents.fatherCNIC && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-700 font-medium">Selected: {documents.fatherCNIC.name}</p>
+                <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-blue-50 rounded-lg">
+                  <p className="text-xs sm:text-sm text-blue-700 font-medium">Selected: {documents.fatherCNIC.name}</p>
                 </div>
               )}
             </div>
 
             {/* Migration Certificate (Optional) */}
-            <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 text-center bg-white">
-              <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <p className="text-gray-700 mb-2 font-medium">Migration Certificate (optional)</p>
-              <p className="text-sm text-gray-500 mb-4">Optional - if applicable</p>
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-4 sm:p-6 text-center bg-white">
+              <FileText className="w-8 h-8 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-3 sm:mb-4" />
+              <p className="text-gray-700 mb-2 font-medium text-sm sm:text-base">Migration Certificate (optional)</p>
+              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">Optional - if applicable</p>
               <input
                 type="file"
                 accept=".jpg,.jpeg,.png,.pdf"
@@ -575,14 +575,14 @@ const ApplicationForm = () => {
               />
               <label
                 htmlFor="migration-certificate"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
+                className="inline-flex items-center px-3 sm:px-4 py-2 sm:py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200 text-sm sm:text-base"
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Choose File
               </label>
               {documents.migrationCertificate && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-700 font-medium">Selected: {documents.migrationCertificate.name}</p>
+                <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-blue-50 rounded-lg">
+                  <p className="text-xs sm:text-sm text-blue-700 font-medium">Selected: {documents.migrationCertificate.name}</p>
                 </div>
               )}
             </div>
@@ -590,31 +590,31 @@ const ApplicationForm = () => {
         </div>
 
         {/* Application Fee Payment */}
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-          <div className="flex items-center mb-6">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 border border-blue-200">
+          <div className="flex items-center mb-4 sm:mb-6">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
               <span className="text-white text-sm font-bold">6</span>
             </div>
-            <h3 className="text-xl font-bold text-blue-900">Application Fee Payment</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-blue-900">Application Fee Payment</h3>
           </div>
           
           {/* Payment Instructions */}
-          <div className="bg-white rounded-xl p-6 mb-6 border border-blue-300">
+          <div className="bg-white rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 border border-blue-300">
             <div className="flex items-start mb-4">
-              <CreditCard className="w-6 h-6 text-blue-600 mr-3 mt-1" />
+              <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 mr-3 mt-1" />
               <div>
-                <h4 className="font-bold text-gray-900 mb-2">Payment Instructions</h4>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <p><strong>Application Fee:</strong> <span className="text-2xl font-bold text-blue-600">PKR 200</span></p>
+                <h4 className="font-bold text-gray-900 mb-2 text-sm sm:text-base">Payment Instructions</h4>
+                <div className="space-y-2 text-xs sm:text-sm text-gray-700">
+                  <p><strong>Application Fee:</strong> <span className="text-xl sm:text-2xl font-bold text-blue-600">PKR 200</span></p>
                   <p><strong>Payment Method:</strong> Easypaisa</p>
                   <p><strong>Account Number:</strong> <span className="font-mono bg-gray-100 px-2 py-1 rounded">03005928890</span></p>
                   <p><strong>Account Title:</strong> Nasir Ahmad Khan</p>
                 </div>
               </div>
             </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h5 className="font-semibold text-blue-800 mb-2">How to Pay:</h5>
-              <ol className="list-decimal list-inside space-y-1 text-sm text-blue-700">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+              <h5 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">How to Pay:</h5>
+              <ol className="list-decimal list-inside space-y-1 text-xs sm:text-sm text-blue-700">
                 <li>Send PKR 200 to the above Easypaisa number</li>
                 <li>Take a screenshot of the transaction receipt</li>
                 <li>Fill the transaction details below</li>
@@ -623,7 +623,7 @@ const ApplicationForm = () => {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Your Easypaisa Number *</label>
               <input
@@ -632,7 +632,7 @@ const ApplicationForm = () => {
                 value={formData.easypaisaNumber}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-base"
                 placeholder="03xxxxxxxxx"
               />
             </div>
@@ -644,7 +644,7 @@ const ApplicationForm = () => {
                 value={formData.transactionId}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-base"
                 placeholder="Enter transaction ID from receipt"
               />
             </div>
@@ -652,17 +652,17 @@ const ApplicationForm = () => {
         </div>
 
         {/* Transaction Receipt Upload */}
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-          <div className="flex items-center mb-6">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 border border-blue-200">
+          <div className="flex items-center mb-4 sm:mb-6">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
               <span className="text-white text-sm font-bold">7</span>
             </div>
-            <h3 className="text-xl font-bold text-blue-900">Transaction Receipt</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-blue-900">Transaction Receipt</h3>
           </div>
-          <div className="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center bg-white">
-            <Receipt className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-            <p className="text-gray-700 mb-2 font-medium">Upload Transaction Receipt *</p>
-            <p className="text-sm text-gray-500 mb-4">Supported formats: JPG, PNG, PDF (Max size: 5MB)</p>
+          <div className="border-2 border-dashed border-blue-300 rounded-xl p-6 sm:p-8 text-center bg-white">
+            <Receipt className="w-8 h-8 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-3 sm:mb-4" />
+            <p className="text-gray-700 mb-2 font-medium text-sm sm:text-base">Upload Transaction Receipt *</p>
+            <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">Supported formats: JPG, PNG, PDF (Max size: 5MB)</p>
             <input
               type="file"
               accept=".jpg,.jpeg,.png,.pdf"
@@ -673,39 +673,39 @@ const ApplicationForm = () => {
             />
             <label
               htmlFor="receipt-upload"
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200"
+              className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 cursor-pointer transition-colors duration-200 text-sm sm:text-base"
             >
-              <Upload className="w-5 h-5 mr-2" />
+              <Upload className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Choose Receipt File
             </label>
             {documents.transactionReceipt && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-700 font-medium">Selected file:</p>
-                <p className="text-sm text-blue-600">{documents.transactionReceipt.name}</p>
+              <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 rounded-lg">
+                <p className="text-xs sm:text-sm text-blue-700 font-medium">Selected file:</p>
+                <p className="text-xs sm:text-sm text-blue-600">{documents.transactionReceipt.name}</p>
               </div>
             )}
           </div>
         </div>
 
-        <div className="pt-6 border-t border-gray-200">
+        <div className="pt-4 sm:pt-6 border-t border-gray-200">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white py-4 px-8 rounded-xl font-semibold text-lg hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl"
+            className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white py-3 sm:py-4 px-6 sm:px-8 rounded-xl font-semibold text-base sm:text-lg hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 animate-spin" />
                 Submitting Application...
               </>
             ) : (
               <>
-                <FileText className="w-6 h-6 mr-3" />
+                <FileText className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                 Submit Application
               </>
             )}
           </button>
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="text-center text-xs sm:text-sm text-gray-500 mt-3 sm:mt-4">
             By submitting this application, you agree to our terms and conditions.
           </p>
         </div>

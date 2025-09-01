@@ -585,8 +585,8 @@ const AdminDashboard = () => {
 
       {/* Modal for viewing/editing applications */}
       {showModal && selectedApplication && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 p-4">
+          <div className="relative top-4 sm:top-8 lg:top-20 mx-auto p-4 sm:p-6 border w-full max-w-4xl shadow-lg rounded-md bg-white max-h-[90vh] sm:max-h-[80vh] overflow-y-auto">
             <div className="mt-3">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium text-gray-900">
@@ -600,11 +600,11 @@ const AdminDashboard = () => {
                 </button>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Personal Information */}
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Personal Information</h4>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <h4 className="font-semibold text-gray-900 mb-3 text-sm sm:text-base">Personal Information</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Name</label>
                       <p className="mt-1 text-sm text-gray-900">
@@ -642,8 +642,8 @@ const AdminDashboard = () => {
 
                 {/* Address Information */}
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Address Information</h4>
-                  <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900 mb-3 text-sm sm:text-base">Address Information</h4>
+                  <div className="space-y-3 sm:space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Home Address</label>
                       <p className="mt-1 text-sm text-gray-900">{selectedApplication.address}</p>
@@ -653,8 +653,8 @@ const AdminDashboard = () => {
 
                 {/* Education Information */}
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Education Information</h4>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <h4 className="font-semibold text-gray-900 mb-3 text-sm sm:text-base">Education Information</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Metric Year</label>
                       <p className="mt-1 text-sm text-gray-900">{selectedApplication.metricYear || selectedApplication.education?.metric?.year || 'Not provided'}</p>
@@ -675,12 +675,12 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Payment Information */}
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                    <CreditCard className="w-5 h-5 mr-2 text-green-600" />
+                <div className="bg-green-50 p-3 sm:p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center text-sm sm:text-base">
+                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
                     Payment Information
                   </h4>
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Amount Paid</label>
                       <p className="mt-1 text-sm font-bold text-green-600">Rs. {selectedApplication.paymentAmount}</p>
@@ -708,61 +708,76 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                {/* Documents - Only show uploaded documents */}
+                {/* Documents - Simple cards for uploaded documents */}
                 {selectedApplication.documents && (
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                      <FileText className="w-5 h-5 mr-2 text-blue-600" />
+                    <h4 className="font-semibold text-gray-900 mb-3 flex items-center text-sm sm:text-base">
+                      <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-600" />
                       Uploaded Documents
                     </h4>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       {/* DMC of Metric */}
                       {selectedApplication.documents.dmcMetric && (
-                        <div className="bg-white p-4 rounded-lg border border-blue-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">📚 DMC of Metric</label>
-                          <div className="text-sm text-gray-600">
-                            <span className="text-green-600 font-medium">✓ Uploaded</span>
+                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
+                          <div className="flex items-center">
+                            <span className="text-lg mr-2">📚</span>
+                            <div>
+                              <div className="font-medium text-gray-700 text-sm">DMC of Metric</div>
+                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                            </div>
                           </div>
                         </div>
                       )}
 
                       {/* Passport Photo */}
                       {selectedApplication.documents.passportPhoto && (
-                        <div className="bg-white p-4 rounded-lg border border-blue-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">🖼️ Passport Photo</label>
-                          <div className="text-sm text-gray-600">
-                            <span className="text-green-600 font-medium">✓ Uploaded</span>
+                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
+                          <div className="flex items-center">
+                            <span className="text-lg mr-2">🖼️</span>
+                            <div>
+                              <div className="font-medium text-gray-700 text-sm">Passport Photo</div>
+                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                            </div>
                           </div>
                         </div>
                       )}
 
                       {/* Father's CNIC */}
                       {selectedApplication.documents.fatherCNIC && (
-                        <div className="bg-white p-4 rounded-lg border border-blue-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">🆔 Father's CNIC</label>
-                          <div className="text-sm text-gray-600">
-                            <span className="text-green-600 font-medium">✓ Uploaded</span>
+                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
+                          <div className="flex items-center">
+                            <span className="text-lg mr-2">🆔</span>
+                            <div>
+                              <div className="font-medium text-gray-700 text-sm">Father's CNIC</div>
+                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                            </div>
                           </div>
                         </div>
                       )}
 
                       {/* Migration Certificate */}
                       {selectedApplication.documents.migrationCertificate && (
-                        <div className="bg-white p-4 rounded-lg border border-blue-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">📝 Migration Certificate</label>
-                          <div className="text-sm text-gray-600">
-                            <span className="text-green-600 font-medium">✓ Uploaded</span>
+                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
+                          <div className="flex items-center">
+                            <span className="text-lg mr-2">📝</span>
+                            <div>
+                              <div className="font-medium text-gray-700 text-sm">Migration Certificate</div>
+                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                            </div>
                           </div>
                         </div>
                       )}
 
                       {/* Transaction Receipt */}
                       {selectedApplication.transactionReceipt && (
-                        <div className="bg-white p-4 rounded-lg border border-blue-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">🧾 Transaction Receipt</label>
-                          <div className="text-sm text-gray-600">
-                            <span className="text-green-600 font-medium">✓ Uploaded</span>
+                        <div className="bg-white p-3 sm:p-4 rounded-lg border border-blue-200">
+                          <div className="flex items-center">
+                            <span className="text-lg mr-2">🧾</span>
+                            <div>
+                              <div className="font-medium text-gray-700 text-sm">Transaction Receipt</div>
+                              <div className="text-green-600 text-xs font-medium">✓ Uploaded</div>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -772,22 +787,22 @@ const AdminDashboard = () => {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => updateApplicationStatus(selectedApplication._id, 'approved')}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm sm:text-base"
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => updateApplicationStatus(selectedApplication._id, 'rejected')}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                      className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm sm:text-base"
                     >
                       Reject
                     </button>
                     <button
                       onClick={() => updateApplicationStatus(selectedApplication._id, 'pending')}
-                      className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                      className="px-3 sm:px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm sm:text-base"
                     >
                       Mark as Pending
                     </button>
