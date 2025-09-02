@@ -552,11 +552,11 @@ const ApplicationsPage = () => {
                     <span className="font-medium text-gray-700">CNIC:</span>
                     <span className="ml-1 text-gray-900">{selectedApplication.documents.fatherCNIC ? '✅' : '❌'}</span>
                   </div>
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <span className={`w-3 h-3 rounded-full mr-2 ${selectedApplication.documents.migrationCertificate ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
                     <span className="font-medium text-gray-700">Migration:</span>
                     <span className="ml-1 text-gray-900">{selectedApplication.documents.migrationCertificate ? '✅' : '📝'}</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center">
                     <span className={`w-3 h-3 rounded-full mr-2 ${selectedApplication.transactionReceipt ? 'bg-green-500' : 'bg-red-500'}`}></span>
                     <span className="font-medium text-gray-700">Receipt:</span>
@@ -753,7 +753,7 @@ const ApplicationsPage = () => {
                       )}
 
                       {/* Migration Certificate */}
-                      {selectedApplication.documents?.migrationCertificate && (
+                      {/* {selectedApplication.documents?.migrationCertificate && (
                         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                           <div className="flex items-center mb-3">
                             <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
@@ -771,7 +771,7 @@ const ApplicationsPage = () => {
                             View Certificate
                           </button>
                         </div>
-                      )}
+                      )} */}
 
                       {/* Transaction Receipt */}
                       {selectedApplication.transactionReceipt && (

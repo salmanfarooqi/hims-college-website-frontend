@@ -787,7 +787,7 @@ const AdminDashboard = () => {
                       )}
 
                       {/* Migration Certificate */}
-                      {selectedApplication.documents.migrationCertificate && (
+                      {/* {selectedApplication.documents.migrationCertificate && (
                         <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center">
@@ -807,7 +807,7 @@ const AdminDashboard = () => {
                             </button>
                           </div>
                         </div>
-                      )}
+                      )} */}
 
                       {/* Transaction Receipt */}
                       {selectedApplication.transactionReceipt && (

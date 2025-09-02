@@ -280,6 +280,7 @@ const StudentsPage = () => {
                   >
                     <option value="">Select Profession</option>
                     <option value="MBBS Doctor">MBBS Doctor</option>
+                        <option value="MBBS Doctor">BDS</option>
                     <option value="Engineer">Engineer</option>
                     <option value="Software Engineer">Software Engineer</option>
                     <option value="Data Scientist">Data Scientist</option>

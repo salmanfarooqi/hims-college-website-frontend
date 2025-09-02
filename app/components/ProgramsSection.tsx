@@ -37,7 +37,7 @@ const ProgramsSection = () => {
       duration: "2 Years",
       seats: "100",
       image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop",
-      description: "Intermediate in Computer Science with programming, mathematics, and computer studies. Foundation for computer science and IT careers.",
+      description: "Intermediate in Computer Science with computer science, mathematics, and physcis. Foundation for computer science and IT careers.",
       subjects: ["Computer Science", "Mathematics", "Physics", "English", "Statistics"],
       icon: Cpu,
       color: "from-purple-500 to-purple-600",
