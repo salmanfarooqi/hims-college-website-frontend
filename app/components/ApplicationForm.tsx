@@ -562,7 +562,7 @@ const ApplicationForm = () => {
             </div>
 
             {/* Migration Certificate (Optional) */}
-            <div className="border-2 border-dashed border-blue-300 rounded-xl p-4 sm:p-6 text-center bg-white">
+            {/* <div className="border-2 border-dashed border-blue-300 rounded-xl p-4 sm:p-6 text-center bg-white">
               <FileText className="w-8 h-8 sm:w-12 sm:h-12 text-blue-400 mx-auto mb-3 sm:mb-4" />
               <p className="text-gray-700 mb-2 font-medium text-sm sm:text-base">Migration Certificate (optional)</p>
               <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">Optional - if applicable</p>
@@ -585,7 +585,7 @@ const ApplicationForm = () => {
                   <p className="text-xs sm:text-sm text-blue-700 font-medium">Selected: {documents.migrationCertificate.name}</p>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
 
